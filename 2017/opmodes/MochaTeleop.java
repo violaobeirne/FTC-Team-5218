@@ -5,6 +5,7 @@ package opmodes;
  * FTC Team 5218: izzielau, October 30, 2016
  */
 
+import com.qualcomm.ftccommon.Device;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import team25core.DeadmanMotorTask;
 import team25core.FourWheelDriveTask;
 import team25core.GamepadTask;
+import team25core.LimitSwitchTask;
 import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
@@ -37,12 +39,15 @@ public class MochaTeleop extends Robot {
     private DcMotor shooterRight;
     private DcMotor sbod;
     private Servo beacon;
+    private DeviceInterfaceModule interfaceModule;
 
     private PersistentTelemetryTask ptt;
 
     @Override
     public void init()
     {
+        // CDIM.
+        interfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
 
         // Drivetrain.
         frontRight = hardwareMap.dcMotor.get("motorFR");
@@ -118,14 +123,50 @@ public class MochaTeleop extends Robot {
 
                 if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
                     beacon.setPosition(1.0);
+                } else if (event.kind == EventKind.LEFT_TRIGGER_UP) {
+                    beacon.setPosition(0.5);
                 } else if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
                     beacon.setPosition(0);
+                } else if (event.kind == EventKind.LEFT_BUMPER_UP) {
+                    beacon.setPosition(0.5);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(0.75);
                 } else if (event.kind == EventKind.BUTTON_A_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(1.0);
+                }
+            }
+        });
+
+        addTask(new LimitSwitchTask(this, interfaceModule, 0) {
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                LimitSwitchEvent event = (LimitSwitchEvent)e;
+
+                if (event.kind == EventKind.CLOSED) {
+                    telemetry.addData("Status (1): ", "closed");
+                } else if (event.kind == EventKind.OPEN) {
+                    telemetry.addData("Status (1): ", "open");
+                } else {
+                    telemetry.addData("Status (1): ", "unknown");
+                }
+            }
+        });
+
+        addTask(new LimitSwitchTask(this, interfaceModule, 1) {
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                LimitSwitchEvent event = (LimitSwitchEvent)e;
+
+                if (event.kind == EventKind.CLOSED) {
+                    telemetry.addData("Status (2): ", "closed");
+                } else if (event.kind == EventKind.OPEN) {
+                    telemetry.addData("Status (2): ", "open");
+                } else {
+                    telemetry.addData("Status (2): ", "unknown");
                 }
             }
         });
