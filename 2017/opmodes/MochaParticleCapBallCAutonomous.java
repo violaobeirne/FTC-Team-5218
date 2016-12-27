@@ -59,7 +59,7 @@ public class MochaParticleCapBallCAutonomous extends Robot {
             paddleCount++;
 
             if (paddleCount == 8) {
-                ptt.changeTimeout(50);
+                // ptt.changeTimeout(50);
             }
 
             addTask(scoreCenterEncoderTask);

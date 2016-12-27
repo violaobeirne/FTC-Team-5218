@@ -1,6 +1,7 @@
 package opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -45,7 +46,7 @@ public class MochaParticleCAutonomous extends Robot {
             paddleCount++;
 
             if (paddleCount == 8) {
-                ptt.changeTimeout(50);
+                // ptt.changeTimeout(50);
             }
 
             addTask(scoreCenterDeadReckonTask);
