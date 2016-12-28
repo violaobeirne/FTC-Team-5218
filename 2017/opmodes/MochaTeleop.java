@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import team25core.DeadmanMotorTask;
@@ -40,6 +41,8 @@ public class MochaTeleop extends Robot {
     private DcMotor sbod;
     private Servo beacon;
     private DeviceInterfaceModule interfaceModule;
+    private LightSensor one;
+    private LightSensor two;
 
     private PersistentTelemetryTask ptt;
 
@@ -48,6 +51,12 @@ public class MochaTeleop extends Robot {
     {
         // CDIM.
         interfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
+
+        // Light sensors.
+        one = hardwareMap.lightSensor.get("lightLeft");
+        one.enableLed(false);
+        two = hardwareMap.lightSensor.get("lightRight");
+        two.enableLed(false);
 
         // Drivetrain.
         frontRight = hardwareMap.dcMotor.get("motorFR");
@@ -135,6 +144,12 @@ public class MochaTeleop extends Robot {
                 } else if (event.kind == EventKind.BUTTON_A_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(1.0);
+                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    one.enableLed(true);
+                    two.enableLed(true);
+
+                    telemetry.addData("Light (1): ", one.getRawLightDetected());
+                    telemetry.addData("Light (2): ", two.getRawLightDetected());
                 }
             }
         });
@@ -171,5 +186,4 @@ public class MochaTeleop extends Robot {
             }
         });
     }
-
 }

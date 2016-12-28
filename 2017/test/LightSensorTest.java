@@ -12,22 +12,22 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 @Disabled
 public class LightSensorTest extends OpMode{
 
-    LightSensor front;
-    LightSensor back;
+    LightSensor one;
+    LightSensor two;
 
     @Override
     public void init()
     {
-        front = hardwareMap.lightSensor.get("frontLight");
-        front.enableLed(true);
-        back = hardwareMap.lightSensor.get("backLight");
-        back.enableLed(true);
+        one = hardwareMap.lightSensor.get("lightLeft");
+        one.enableLed(true);
+        two = hardwareMap.lightSensor.get("lightRight");
+        two.enableLed(true);
     }
 
     @Override
     public void loop()
     {
-        telemetry.addData("Back light: ", back.getRawLightDetected());
-        telemetry.addData("Front light: ", front.getRawLightDetected());
+        telemetry.addData("Light (1): ", one.getRawLightDetected());
+        telemetry.addData("Light (2): ", two.getRawLightDetected());
     }
 }
