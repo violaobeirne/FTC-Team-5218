@@ -140,7 +140,7 @@ public class MochaTeleop extends Robot {
                     beacon.setPosition(0.5);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     drive.slowDown(true);
-                    drive.slowDown(0.75);
+                    drive.slowDown(0.35);
                 } else if (event.kind == EventKind.BUTTON_A_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(1.0);
@@ -150,6 +150,12 @@ public class MochaTeleop extends Robot {
 
                     telemetry.addData("Light (1): ", one.getRawLightDetected());
                     telemetry.addData("Light (2): ", two.getRawLightDetected());
+                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+                    one.enableLed(false);
+                    two.enableLed(false);
+
+                    telemetry.addData("Light (1): ", "OFF");
+                    telemetry.addData("Light (2): ", "OFF");
                 }
             }
         });
