@@ -18,7 +18,7 @@ import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;
 import team25core.SingleShotTimerTask;
 
-@Autonomous(name = "(S) Center (G) Particle Cap Ball 251", group = "AutoTest")
+@Autonomous(name = "(S) Corner (G) Particle Cap Ball", group = "AutoTest")
 public class MochaParticleCapBallCAutonomous extends Robot {
 
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;

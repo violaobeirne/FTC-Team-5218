@@ -15,4 +15,6 @@ public class MochaCalibration {
     public static final double SHOOTER_MED_Y = 0.4;
     public static final double SHOOTER_HIGH_X = 0.425;
 
+    public static final int LIGHT_MINIMUM = 0;
+    public static final int LIGHT_MAXIMUM = 0;
 }

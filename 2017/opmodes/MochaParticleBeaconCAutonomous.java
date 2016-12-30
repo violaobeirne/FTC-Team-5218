@@ -18,11 +18,22 @@ import team25core.SingleShotTimerTask;
 /**
  * Created by Lizzie on 11/19/2016.
  */
-@Autonomous(name = "(S) Vertex (G) Particle Beacon", group = "5218")
-public class MochaParticleBeaconAutonomous extends Robot
+@Autonomous(name = "(S) Corner (G) Particle Beacon", group = "5218")
+public class MochaParticleBeaconCAutonomous extends Robot
 {
+    protected enum Alliance {
+        BLUE,
+        RED
+    }
+
+    protected Alliance alliance;
+
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
+    private final int LIGHT_MIN = MochaCalibration.LIGHT_MINIMUM;
+    private final int LIGHT_MAX = MochaCalibration.LIGHT_MAXIMUM;
+    private final static double SHOOTER_VORTEX = MochaCalibration.SHOOTER_AUTO_VORTEX;
+    private final static double SHOOTER_CORNER = MochaCalibration.SHOOTER_AUTO_CORNER;
 
     private DcMotorController mc;
 
@@ -100,8 +111,8 @@ public class MochaParticleBeaconAutonomous extends Robot
 
     protected void startShooter()
     {
-        shooterLeft.setPower(0.45);
-        shooterRight.setPower(-0.45);
+        shooterLeft.setPower(SHOOTER_CORNER);
+        shooterRight.setPower(-SHOOTER_CORNER);
     }
 
     protected void stopShooter()
