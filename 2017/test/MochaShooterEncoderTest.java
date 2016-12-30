@@ -36,10 +36,12 @@ public class MochaShooterEncoderTest extends Robot{
 
     @Override
     public void start() {
-        shooterLeft.setPower(0.1);
-        shooterRight.setPower(0.1);
-        // addTask(new MonitorMotorTask(this, shooterLeft, MonitorMotorTask.MotorKind.ANDYMARK_3_7, MonitorMotorTask.DISPLAY_RPM));
-        addTask(new RunAtRpmTask(this, shooterRight, MonitorMotorTask.MotorKind.ANDYMARK_3_7, 900));
+        shooterLeft.setPower(1);
+        shooterRight.setPower(1);
+        // right = negative for correct direction
+        // mention negative rpm
+        addTask(new MonitorMotorTask(this, shooterRight, MonitorMotorTask.MotorKind.ANDYMARK_3_7, MonitorMotorTask.DISPLAY_RPM));
+        // addTask(new RunAtRpmTask(this, shooterRight, MonitorMotorTask.MotorKind.ANDYMARK_3_7, 900));
     }
 
 }
