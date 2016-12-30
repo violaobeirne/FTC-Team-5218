@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.LightSensor;
  * Created by Izzie on 2/17/2016.
  */
 @Autonomous(name = "TEST Light")
-@Disabled
 public class LightSensorTest extends OpMode{
 
     LightSensor one;
@@ -27,7 +26,11 @@ public class LightSensorTest extends OpMode{
     @Override
     public void loop()
     {
-        telemetry.addData("Light (1): ", one.getRawLightDetected());
-        telemetry.addData("Light (2): ", two.getRawLightDetected());
+        telemetry.addData("Light (1) Raw: ", one.getRawLightDetected());
+        telemetry.addData("Light (2) Raw: ", two.getRawLightDetected());
+
+        telemetry.addData("Light (1) :", one.getLightDetected());
+        telemetry.addData("Light (2) :", one.getLightDetected());
+
     }
 }
