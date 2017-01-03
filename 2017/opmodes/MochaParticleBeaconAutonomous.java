@@ -1,11 +1,18 @@
 package opmodes;
 
+import android.graphics.Color;
+
+import com.qualcomm.ftccommon.Device;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import team25core.ColorSensorTask;
 import team25core.DeadReckon;
 import team25core.DeadReckonTask;
 import team25core.FourWheelDirectDriveDeadReckon;
@@ -42,6 +49,8 @@ public class MochaParticleBeaconAutonomous extends Robot
     private static int TURN_MULTIPLY = 0;
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
+    private final int LEFT_COLOR_PORT = MochaCalibration.LEFT_COLOR_PORT;
+    private final int RIGHT_COLOR_PORT = MochaCalibration.RIGHT_COLOR_PORT;
     private final double TURN_SPEED = MochaCalibration.TURN_SPEED;
     private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
     private final double LINE_SPEED = MochaCalibration.LINE_SPEED;
@@ -50,7 +59,10 @@ public class MochaParticleBeaconAutonomous extends Robot
     private final double SHOOTER_CORNER = MochaCalibration.SHOOTER_AUTO_CORNER;
     private final double SHOOTER_VORTEX = MochaCalibration.SHOOTER_AUTO_VORTEX;
 
+    private final BeaconArms5218.ServoType SERVO_TYPE = BeaconArms5218.ServoType.CONTINUOUS;
+
     private int paddleCount;
+    private boolean isBlue;
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -59,20 +71,28 @@ public class MochaParticleBeaconAutonomous extends Robot
     private DcMotor shooterLeft;
     private DcMotor shooterRight;
     private DcMotor sbod;
+    private Servo beacon;
     private LightSensor rightLight;
     private LightSensor leftLight;
+    private DeviceInterfaceModule deviceInterfaceModule;
 
     private RunToEncoderValueTask scoreCenterEncoderTask;
     private PersistentTelemetryTask persistentTelemetryTask;
+    private ColorSensorTask leftColorSensorTask;
+    private ColorSensorTask rightColorSensorTask;
     private GamepadTask gamepad;
 
     private FourWheelDirectDriveDeadReckon positionForParticleFromCorner;
     private FourWheelDirectDriveDeadReckon positionForParticle;
     private FourWheelDirectDriveDeadReckon moveToBeacon;
     private FourWheelDirectDriveDeadReckon targetingLine;
+    private FourWheelDirectDriveDeadReckon moveNextToBeacon;
+    private FourWheelDirectDriveDeadReckon alignColorSensorWithButton;
 
     private LightSensorCriteria whiteLineRightCriteria;
     private LightSensorCriteria whiteLineLeftCriteria;
+
+    private BeaconArms5218 beaconSensor;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -100,7 +120,7 @@ public class MochaParticleBeaconAutonomous extends Robot
             }
         } else if (e instanceof RunToEncoderValueTask.RunToEncoderValueEvent) {
             RunToEncoderValueTask.RunToEncoderValueEvent event = (RunToEncoderValueTask.RunToEncoderValueEvent) e;
-            handlePaddleEncoderDoneEvent(event);
+            handlePaddleEncoderDone(event);
         }
     }
 
@@ -159,7 +179,8 @@ public class MochaParticleBeaconAutonomous extends Robot
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         positionForParticleFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 10, -MOVE_SPEED);
 
-        moveToBeacon = new FourWheelDirectDriveDeadReckon(this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+        moveToBeacon = new FourWheelDirectDriveDeadReckon
+                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         moveToBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, MOVE_SPEED);
         moveToBeacon.addSegment(DeadReckon.SegmentType.TURN, 45, -TURN_SPEED * TURN_MULTIPLY);
         moveToBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 75 , -MOVE_SPEED);
@@ -169,6 +190,15 @@ public class MochaParticleBeaconAutonomous extends Robot
         targetingLine = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         targetingLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 20, LINE_SPEED);
+
+        moveNextToBeacon = new FourWheelDirectDriveDeadReckon
+                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+        moveNextToBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, -MOVE_SPEED);
+
+        alignColorSensorWithButton = new FourWheelDirectDriveDeadReckon
+                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+        alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 2, 0.5 * -MOVE_SPEED);
+
     }
 
     protected void startShooterCorner()
@@ -244,7 +274,7 @@ public class MochaParticleBeaconAutonomous extends Robot
         });
     }
 
-    protected void handlePaddleEncoderDoneEvent(RunToEncoderValueTask.RunToEncoderValueEvent e)
+    protected void handlePaddleEncoderDone(RunToEncoderValueTask.RunToEncoderValueEvent e)
     {
         switch (e.kind) {
             case DONE:
@@ -272,14 +302,16 @@ public class MochaParticleBeaconAutonomous extends Robot
 
                 switch (event.kind) {
                     case PATH_DONE:
-                        handleMovedToBeaconEvent(event);
+                        handleMovedToBeacon(event);
+                        break;
+                    default:
                         break;
                 }
             }
         });
     }
 
-    protected void handleMovedToBeaconEvent(DeadReckonTask.DeadReckonEvent e)
+    protected void handleMovedToBeacon(DeadReckonTask.DeadReckonEvent e)
     {
         switch (e.kind) {
             case PATH_DONE:
@@ -305,12 +337,21 @@ public class MochaParticleBeaconAutonomous extends Robot
 
     protected void handleFoundWhiteLine(DeadReckonTask.DeadReckonEvent e)
     {
-        switch (e.kind) {
+        switch (e.kind)
+        {
             case SENSOR_SATISFIED:
+                addTask(new DeadReckonTask(this, alignColorSensorWithButton) {
+                    @Override
+                    public void handleEvent(RobotEvent e) {
+                        DeadReckonEvent event = (DeadReckonEvent) e;
 
-                break;
-            case PATH_DONE:
-                RobotLog.i("163 Robot moved past the white line");
+                        switch (event.kind) {
+                            case PATH_DONE:
+
+                                break;
+                        }
+                     }
+                });
                 break;
         }
     }
