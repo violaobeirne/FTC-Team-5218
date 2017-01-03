@@ -26,11 +26,10 @@ import team25core.RobotEvent;
 @TeleOp(name="5218 Mocha", group = "5218")
 public class MochaTeleop extends Robot {
 
-    private final static int LED_CHANNEL = 0;
-
-    private final static double SHOOTER_LOW = MochaCalibration.SHOOTER_LOW_A;
-    private final static double SHOOTER_MED = MochaCalibration.SHOOTER_MED_Y;
-    private final static double SHOOTER_HIGH = MochaCalibration.SHOOTER_HIGH_X;
+    private final static double SHOOTER_Y = MochaCalibration.SHOOTER_Y;
+    private final static double SHOOTER_B = MochaCalibration.SHOOTER_B;
+    private final static double SHOOTER_A= MochaCalibration.SHOOTER_A;
+    private final static double SHOOTER_X = MochaCalibration.SHOOTER_X;
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -113,18 +112,22 @@ public class MochaTeleop extends Robot {
         addTask(dispenseSlow);
 
         // Shooters
-        DeadmanMotorTask shootFastLeft = new DeadmanMotorTask(this, shooterLeft, SHOOTER_HIGH, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        addTask(shootFastLeft);
-        DeadmanMotorTask shootFastRight = new DeadmanMotorTask(this, shooterRight, -SHOOTER_HIGH, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        addTask(shootFastRight);
-        DeadmanMotorTask shootLeft = new DeadmanMotorTask(this, shooterLeft, SHOOTER_MED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
-        addTask(shootLeft);
-        DeadmanMotorTask shootRight = new DeadmanMotorTask(this, shooterRight, -SHOOTER_MED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
-        addTask(shootRight);
-        DeadmanMotorTask shootSlowLeft = new DeadmanMotorTask(this, shooterLeft, SHOOTER_LOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(shootSlowLeft);
-        DeadmanMotorTask shootSlowRight = new DeadmanMotorTask(this, shooterRight, -SHOOTER_LOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(shootSlowRight);
+        DeadmanMotorTask shootLeftY = new DeadmanMotorTask(this, shooterLeft, SHOOTER_Y, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        addTask(shootLeftY);
+        DeadmanMotorTask shootRightY = new DeadmanMotorTask(this, shooterRight, -SHOOTER_Y, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        addTask(shootRightY);
+        DeadmanMotorTask shootLeftB = new DeadmanMotorTask(this, shooterLeft, SHOOTER_B, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_B);
+        addTask(shootLeftB);
+        DeadmanMotorTask shootRightB = new DeadmanMotorTask(this, shooterRight, -SHOOTER_B, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_B);
+        addTask(shootRightB);
+        DeadmanMotorTask shootLeftA = new DeadmanMotorTask(this, shooterLeft, SHOOTER_A, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        addTask(shootLeftA);
+        DeadmanMotorTask shootRightA = new DeadmanMotorTask(this, shooterRight, -SHOOTER_A, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        addTask(shootRightA);
+        DeadmanMotorTask shootLeftX = new DeadmanMotorTask(this, shooterLeft, SHOOTER_X, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        addTask(shootLeftX);
+        DeadmanMotorTask shootRightX = new DeadmanMotorTask(this, shooterRight, -SHOOTER_X, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        addTask(shootRightX);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
@@ -144,18 +147,6 @@ public class MochaTeleop extends Robot {
                 } else if (event.kind == EventKind.BUTTON_A_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(1.0);
-                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    one.enableLed(true);
-                    two.enableLed(true);
-
-                    telemetry.addData("Light (1): ", one.getRawLightDetected());
-                    telemetry.addData("Light (2): ", two.getRawLightDetected());
-                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
-                    one.enableLed(false);
-                    two.enableLed(false);
-
-                    telemetry.addData("Light (1): ", "OFF");
-                    telemetry.addData("Light (2): ", "OFF");
                 }
             }
         });

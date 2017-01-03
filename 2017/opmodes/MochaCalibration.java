@@ -23,6 +23,12 @@ public class MochaCalibration {
     public static final double MOVE_SPEED = 0.65;
     public static final double LINE_SPEED = 0.1;
 
+    public static final int LEFT_COLOR_PORT = 0;
+    public static final int RIGHT_COLOR_PORT = 1;
+
+    public static final int LEFT_LIMIT_PORT = 0;
+    public static final int RIGHT_LIMIT_PORT = 1;
+    
     public static final double BRUSH_SPEED = 0.8;
 
 }
