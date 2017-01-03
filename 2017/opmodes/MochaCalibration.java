@@ -23,4 +23,6 @@ public class MochaCalibration {
     public static final double MOVE_SPEED = 0.65;
     public static final double LINE_SPEED = 0.1;
 
+    public static final double BRUSH_SPEED = 0.8;
+
 }
