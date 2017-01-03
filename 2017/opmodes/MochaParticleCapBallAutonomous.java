@@ -42,14 +42,12 @@ public class MochaParticleCapBallAutonomous extends Robot {
     private static int TURN_MULTIPLY = 0;
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
-    private final double LIGHT_MIN = MochaCalibration.LIGHT_MINIMUM;
-    private final double LIGHT_MAX = MochaCalibration.LIGHT_MAXIMUM;
     private final double SHOOTER_CORNER = MochaCalibration.SHOOTER_AUTO_CORNER;
     private final double SHOOTER_VORTEX = MochaCalibration.SHOOTER_AUTO_VORTEX;
+    private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
 
     private int paddleCount;
 
-    private DcMotorController mc;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -149,19 +147,22 @@ public class MochaParticleCapBallAutonomous extends Robot {
 
         moveAwayFromWallReckonFromCorner = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 1, -0.45);
+        moveAwayFromWallReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, -MOVE_SPEED);
 
         moveAwayFromWallReckonFromVortex = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 7, -0.45);
+        moveAwayFromWallReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 7, -MOVE_SPEED);
 
         pushCapDeadReckonFromCorner = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pushCapDeadReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 64, -0.75);
+        pushCapDeadReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 64, -MOVE_SPEED);
 
         pushCapDeadReckonFromVortex = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 50, -0.75);
+        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 50, -MOVE_SPEED);
+        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 8, MOVE_SPEED);
+        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 8, -MOVE_SPEED);
+
     }
 
     protected void startShooterCorner()
@@ -173,7 +174,7 @@ public class MochaParticleCapBallAutonomous extends Robot {
     protected void startShooterVortex()
     {
         shooterLeft.setPower(SHOOTER_VORTEX);
-        shooterRight.setPower(SHOOTER_VORTEX);
+        shooterRight.setPower(-SHOOTER_VORTEX);
     }
 
     protected void stopShooter()

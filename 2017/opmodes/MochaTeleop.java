@@ -30,6 +30,7 @@ public class MochaTeleop extends Robot {
     private final static double SHOOTER_B = MochaCalibration.SHOOTER_B;
     private final static double SHOOTER_A= MochaCalibration.SHOOTER_A;
     private final static double SHOOTER_X = MochaCalibration.SHOOTER_X;
+    private final static double BRUSH_SPEED = MochaCalibration.BRUSH_SPEED;
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -82,8 +83,6 @@ public class MochaTeleop extends Robot {
         // Servo.
         beacon = hardwareMap.servo.get("beacon");
 
-        ptt = new PersistentTelemetryTask(this);
-        addTask(ptt);
     }
 
     @Override
@@ -101,14 +100,14 @@ public class MochaTeleop extends Robot {
         this.addTask(drive);
 
         // SBOD
-        DeadmanMotorTask collect = new DeadmanMotorTask(this, sbod, 0.7, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_BUMPER);
+        DeadmanMotorTask collect = new DeadmanMotorTask(this, sbod, BRUSH_SPEED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_BUMPER);
         addTask(collect);
-        DeadmanMotorTask dispense = new DeadmanMotorTask(this, sbod, -0.7, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_TRIGGER);
+        DeadmanMotorTask dispense = new DeadmanMotorTask(this, sbod, -BRUSH_SPEED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_TRIGGER);
         addTask(dispense);
 
-        DeadmanMotorTask collectSlow = new DeadmanMotorTask(this, sbod, 0.35, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        DeadmanMotorTask collectSlow = new DeadmanMotorTask(this, sbod, 0.5 * BRUSH_SPEED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
         addTask(collectSlow);
-        DeadmanMotorTask dispenseSlow = new DeadmanMotorTask(this, sbod, -0.35, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        DeadmanMotorTask dispenseSlow = new DeadmanMotorTask(this, sbod, -0.5 * BRUSH_SPEED, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         addTask(dispenseSlow);
 
         // Shooters

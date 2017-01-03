@@ -8,13 +8,13 @@ public class MochaCalibration {
     public static final int TICKS_PER_DEGREE = 17;
     public static final int TICKS_PER_INCH = 79;
 
-    public static final double SHOOTER_AUTO_VORTEX = 0.225;
-    public static final double SHOOTER_AUTO_CORNER = 0.5;
+    public static final double SHOOTER_AUTO_VORTEX = 0.21;
+    public static final double SHOOTER_AUTO_CORNER = 0.45;
 
     public static final double SHOOTER_Y = 0.5;
     public static final double SHOOTER_B = 0.45;
     public static final double SHOOTER_A = 0.425;
-    public static final double SHOOTER_X = 0.4  ;
+    public static final double SHOOTER_X = 0.4;
 
     public static final double LIGHT_MINIMUM = 1.35;
     public static final double LIGHT_MAXIMUM = 2.01;
