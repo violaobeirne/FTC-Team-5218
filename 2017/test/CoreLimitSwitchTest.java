@@ -4,12 +4,14 @@ package test;
  * FTC Team 25: izzielau, October 27, 2015
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 
 import team25core.LimitSwitchTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 
+@TeleOp(name = "Mocha Limit Switches", group = "5218")
 public class CoreLimitSwitchTest extends Robot
 {
 
@@ -37,11 +39,27 @@ public class CoreLimitSwitchTest extends Robot
                 LimitSwitchEvent event = (LimitSwitchEvent)e;
 
                 if (event.kind == EventKind.CLOSED) {
-                    telemetry.addData("Status: ", "closed");
+                    telemetry.addData("Status (1): ", "closed");
                 } else if (event.kind == EventKind.OPEN) {
-                    telemetry.addData("Status: ", "open");
+                    telemetry.addData("Status (1): ", "open");
                 } else {
-                    telemetry.addData("Status: ", "unknown");
+                    telemetry.addData("Status (1): ", "unknown");
+                }
+            }
+        });
+
+        addTask(new LimitSwitchTask(this, interfaceModule, 1) {
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                LimitSwitchEvent event = (LimitSwitchEvent)e;
+
+                if (event.kind == EventKind.CLOSED) {
+                    telemetry.addData("Status (2): ", "closed");
+                } else if (event.kind == EventKind.OPEN) {
+                    telemetry.addData("Status (2): ", "open");
+                } else {
+                    telemetry.addData("Status (2): ", "unknown");
                 }
             }
         });
