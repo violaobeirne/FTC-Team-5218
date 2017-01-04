@@ -59,7 +59,7 @@ public class MochaParticleBeaconAutonomous extends Robot
     private final double SHOOTER_CORNER = MochaCalibration.SHOOTER_AUTO_CORNER;
     private final double SHOOTER_VORTEX = MochaCalibration.SHOOTER_AUTO_VORTEX;
 
-    private final BeaconArms5218.ServoType SERVO_TYPE = BeaconArms5218.ServoType.CONTINUOUS;
+    private final VelocityVortexBeaconArms.ServoType SERVO_TYPE = VelocityVortexBeaconArms.ServoType.CONTINUOUS;
 
     private int paddleCount;
     private boolean isBlue;
@@ -75,11 +75,11 @@ public class MochaParticleBeaconAutonomous extends Robot
     private LightSensor rightLight;
     private LightSensor leftLight;
     private DeviceInterfaceModule deviceInterfaceModule;
+    // private ColorSensor colorLeft;
+    private ColorSensor colorRight;
 
     private RunToEncoderValueTask scoreCenterEncoderTask;
     private PersistentTelemetryTask persistentTelemetryTask;
-    private ColorSensorTask leftColorSensorTask;
-    private ColorSensorTask rightColorSensorTask;
     private GamepadTask gamepad;
 
     private FourWheelDirectDriveDeadReckon positionForParticleFromCorner;
@@ -92,32 +92,14 @@ public class MochaParticleBeaconAutonomous extends Robot
     private LightSensorCriteria whiteLineRightCriteria;
     private LightSensorCriteria whiteLineLeftCriteria;
 
-    private BeaconArms5218 beaconSensor;
+    private VelocityVortexBeaconArms beaconArms;
 
     @Override
     public void handleEvent(RobotEvent e)
     {
         if (e instanceof GamepadTask.GamepadEvent) {
             GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
-            switch (event.kind) {
-                case BUTTON_X_DOWN:
-                    alliance = Alliance.BLUE;
-                    persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
-                    break;
-                case BUTTON_B_DOWN:
-                    alliance = Alliance.RED;
-                    persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
-                    break;
-                case BUTTON_Y_DOWN:
-                    startingPosition = StartingPosition.CORNER;
-                    persistentTelemetryTask.addData("POSITION: ", "" + startingPosition);
-                    break;
-                case BUTTON_A_DOWN:
-                    startingPosition = StartingPosition.VORTEX;
-                    persistentTelemetryTask.addData("POSITION: ", "" + startingPosition);
-                    break;
-            }
+            handleGamepadSelection(event);
         } else if (e instanceof RunToEncoderValueTask.RunToEncoderValueEvent) {
             RunToEncoderValueTask.RunToEncoderValueEvent event = (RunToEncoderValueTask.RunToEncoderValueEvent) e;
             handlePaddleEncoderDone(event);
@@ -161,6 +143,10 @@ public class MochaParticleBeaconAutonomous extends Robot
         whiteLineRightCriteria = new LightSensorCriteria(rightLight, LightSensorCriteria.LightPolarity.WHITE, LIGHT_MIN, LIGHT_MAX);
         whiteLineRightCriteria.setThreshold(0.65);
         whiteLineLeftCriteria = new LightSensorCriteria(leftLight, LightSensorCriteria.LightPolarity.WHITE, LIGHT_MIN, LIGHT_MAX);
+
+        deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
+        // colorLeft = hardwareMap.colorSensor.get("colorLeft");
+        colorRight = hardwareMap.colorSensor.get("colorRight");
 
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -224,8 +210,10 @@ public class MochaParticleBeaconAutonomous extends Robot
     {
         if (alliance == Alliance.RED) {
             redInit();
+            beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, alignColorSensorWithButton, beacon, SERVO_TYPE, false);
         } else {
             blueInit();
+            beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, alignColorSensorWithButton, beacon, SERVO_TYPE, true);
         }
         if (startingPosition == StartingPosition.CORNER) {
             initialMove(positionForParticleFromCorner);
@@ -234,6 +222,26 @@ public class MochaParticleBeaconAutonomous extends Robot
         }
     }
 
+    public void handleGamepadSelection(GamepadTask.GamepadEvent event) {
+        switch (event.kind) {
+            case BUTTON_X_DOWN:
+                alliance = Alliance.BLUE;
+                persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
+                break;
+            case BUTTON_B_DOWN:
+                alliance = Alliance.RED;
+                persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
+                break;
+            case BUTTON_Y_DOWN:
+                startingPosition = StartingPosition.CORNER;
+                persistentTelemetryTask.addData("POSITION: ", "" + startingPosition);
+                break;
+            case BUTTON_A_DOWN:
+                startingPosition = StartingPosition.VORTEX;
+                persistentTelemetryTask.addData("POSITION: ", "" + startingPosition);
+                break;
+        }
+    }
     protected void blueInit() {
         TURN_MULTIPLY = 1;
         leftLight.enableLed(false);
@@ -313,46 +321,84 @@ public class MochaParticleBeaconAutonomous extends Robot
 
     protected void handleMovedToBeacon(DeadReckonTask.DeadReckonEvent e)
     {
-        switch (e.kind) {
-            case PATH_DONE:
-                RobotLog.i("163 Robot moved to beacon");
+        RobotLog.i("163 Robot moved to beacon");
+        addTask(new DeadReckonTask(this, targetingLine, whiteLineRightCriteria) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                RobotLog.i("163 Targeting the white line");
 
-                addTask(new DeadReckonTask(this, targetingLine, whiteLineRightCriteria) {
-                    @Override
-                    public void handleEvent(RobotEvent e) {
-                        DeadReckonEvent event = (DeadReckonEvent) e;
-                        RobotLog.i("163 Targeting the white line");
-
-                        if (event.kind == EventKind.SENSOR_SATISFIED) {
-                            RobotLog.i("163 Robot finished moving to the white line");
-                            handleFoundWhiteLine(event);
-                        } else {
-                            RobotLog.e("163 Robot moved past the white line");
-                        }
-                    }
-                });
-                break;
-        }
+                if (event.kind == EventKind.SENSOR_SATISFIED) {
+                    RobotLog.i("163 Robot finished moving to the white line");
+                    handleFoundWhiteLine(event);
+                } else if (event.kind == EventKind.PATH_DONE) {
+                    RobotLog.i("163 Robot moved past the white line");
+                    handleFoundWhiteLine(event);
+                } else {
+                    RobotLog.e("163 Unknown event occurred");
+                }
+            }
+        });
     }
 
     protected void handleFoundWhiteLine(DeadReckonTask.DeadReckonEvent e)
     {
-        switch (e.kind)
-        {
+        switch (e.kind) {
             case SENSOR_SATISFIED:
                 addTask(new DeadReckonTask(this, alignColorSensorWithButton) {
                     @Override
                     public void handleEvent(RobotEvent e) {
                         DeadReckonEvent event = (DeadReckonEvent) e;
 
-                        switch (event.kind) {
-                            case PATH_DONE:
-
-                                break;
+                        if (event.kind == EventKind.PATH_DONE) {
+                            handleAlignedWithColor(event);
                         }
                      }
                 });
                 break;
+            case PATH_DONE:
+                break;
         }
+    }
+
+    protected void handleAlignedWithColor(DeadReckonTask.DeadReckonEvent e)
+    {
+        RobotLog.i("163 Robot has aligned with the button");
+
+        int channelToUse;
+        ColorSensor sensorToUse;
+        /*
+        if (alliance == Alliance.RED) {
+            channelToUse = LEFT_COLOR_PORT;
+            // sensorToUse = colorLeft;
+        } else {
+        */
+            channelToUse = RIGHT_COLOR_PORT;
+            sensorToUse = colorRight;
+        // }
+
+        addTask(new ColorSensorTask(this, sensorToUse, deviceInterfaceModule, false, true, channelToUse) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                ColorSensorEvent color = (ColorSensorEvent) e;
+
+                switch (color.kind) {
+                    case BLUE:
+                        if (alliance == Alliance.BLUE) {
+                            beaconArms.deploy(true, true);
+                        } else {
+                            beaconArms.deploy(false, true);
+                        }
+                        break;
+                    case RED:
+                        if (alliance == Alliance.RED) {
+                            beaconArms.deploy(true, true);
+                        } else {
+                            beaconArms.deploy(false, true);
+                        }
+                        break;
+                }
+            }
+        });
     }
 }

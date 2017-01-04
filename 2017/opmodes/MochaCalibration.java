@@ -28,6 +28,9 @@ public class MochaCalibration {
 
     public static final int LEFT_LIMIT_PORT = 0;
     public static final int RIGHT_LIMIT_PORT = 1;
+
+    public static final double LEFT_PRESSER_DIRECTION = 1;
+    public static final double RIGHT_PRESSER_DIRECTION = 0;
     
     public static final double BRUSH_SPEED = 0.8;
 
