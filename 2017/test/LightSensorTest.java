@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 /**
  * Created by Izzie on 2/17/2016.
  */
-@Autonomous(name = "TEST Light", group = "5218")
+@Autonomous(name = "TEST Light", group = "TEST")
 public class LightSensorTest extends OpMode{
 
     LightSensor one;

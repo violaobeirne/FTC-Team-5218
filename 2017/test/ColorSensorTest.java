@@ -16,11 +16,11 @@ import team25core.RobotEvent;
 /**
  * Created by Izzie on 2/10/2016.
  */
-@Autonomous(name = "TEST Color", group = "5218")
+@Autonomous(name = "TEST Color", group = "TEST")
 public class ColorSensorTest extends Robot {
 
     private DeviceInterfaceModule interfaceModule;
-    private ColorSensor colorLeft;
+    // private ColorSensor colorLeft;
     private ColorSensor colorRight;
 
     @Override
@@ -31,7 +31,7 @@ public class ColorSensorTest extends Robot {
     @Override
     public void init() {
         interfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
-        colorLeft = hardwareMap.colorSensor.get("colorLeft");
+        // colorLeft = hardwareMap.colorSensor.get("colorLeft");
         colorRight = hardwareMap.colorSensor.get("colorRight");
 
         interfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
@@ -41,11 +41,12 @@ public class ColorSensorTest extends Robot {
     @Override
     public void loop() {
 
-        int leftRed = colorLeft.red();
-        int leftBlue = colorLeft.blue();
+        // int leftRed = colorLeft.red();
+        // int leftBlue = colorLeft.blue();
         int rightRed = colorRight.red();
         int rightBlue = colorRight.blue();
 
+        /*
         if (leftRed > leftBlue) {
             telemetry.addData("STATE (L): ", "Red");
         } else if (leftRed < leftBlue) {
@@ -53,6 +54,7 @@ public class ColorSensorTest extends Robot {
         } else {
             telemetry.addData("STATE (L): ", "Unknown");
         }
+        */
 
         if (rightRed > rightBlue) {
             telemetry.addData("STATE (R): ", "Red");
@@ -62,8 +64,8 @@ public class ColorSensorTest extends Robot {
             telemetry.addData("STATE (R): ", "Unknown");
         }
 
-        telemetry.addData("LEFT (R): ", leftRed);
-        telemetry.addData("LEFT (B): ", leftBlue);
+        // telemetry.addData("LEFT (R): ", leftRed);
+        // telemetry.addData("LEFT (B): ", leftBlue);
 
         telemetry.addData("RIGHT (R): ", rightRed);
         telemetry.addData("RIGHT (B): ", rightBlue);

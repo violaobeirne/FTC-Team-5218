@@ -61,15 +61,14 @@ public class VelocityVortexBeaconArms {
         this.deployPosition = deploy;
     }
 
-
     public void deploy(boolean sensedMyAlliance, boolean firstButton)
     {
         if (sensedMyAlliance && isBlueAlliance) {
             RobotLog.i("163 Blue alliance, aligned correctly");
-            deployServo(RIGHT_PORT, RIGHT_DIRECTION);
+            deployServo();
         } else if (sensedMyAlliance && !isBlueAlliance){
             RobotLog.i("163 Red alliance, aligned correctly");
-            deployServo(LEFT_PORT, LEFT_DIRECTION);
+            deployServo();
         } else if (!sensedMyAlliance && firstButton) {
             RobotLog.i("163 Wrong color, moving on to the next button");
             handleWrongColor();
@@ -97,26 +96,13 @@ public class VelocityVortexBeaconArms {
         });
     }
 
-    public void deployServo(int limitPort, final double direction)
+    public void deployServo()
     {
         RobotLog.i("163 Limit switch closed or kill timer done, stopping servo");
         switch (servoType) {
             case CONTINUOUS:
-                robot.addTask(new LimitSwitchTask(robot, module, limitPort) {
-                    @Override
-                    public void handleEvent(RobotEvent e)
-                    {
-                        LimitSwitchEvent event = (LimitSwitchEvent) e;
-
-                        servo.setPosition(direction);
-                        if ((event.kind == EventKind.CLOSED) || (killTimer >= 7)) {
-                            RobotLog.i("163 Limit switch closed or kill timer done, stopping servo");
-                            stowServo();
-                        } else {
-                            runTimer();
-                        }
-                    }
-                });
+                RobotLog.i("163 Timer start, moving the servo");
+                runServoWithTimer();
                 break;
             case STANDARD:
                 robot.addTask(new SingleShotTimerTask(robot, 2000) {
@@ -129,8 +115,14 @@ public class VelocityVortexBeaconArms {
         }
     }
 
-    public void runTimer()
+    public void runServoWithTimer()
     {
+        if (isBlueAlliance) {
+            servo.setPosition(RIGHT_DIRECTION);
+        } else {
+            servo.setPosition(LEFT_DIRECTION);
+        }
+
         robot.addTask(new SingleShotTimerTask(robot, 1000) {
             @Override
             public void handleEvent(RobotEvent e) {
@@ -138,7 +130,13 @@ public class VelocityVortexBeaconArms {
 
                 if (event.kind == EventKind.EXPIRED) {
                     RobotLog.i("163 Increasing kill timer %d", killTimer);
-                    killTimer++;
+
+                    if (killTimer < 3) {
+                        killTimer++;
+                        runServoWithTimer();
+                    } else {
+                        stowServo();
+                    }
                 }
             }
         });

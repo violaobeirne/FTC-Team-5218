@@ -13,7 +13,7 @@ import team25core.RobotEvent;
 /**
  * Created by Izzie on 2/20/2016.
  */
-@TeleOp(name = "TEST Ultrasonic", group = "5218")
+@Autonomous(name = "TEST Ultrasonic", group = "TEST")
 public class UltrasonicSensorTest extends Robot {
     private UltrasonicSensor leftSound;
     private UltrasonicSensor rightSound;

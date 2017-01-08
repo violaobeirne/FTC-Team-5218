@@ -1,8 +1,10 @@
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -18,7 +20,10 @@ import team25core.RobotEvent;
 /**
  * Created by Elizabeth on 1/4/2017.
  */
+
+@Autonomous(name = "TEST Beacon", group = "TEST")
 public class MochaBeaconArmsTest extends Robot {
+
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
 
@@ -27,22 +32,16 @@ public class MochaBeaconArmsTest extends Robot {
     private DcMotor backLeft;
     private DcMotor backRight;
     private Servo beacon;
-
-    private ColorSensor colorLeft;
+    private DeviceInterfaceModule deviceInterfaceModule;
     private ColorSensor colorRight;
 
     private VelocityVortexBeaconArms beaconArms;
 
-    private final int LEFT_COLOR_PORT = MochaCalibration.LEFT_COLOR_PORT;
     private final int RIGHT_COLOR_PORT = MochaCalibration.RIGHT_COLOR_PORT;
-
     private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
-
     private final VelocityVortexBeaconArms.ServoType SERVO_TYPE = VelocityVortexBeaconArms.ServoType.CONTINUOUS;
 
-    private DeviceInterfaceModule deviceInterfaceModule;
-
-    private FourWheelDirectDriveDeadReckon alignColorSensorWithButton;
+    private FourWheelDirectDriveDeadReckon moveToNextButton;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -59,14 +58,18 @@ public class MochaBeaconArmsTest extends Robot {
 
         beacon = hardwareMap.servo.get("beacon");
 
+        deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
+        deviceInterfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
+        deviceInterfaceModule.setDigitalChannelState(0, false);
+
         colorRight = hardwareMap.colorSensor.get("colorRight");
 
-        deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
-        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, alignColorSensorWithButton, beacon, SERVO_TYPE, true);
-
-        alignColorSensorWithButton = new FourWheelDirectDriveDeadReckon
+        moveToNextButton = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 2, 0.5 * -MOVE_SPEED);
+        moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 3, 0.5 * -MOVE_SPEED);
+
+        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, SERVO_TYPE, true);
+
     }
 
     @Override
