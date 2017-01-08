@@ -21,7 +21,7 @@ import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;
 import team25core.SingleShotTimerTask;
 
-@Autonomous(name = "Particle Cap Ball", group = "AutoTest")
+@Autonomous(name = "Particle Cap Ball", group = "5218")
 public class MochaParticleCapBallAutonomous extends Robot {
 
     protected enum Alliance {
