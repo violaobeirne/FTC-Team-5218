@@ -78,7 +78,6 @@ public class MochaParticleBeaconAutonomous extends Robot
     private final double SHOOTER_CORNER = MochaCalibration.SHOOTER_AUTO_CORNER;
     private final double SHOOTER_VORTEX = MochaCalibration.SHOOTER_AUTO_VORTEX;
     private final double ULTRASONIC_DISTANCE_MINIMUM = MochaCalibration.ULTRASONIC_DISTANCE_MINIMUM;
-    private final VelocityVortexBeaconArms.ServoType SERVO_TYPE = VelocityVortexBeaconArms.ServoType.CONTINUOUS;
     private final FourWheelPivotTurnDeadReckon.TurningSide RIGHT_TURN = FourWheelPivotTurnDeadReckon.TurningSide.RIGHT;
     private final FourWheelPivotTurnDeadReckon.TurningSide LEFT_TURN = FourWheelPivotTurnDeadReckon.TurningSide.LEFT;
 
@@ -117,7 +116,6 @@ public class MochaParticleBeaconAutonomous extends Robot
     private FourWheelDirectDriveDeadReckon alignColorSensorWithButtonAgain;
     private FourWheelDirectDriveDeadReckon alignColorSensorWithButtonAfterParallelPark;
     private FourWheelDirectDriveDeadReckon moveToNextButton;
-    private FourWheelDirectDriveDeadReckon moveToNextButtonAgain;
     private FourWheelDirectDriveDeadReckon moveFastToLine;
     private FourWheelDirectDriveDeadReckon moveFastToNextBeacon;
     private FourWheelDirectDriveDeadReckon parallelPark;
@@ -237,16 +235,6 @@ public class MochaParticleBeaconAutonomous extends Robot
             (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         targetingSecondLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 18, -LINE_SPEED * MOVE_MULTIPLIER);
 
-        pivotBackwardsToTheLeftParallelPark= new FourWheelPivotTurnDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pivotBackwardsToTheLeftParallelPark.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
-        pivotBackwardsToTheLeftParallelPark.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
-
-        pivotBackwardsToTheRightParallelPark = new FourWheelPivotTurnDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pivotBackwardsToTheRightParallelPark.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
-        pivotBackwardsToTheRightParallelPark.setMultiplierSide(PIVOT_MULTIPLIER, LEFT_TURN);
-
         pivotBackwardsToTheLeftAfter = new FourWheelPivotTurnDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         pivotBackwardsToTheLeftAfter.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED * TURN_MULTIPLIER);
@@ -270,13 +258,9 @@ public class MochaParticleBeaconAutonomous extends Robot
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         alignColorSensorWithButtonAfterParallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
 
-        moveToNextButtonAgain = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveToNextButtonAgain.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
-
         moveFastToNextBeacon = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveFastToNextBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 37, -0.35 * MOVE_MULTIPLIER);
+        moveFastToNextBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 42, -MOVE_SPEED * MOVE_MULTIPLIER);
 
         parallelParkLookForLine = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
@@ -516,13 +500,14 @@ public class MochaParticleBeaconAutonomous extends Robot
                 RobotLog.i("163 Turning to fully realign with the beacon");
                 persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Realigning fully");
                 pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
-                pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, LEFT_TURN);
+                pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
                 criteriaToUse = whiteLineRightCriteria;
                 break;
             case RIGHT_SENSOR_SATISFIED:
                 pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
-                pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
+                pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, LEFT_TURN);
                 criteriaToUse = whiteLineLeftCriteria;
+                break;
             default:
                 RobotLog.i("163 Unknown event occurred");
                 return;
@@ -553,10 +538,10 @@ public class MochaParticleBeaconAutonomous extends Robot
                 alignColorSensorWithButton = new FourWheelDirectDriveDeadReckon
                         (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
                 if (cachedEvent.kind == DeadReckonTask.EventKind.RIGHT_SENSOR_SATISFIED) {
-                    RobotLog.i("163 Attemoting to turn right through the white line")
+                    RobotLog.i("163 Attempting to turn right through the white line");
                     alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, -0.75 * TURN_SPEED);
                 } else {
-                    RobotLog.i("163 Attemoting to turn left through the white line")
+                    RobotLog.i("163 Attempting to turn left through the white line");
                     alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, 0.75 * TURN_SPEED);
                 }
                 alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
@@ -596,9 +581,23 @@ public class MochaParticleBeaconAutonomous extends Robot
         RobotLog.i("163 Starting to look for color, distance from wall: " + ultrasonicValue);
 
         if (ultrasonicValue <= ULTRASONIC_DISTANCE_MINIMUM) {
-            handleAlignedWithColor();
+            if (isBlueAlliance) {
+                beacon.setPosition(MochaCalibration.RIGHT_PRESSER_DIRECTION);
+            } else {
+                beacon.setPosition(MochaCalibration.LEFT_PRESSER_DIRECTION);
+            }
+            addTask(new SingleShotTimerTask(this, 500) {
+                @Override
+                public void handleEvent(RobotEvent e)
+                {
+                    SingleShotTimerEvent event = (SingleShotTimerEvent) e;
+                    if (event.kind == EventKind.EXPIRED) {
+                        beacon.setPosition(0.5);
+                        handleAlignedWithColor();
+                    }
+                }
+            });
         } else {
-            hasParallelParked = true;
             handleParkNeedToRealign();
         }
     }
@@ -608,7 +607,7 @@ public class MochaParticleBeaconAutonomous extends Robot
         parallelPark = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         parallelPark.addSegment(DeadReckon.SegmentType.TURN, 20, TURN_SPEED);
-        parallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 9, LINE_SPEED);
+        parallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 9, MOVE_SPEED);
         parallelPark.addSegment(DeadReckon.SegmentType.TURN, 25, -TURN_SPEED);
 
         addTask(new DeadReckonTask(this, parallelPark) {
@@ -624,62 +623,14 @@ public class MochaParticleBeaconAutonomous extends Robot
         });
     }
 
-    protected void handleParkReadyToAlignWithLine()
-    {
-        addTask(new DeadReckonTask(this, parallelParkLookForLine, whiteLineLeftCriteria) {
-            @Override
-            public void handleEvent(RobotEvent e)
-            {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                if (event.kind == EventKind.SENSOR_SATISFIED) {
-                    RobotLog.i("163 Robot has found the line after parallel park");
-                    handleParkFoundOnePartOfLine(event);
-                }
-            }
-        });
-    }
-
-    protected void handleParkFoundOnePartOfLine(DeadReckonTask.DeadReckonEvent e) {
-        rightLight.enableLed(true);
-        leftLight.enableLed(true);
-
-        LightSensorCriteria criteriaToUse;
-        FourWheelPivotTurnDeadReckon pivotReckonToUse;
-
-        if (isBlueAlliance) {
-            criteriaToUse = whiteLineRightCriteria;
-            pivotReckonToUse = pivotBackwardsToTheLeftParallelPark;
-            RobotLog.i("Using left pivot with number of segments: " + pivotBackwardsToTheLeftParallelPark.numSegments());
-        } else {
-            criteriaToUse = whiteLineLeftCriteria;
-            pivotReckonToUse = pivotBackwardsToTheRightParallelPark;
-            RobotLog.i("Using right pivot with number of segments: " + pivotBackwardsToTheRightParallelPark.numSegments());
-        }
-
-        addTask(new DeadReckonTask(this, pivotReckonToUse, criteriaToUse) {
-            @Override
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                RobotLog.i("163 Pivoting to realign with line");
-
-                if (event.kind == EventKind.SENSOR_SATISFIED) {
-                    RobotLog.i("163 Robot is fully aligned");
-                    handleAlignedWithWhiteLine(event);
-                }
-            }
-        });
-    }
-
     protected void handleAlignedWithColor()
     {
-        FourWheelDirectDriveDeadReckon moveToNextButtonPath;
         moveToNextButton = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
 
-        moveToNextButtonPath = moveToNextButton;
 
-        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButtonPath, beacon, SERVO_TYPE, isBlueAlliance, numberOfBeacons);
+        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, isBlueAlliance, numberOfBeacons);
         addTask(new ColorSensorTask(this, color, deviceInterfaceModule, false, true, 0) {
             @Override
             public void handleEvent(RobotEvent e) {
@@ -728,45 +679,23 @@ public class MochaParticleBeaconAutonomous extends Robot
     {
         if (!isOnSecondBeacon) {
             RobotLog.i("163 Beacon work for beacon one is done");
-            switch (e.kind) {
-                case BEACON_DONE:
-                    isOnSecondBeacon = true;
-                    addTask(new DeadReckonTask(this, moveFastToNextBeacon) {
-                        @Override
-                        public void handleEvent(RobotEvent e) {
-                            DeadReckonEvent event = (DeadReckonEvent) e;
-                            switch (event.kind) {
-                                case PATH_DONE:
-                                    handleMovedNearNextBeacon();
-                                    break;
-                            }
+            if (e.kind == AutonomousEvent.EventKind.BEACON_DONE) {
+                RobotLog.i("163 Autonomous event is of type BeaconDone");
+                isOnSecondBeacon = true;
+                addTask(new DeadReckonTask(this, moveFastToNextBeacon) {
+                    @Override
+                    public void handleEvent(RobotEvent e) {
+                        DeadReckonEvent event = (DeadReckonEvent) e;
+                        switch (event.kind) {
+                            case PATH_DONE:
+                                handleMovedToBeacon();
+                                break;
                         }
-                    });
-                    break;
+                    }
+                });
             }
         } else {
             initialMove(positionForParticleFromBeaconCorner);
         }
     }
-
-    public void handleMovedNearNextBeacon()
-    {
-        addTask(new DeadReckonTask(this, targetingSecondLine, whiteLineLeftCriteria, whiteLineRightCriteria) {
-            @Override
-            public void handleEvent(RobotEvent e)
-            {
-                RobotLog.i("163 Targeting the second line");
-
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                if (event.kind == EventKind.LEFT_SENSOR_SATISFIED) {
-                    RobotLog.i("163 Left sensor found the first part of the second line");
-                    handleAlignedWithWhiteLine(event);
-                } else if (event.kind == EventKind.RIGHT_SENSOR_SATISFIED) {
-                    RobotLog.i("163 Left sensor found the first part of the second line");
-                    handleAlignedWithWhiteLine(event);
-                }
-            }
-        });
-    }
-
 }
