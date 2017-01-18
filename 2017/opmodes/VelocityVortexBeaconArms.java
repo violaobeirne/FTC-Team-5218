@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import team25core.AutonomousEvent;
 import team25core.ColorSensorTask;
 import team25core.DeadReckon;
 import team25core.DeadReckonTask;
@@ -18,19 +19,13 @@ import team25core.SingleShotTimerTask;
 
 public class VelocityVortexBeaconArms {
 
-    public enum ServoType {
-        CONTINUOUS,
-        STANDARD,
-    }
-
     protected Robot robot;
     protected Servo servo;
-    protected ServoType servoType;
     protected DeviceInterfaceModule module;
     protected DeadReckon moveToNextButton;
+    protected MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons;
     protected boolean isBlueAlliance;
     protected double deployPosition;
-    protected double stowPosition;
 
     protected int RIGHT_PORT = MochaCalibration.RIGHT_LIMIT_PORT;
     protected double RIGHT_DIRECTION = MochaCalibration.RIGHT_PRESSER_DIRECTION;
@@ -39,26 +34,23 @@ public class VelocityVortexBeaconArms {
 
     protected int killTimer = 0;
 
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, ServoType servoType, boolean isBlueAlliance)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons)
     {
         this.robot = robot;
         this.servo = servo;
-        this.servoType = servoType;
         this.module = interfaceModule;
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
+        this.numberOfBeacons = numberOfBeacons;
     }
 
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, ServoType servoType, double deploy, double stow, boolean isBlueAlliance)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance)
     {
         this.robot = robot;
         this.servo = servo;
-        this.servoType = servoType;
         this.module = interfaceModule;
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
-        this.stowPosition = stow;
-        this.deployPosition = deploy;
     }
 
     public void deploy(boolean sensedMyAlliance, boolean firstButton)
@@ -99,20 +91,8 @@ public class VelocityVortexBeaconArms {
     public void deployServo()
     {
         RobotLog.i("163 Limit switch closed or kill timer done, stopping servo");
-        switch (servoType) {
-            case CONTINUOUS:
-                RobotLog.i("163 Timer start, moving the servo");
-                runServoWithTimer();
-                break;
-            case STANDARD:
-                robot.addTask(new SingleShotTimerTask(robot, 2000) {
-                    @Override
-                    public void handleEvent(RobotEvent e) {
-                        servo.setPosition(deployPosition);
-                    }
-                });
-                break;
-        }
+        RobotLog.i("163 Timer start, moving the servo");
+        runServoWithTimer();
     }
 
     public void runServoWithTimer()
@@ -123,20 +103,13 @@ public class VelocityVortexBeaconArms {
             servo.setPosition(LEFT_DIRECTION);
         }
 
-        robot.addTask(new SingleShotTimerTask(robot, 1000) {
+        robot.addTask(new SingleShotTimerTask(robot, 2000) {
             @Override
             public void handleEvent(RobotEvent e) {
                 SingleShotTimerEvent event = (SingleShotTimerEvent) e;
 
                 if (event.kind == EventKind.EXPIRED) {
-                    RobotLog.i("163 Increasing kill timer %d", killTimer);
-
-                    if (killTimer < 3) {
-                        killTimer++;
-                        runServoWithTimer();
-                    } else {
-                        stowServo();
-                    }
+                    stowServo();
                 }
             }
         });
@@ -158,12 +131,20 @@ public class VelocityVortexBeaconArms {
 
                 if (event.kind == EventKind.EXPIRED) {
                     RobotLog.i("163 Timer done, finish stowing the servo");
+                    servo.setPosition(0.5);
 
-                    if (servoType == ServoType.CONTINUOUS) {
-                        servo.setPosition(0.5);
+                    if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
+                        beaconWorkDone();
                     }
                 }
             }
         });
+    }
+
+    public void beaconWorkDone()
+    {
+        RobotLog.i("163 Queuing BeaconDone AutonomousEvent");
+        AutonomousEvent beaconDone = new AutonomousEvent(robot, AutonomousEvent.EventKind.BEACON_DONE);
+        robot.queueEvent(beaconDone);
     }
 }
