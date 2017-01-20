@@ -35,8 +35,7 @@ import team25core.TwoWheelDirectDriveDeadReckon;
  * Created by Lizzie on 11/19/2016.
  */
 @Autonomous(name = "Particle Beacon", group = "5218")
-public class MochaParticleBeaconAutonomous extends Robot
-{
+public class MochaParticleBeaconAutonomous extends Robot {
 
     protected enum Alliance {
         BLUE,
@@ -111,24 +110,13 @@ public class MochaParticleBeaconAutonomous extends Robot
     private FourWheelDirectDriveDeadReckon positionForParticle;
     private FourWheelDirectDriveDeadReckon positionForBeacon;
     private FourWheelDirectDriveDeadReckon targetingLine;
-    private FourWheelDirectDriveDeadReckon targetingSecondLine;
     private FourWheelDirectDriveDeadReckon alignColorSensorWithButton;
-    private FourWheelDirectDriveDeadReckon alignColorSensorWithButtonAgain;
-    private FourWheelDirectDriveDeadReckon alignColorSensorWithButtonAfterParallelPark;
     private FourWheelDirectDriveDeadReckon moveToNextButton;
     private FourWheelDirectDriveDeadReckon moveFastToLine;
     private FourWheelDirectDriveDeadReckon moveFastToNextBeacon;
     private FourWheelDirectDriveDeadReckon parallelPark;
-    private FourWheelDirectDriveDeadReckon parallelParkLookForLine;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheLeft;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheRight;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheLeftAfter;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheRightAfter;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheRightParallelPark;
-    private FourWheelPivotTurnDeadReckon pivotBackwardsToTheLeftParallelPark;
 
     private FourWheelPivotTurnDeadReckon pivotForwardsToTheLeft;
-    private FourWheelDirectDriveDeadReckon pivotForwardsToTheRight;
 
     private LightSensorCriteria whiteLineRightCriteria;
     private LightSensorCriteria whiteLineLeftCriteria;
@@ -136,8 +124,7 @@ public class MochaParticleBeaconAutonomous extends Robot
     private VelocityVortexBeaconArms beaconArms;
 
     @Override
-    public void handleEvent(RobotEvent e)
-    {
+    public void handleEvent(RobotEvent e) {
         if (e instanceof GamepadTask.GamepadEvent) {
             GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
             handleGamepadSelection(event);
@@ -224,48 +211,12 @@ public class MochaParticleBeaconAutonomous extends Robot
         positionForBeacon = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         positionForBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 6, -MOVE_SPEED * MOVE_MULTIPLIER);
-        positionForBeacon.addSegment(DeadReckon.SegmentType.TURN, 50, -TURN_SPEED);
-
-        moveFastToLine = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveFastToLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 56.5, -MOVE_SPEED * MOVE_MULTIPLIER);
-        moveFastToLine.addSegment(DeadReckon.SegmentType.TURN, 35, TURN_SPEED);
-
-        targetingSecondLine = new FourWheelDirectDriveDeadReckon
-            (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        targetingSecondLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 18, -LINE_SPEED * MOVE_MULTIPLIER);
-
-        pivotBackwardsToTheLeftAfter = new FourWheelPivotTurnDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pivotBackwardsToTheLeftAfter.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED * TURN_MULTIPLIER);
-        pivotBackwardsToTheLeftAfter.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
-
-        pivotBackwardsToTheRightAfter = new FourWheelPivotTurnDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pivotBackwardsToTheRightAfter.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
-        pivotBackwardsToTheRightAfter.setMultiplierSide(PIVOT_MULTIPLIER, LEFT_TURN);
+        positionForBeacon.addSegment(DeadReckon.SegmentType.TURN, 50, -TURN_SPEED * TURN_MULTIPLIER);
 
         pivotForwardsToTheLeft = new FourWheelPivotTurnDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pivotForwardsToTheLeft.addSegment(DeadReckon.SegmentType.TURN, 50, LINE_SPEED);
+        pivotForwardsToTheLeft.addSegment(DeadReckon.SegmentType.TURN, 50, LINE_SPEED * TURN_MULTIPLIER);
         pivotForwardsToTheLeft.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
-
-        alignColorSensorWithButtonAgain = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        alignColorSensorWithButtonAgain.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
-
-        alignColorSensorWithButtonAfterParallelPark = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        alignColorSensorWithButtonAfterParallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
-
-        moveFastToNextBeacon = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveFastToNextBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 42, -MOVE_SPEED * MOVE_MULTIPLIER);
-
-        parallelParkLookForLine = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        parallelParkLookForLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 10, -LINE_SPEED);
-
     }
 
     protected void startShooterCorner()
@@ -430,6 +381,11 @@ public class MochaParticleBeaconAutonomous extends Robot
         RobotLog.i("163 Robot is moving fast to the white line");
         persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Moving fast to white line");
 
+        moveFastToLine = new FourWheelDirectDriveDeadReckon
+                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+        moveFastToLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 56.5, -MOVE_SPEED * MOVE_MULTIPLIER);
+        moveFastToLine.addSegment(DeadReckon.SegmentType.TURN, 35, TURN_SPEED * TURN_MULTIPLIER);
+
         addTask(new DeadReckonTask(this, moveFastToLine) {
             @Override
             public void handleEvent(RobotEvent e) {
@@ -468,7 +424,10 @@ public class MochaParticleBeaconAutonomous extends Robot
                 RobotLog.i("163 Targeting the white line with leftLight");
                 persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Targeting white line with left light");
 
-                if ((event.kind == EventKind.LEFT_SENSOR_SATISFIED) || (event.kind == EventKind.RIGHT_SENSOR_SATISFIED)) {
+                if ((event.kind == EventKind.LEFT_SENSOR_SATISFIED) && (event.kind == EventKind.RIGHT_SENSOR_SATISFIED)) {
+                    RobotLog.i("163 Robot found the both parts of the first line");
+
+                } else if ((event.kind == EventKind.LEFT_SENSOR_SATISFIED) || (event.kind == EventKind.RIGHT_SENSOR_SATISFIED)) {
                     RobotLog.i("163 Robot found the first part of the first line");
                     persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Sensor satisfied");
 
@@ -499,12 +458,12 @@ public class MochaParticleBeaconAutonomous extends Robot
             case LEFT_SENSOR_SATISFIED:
                 RobotLog.i("163 Turning to fully realign with the beacon");
                 persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Realigning fully");
-                pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
+                pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED * TURN_MULTIPLIER);
                 pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, RIGHT_TURN);
                 criteriaToUse = whiteLineRightCriteria;
                 break;
             case RIGHT_SENSOR_SATISFIED:
-                pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED);
+                pivotReckonToUse.addSegment(DeadReckon.SegmentType.TURN, 50, -LINE_SPEED * TURN_MULTIPLIER);
                 pivotReckonToUse.setMultiplierSide(PIVOT_MULTIPLIER, LEFT_TURN);
                 criteriaToUse = whiteLineLeftCriteria;
                 break;
@@ -537,14 +496,20 @@ public class MochaParticleBeaconAutonomous extends Robot
 
                 alignColorSensorWithButton = new FourWheelDirectDriveDeadReckon
                         (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-                if (cachedEvent.kind == DeadReckonTask.EventKind.RIGHT_SENSOR_SATISFIED) {
-                    RobotLog.i("163 Attempting to turn right through the white line");
-                    alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, -0.75 * TURN_SPEED);
+                if (cachedEvent != null) {
+                    if (cachedEvent.kind == DeadReckonTask.EventKind.RIGHT_SENSOR_SATISFIED) {
+                        RobotLog.i("163 Attempting to turn right through the white line");
+                        alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, -0.75 * TURN_SPEED * TURN_MULTIPLIER);
+                    } else {
+                        RobotLog.i("163 Attempting to turn left through the white line");
+                        alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, 0.75 * TURN_SPEED * TURN_MULTIPLIER);
+                    }
                 } else {
-                    RobotLog.i("163 Attempting to turn left through the white line");
-                    alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.TURN, 5, 0.75 * TURN_SPEED);
+                    RobotLog.i("163 Aligned to both white lines");
                 }
-                alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED * MOVE_MULTIPLIER);
+
+                // TODO: Reverse the compensation direction for red alliance (already done by taking out move multiplier below).
+                alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.25 * -MOVE_SPEED);
 
                 addTask(new DeadReckonTask(this, alignColorSensorWithButton) {
                     @Override
@@ -555,7 +520,16 @@ public class MochaParticleBeaconAutonomous extends Robot
                             RobotLog.i("163 Color sensor has aligned with the beacon");
                             persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Aligned color sensor");
 
-                            checkForDistanceFromWall();
+                            addTask(new SingleShotTimerTask(robot, 750) {
+                                @Override
+                                public void handleEvent(RobotEvent e)
+                                {
+                                    SingleShotTimerEvent event = (SingleShotTimerEvent) e;
+                                    if (event.kind == EventKind.EXPIRED) {
+                                        checkForDistanceFromWall();
+                                    }
+                                }
+                            });
                         } else {
                             RobotLog.e("163 Unknown event occurred");
                         }
@@ -606,9 +580,9 @@ public class MochaParticleBeaconAutonomous extends Robot
     {
         parallelPark = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        parallelPark.addSegment(DeadReckon.SegmentType.TURN, 20, TURN_SPEED);
-        parallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 9, MOVE_SPEED);
-        parallelPark.addSegment(DeadReckon.SegmentType.TURN, 25, -TURN_SPEED);
+        parallelPark.addSegment(DeadReckon.SegmentType.TURN, 20, TURN_SPEED * TURN_MULTIPLIER);
+        parallelPark.addSegment(DeadReckon.SegmentType.STRAIGHT, 9, MOVE_SPEED * MOVE_MULTIPLIER);
+        parallelPark.addSegment(DeadReckon.SegmentType.TURN, 20, -TURN_SPEED * TURN_MULTIPLIER);
 
         addTask(new DeadReckonTask(this, parallelPark) {
             @Override
@@ -682,6 +656,11 @@ public class MochaParticleBeaconAutonomous extends Robot
             if (e.kind == AutonomousEvent.EventKind.BEACON_DONE) {
                 RobotLog.i("163 Autonomous event is of type BeaconDone");
                 isOnSecondBeacon = true;
+
+                moveFastToNextBeacon = new FourWheelDirectDriveDeadReckon
+                        (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+                moveFastToNextBeacon.addSegment(DeadReckon.SegmentType.STRAIGHT, 42, -MOVE_SPEED * MOVE_MULTIPLIER);
+
                 addTask(new DeadReckonTask(this, moveFastToNextBeacon) {
                     @Override
                     public void handleEvent(RobotEvent e) {

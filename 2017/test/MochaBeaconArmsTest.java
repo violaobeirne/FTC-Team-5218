@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import opmodes.MochaCalibration;
+import opmodes.MochaParticleBeaconAutonomous;
 import opmodes.VelocityVortexBeaconArms;
 import team25core.ColorSensorTask;
 import team25core.DeadReckon;
@@ -37,9 +38,8 @@ public class MochaBeaconArmsTest extends Robot {
 
     private VelocityVortexBeaconArms beaconArms;
 
-    private final int RIGHT_COLOR_PORT = MochaCalibration.RIGHT_COLOR_PORT;
+    private final int RIGHT_COLOR_PORT = 5;
     private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
-    private final VelocityVortexBeaconArms.ServoType SERVO_TYPE = VelocityVortexBeaconArms.ServoType.CONTINUOUS;
 
     private FourWheelDirectDriveDeadReckon moveToNextButton;
 
@@ -68,7 +68,7 @@ public class MochaBeaconArmsTest extends Robot {
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
         moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 3, 0.5 * -MOVE_SPEED);
 
-        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, SERVO_TYPE, true);
+        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, true);
 
     }
 

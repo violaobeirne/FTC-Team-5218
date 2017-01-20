@@ -31,6 +31,6 @@ public class MochaCalibration {
     public static final double RIGHT_PRESSER_DIRECTION = 0.0;
 
     public static final double BRUSH_SPEED = 0.8;
-    public static final double ULTRASONIC_DISTANCE_MINIMUM = 25;
+    public static final double ULTRASONIC_DISTANCE_MINIMUM = 24;
 
 }

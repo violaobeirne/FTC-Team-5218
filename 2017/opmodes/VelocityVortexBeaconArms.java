@@ -90,7 +90,6 @@ public class VelocityVortexBeaconArms {
 
     public void deployServo()
     {
-        RobotLog.i("163 Limit switch closed or kill timer done, stopping servo");
         RobotLog.i("163 Timer start, moving the servo");
         runServoWithTimer();
     }
@@ -130,12 +129,31 @@ public class VelocityVortexBeaconArms {
                 SingleShotTimerEvent event = (SingleShotTimerEvent) e;
 
                 if (event.kind == EventKind.EXPIRED) {
-                    RobotLog.i("163 Timer done, finish stowing the servo");
-                    servo.setPosition(0.5);
+                    stowServoForASecond();
 
                     if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
                         beaconWorkDone();
                     }
+                }
+            }
+        });
+    }
+
+    public void stowServoForASecond()
+    {
+        if (isBlueAlliance) {
+            servo.setPosition(LEFT_DIRECTION);
+        } else {
+            servo.setPosition(RIGHT_DIRECTION);
+        }
+        robot.addTask(new SingleShotTimerTask(robot, 1000) {
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                SingleShotTimerEvent event = (SingleShotTimerEvent) e;
+                if (event.kind == EventKind.EXPIRED) {
+                    RobotLog.i("163 Timer done, finish stowing the servo");
+                    servo.setPosition(0.5);
                 }
             }
         });
