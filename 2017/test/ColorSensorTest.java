@@ -32,7 +32,7 @@ public class ColorSensorTest extends Robot {
     public void init() {
         interfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
         // colorLeft = hardwareMap.colorSensor.get("colorLeft");
-        colorRight = hardwareMap.colorSensor.get("colorRight");
+        colorRight = hardwareMap.colorSensor.get("color");
 
         interfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
         interfaceModule.setDigitalChannelState(0, false);

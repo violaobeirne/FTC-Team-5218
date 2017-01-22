@@ -25,14 +25,9 @@ public class VelocityVortexBeaconArms {
     protected DeadReckon moveToNextButton;
     protected MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons;
     protected boolean isBlueAlliance;
-    protected double deployPosition;
 
-    protected int RIGHT_PORT = MochaCalibration.RIGHT_LIMIT_PORT;
     protected double RIGHT_DIRECTION = MochaCalibration.RIGHT_PRESSER_DIRECTION;
-    protected int LEFT_PORT = MochaCalibration.LEFT_LIMIT_PORT;
     protected double LEFT_DIRECTION = MochaCalibration.LEFT_PRESSER_DIRECTION;
-
-    protected int killTimer = 0;
 
     public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons)
     {
@@ -78,11 +73,7 @@ public class VelocityVortexBeaconArms {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 if (event.kind == EventKind.PATH_DONE) {
                     RobotLog.i("163 Robot finished moving to the next button, redoing color");
-                    if (isBlueAlliance) {
-                        deploy(true, false);
-                    } else {
-                        deploy(true, false);
-                    }
+                    deploy(true, false);
                 }
             }
         });
@@ -96,12 +87,7 @@ public class VelocityVortexBeaconArms {
 
     public void runServoWithTimer()
     {
-        if (isBlueAlliance) {
-            servo.setPosition(RIGHT_DIRECTION);
-        } else {
-            servo.setPosition(LEFT_DIRECTION);
-        }
-
+        servo.setPosition(RIGHT_DIRECTION);
         robot.addTask(new SingleShotTimerTask(robot, 2000) {
             @Override
             public void handleEvent(RobotEvent e) {
@@ -128,6 +114,7 @@ public class VelocityVortexBeaconArms {
             public void handleEvent(RobotEvent e) {
                 SingleShotTimerEvent event = (SingleShotTimerEvent) e;
 
+                this.stop();
                 if (event.kind == EventKind.EXPIRED) {
                     stowServoForASecond();
 
@@ -141,18 +128,14 @@ public class VelocityVortexBeaconArms {
 
     public void stowServoForASecond()
     {
-        if (isBlueAlliance) {
-            servo.setPosition(LEFT_DIRECTION);
-        } else {
-            servo.setPosition(RIGHT_DIRECTION);
-        }
+        servo.setPosition(LEFT_DIRECTION);
         robot.addTask(new SingleShotTimerTask(robot, 1000) {
             @Override
             public void handleEvent(RobotEvent e)
             {
                 SingleShotTimerEvent event = (SingleShotTimerEvent) e;
                 if (event.kind == EventKind.EXPIRED) {
-                    RobotLog.i("163 Timer done, finish stowing the servo");
+                    RobotLog.i("163 Timer done, finish stowing the servo for a second");
                     servo.setPosition(0.5);
                 }
             }
