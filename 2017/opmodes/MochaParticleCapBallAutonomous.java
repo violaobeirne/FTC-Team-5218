@@ -27,17 +27,24 @@ public class MochaParticleCapBallAutonomous extends Robot {
     protected enum Alliance {
         BLUE,
         RED,
-        DEFAULT
+        DEFAULT,
     }
 
     protected enum StartingPosition {
         CORNER,
         VORTEX,
-        DEFAULT
+        DEFAULT,
+    }
+
+    protected enum MoveAfterParticleScore {
+        YES,
+        NO,
+        DEFAULT,
     }
 
     protected Alliance alliance;
     protected StartingPosition startingPosition;
+    protected MoveAfterParticleScore moveAfterParticleScore;
 
     private static int TURN_MULTIPLY = 0;
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
@@ -95,6 +102,14 @@ public class MochaParticleCapBallAutonomous extends Robot {
                     startingPosition = StartingPosition.VORTEX;
                     persistentTelemetryTask.addData("POSITION: ", "" + startingPosition);
                     break;
+                case LEFT_BUMPER_DOWN:
+                    moveAfterParticleScore = MoveAfterParticleScore.YES;
+                    persistentTelemetryTask.addData("MOVE AFTER SHOOTERS: ", "" + moveAfterParticleScore);
+                    break;
+                case LEFT_TRIGGER_DOWN:
+                    moveAfterParticleScore = MoveAfterParticleScore.NO;
+                    persistentTelemetryTask.addData("MOVE AFTER SHOOTERS: ", "" + moveAfterParticleScore);
+                    break;
             }
         }
         else if (e instanceof RunToEncoderValueTask.RunToEncoderValueEvent) {
@@ -108,6 +123,7 @@ public class MochaParticleCapBallAutonomous extends Robot {
     {
         alliance = Alliance.DEFAULT;
         startingPosition = StartingPosition.DEFAULT;
+        moveAfterParticleScore = MoveAfterParticleScore.DEFAULT;
 
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
@@ -117,6 +133,7 @@ public class MochaParticleCapBallAutonomous extends Robot {
 
         persistentTelemetryTask.addData("ALLIANCE: ", "NOT SELECTED");
         persistentTelemetryTask.addData("POSITION: ", "NOT SELECTED");
+        persistentTelemetryTask.addData("MOVE AFTER SHOOTERS: ", "NOT SELECTED");
 
         frontLeft = hardwareMap.dcMotor.get("motorFL");
         frontRight = hardwareMap.dcMotor.get("motorFR");
@@ -147,11 +164,11 @@ public class MochaParticleCapBallAutonomous extends Robot {
 
         moveAwayFromWallReckonFromCorner = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, -MOVE_SPEED);
+        moveAwayFromWallReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, -0.3);
 
         moveAwayFromWallReckonFromVortex = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 7, -MOVE_SPEED);
+        moveAwayFromWallReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 7, -0.3);
 
         pushCapDeadReckonFromCorner = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
@@ -229,6 +246,7 @@ public class MochaParticleCapBallAutonomous extends Robot {
                         break;
                     default:
                         RobotLog.e("163 Unknown event kind");
+                        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Unknown event kind");
                         break;
                 }
             }
@@ -239,33 +257,50 @@ public class MochaParticleCapBallAutonomous extends Robot {
     {
         switch (e.kind) {
             case DONE:
-                if (paddleCount >= 15) {
-                    RobotLog.i("163 Stopping the shooter");
-                    stopShooter();
-
-                    if (startingPosition == StartingPosition.CORNER) {
-                        handlePaddleCountFinished(pushCapDeadReckonFromCorner);
-                    } else {
-                        handlePaddleCountFinished(pushCapDeadReckonFromVortex);
-                    }
-
-                } else {
+                if (paddleCount <= 20) {
                     RobotLog.i("163 Paddle count expired, iteration %d", paddleCount);
+                    persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Paddle count expired, iteration " + paddleCount);
+
                     addTask(scoreCenterEncoderTask);
                     paddleCount++;
+                } else {
+                    RobotLog.i("163 Stopping the shooter");
+                    persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Stopping the shooter");
+
+                    stopShooter();
+
+                    if ((moveAfterParticleScore == MoveAfterParticleScore.YES) && (startingPosition == StartingPosition.CORNER)) {
+                        RobotLog.i("163 Moving to push cap ball from the corner position");
+                        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Pushing cap ball from corner");
+
+                        handlePaddleCountFinished(pushCapDeadReckonFromCorner);
+                    } else if ((moveAfterParticleScore == MoveAfterParticleScore.YES) && (startingPosition == StartingPosition.VORTEX)) {
+                        RobotLog.i("163 Moving to push cap ball from the vortex position");
+                        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Pushing cap ball from vortex");
+
+                        handlePaddleCountFinished(pushCapDeadReckonFromVortex);
+                    } else {
+                        RobotLog.i("163 Robot staying still after shooting a particle");
+                        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Staying still after particle is shot");
+                    }
                 }
+                break;
         }
     }
 
     protected void handlePaddleCountFinished(DeadReckon path)
     {
-        RobotLog.i("163 Paddle count finished");
+        RobotLog.i("163 Paddle count finished, moving to cap ball");
+        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Paddle count done, cap ball commence");
 
         addTask(new DeadReckonTask(this, path) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
-                RobotLog.i("163 Shooter is done, moving to cap ball");
+                if (event.kind == EventKind.PATH_DONE) {
+                    RobotLog.i("163 Robot has finished moving to the cap ball");
+                    persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Autonomous done");
+                }
             }
         });
     }

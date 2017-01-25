@@ -21,16 +21,14 @@ public class MochaCalibration {
     public static final double LIGHT_MAXIMUM = 2.01;
 
     public static final double TURN_SPEED = 0.2;
-    public static final double MOVE_SPEED = 0.55;
-    public static final double LINE_SPEED = 0.1;
+    public static final double MOVE_SPEED = 0.75;
+    public static final double LINE_SPEED = 0.2;
 
-    public static final int LEFT_LIMIT_PORT = 0;
-    public static final int RIGHT_LIMIT_PORT = 1;
-
-    public static final double LEFT_PRESSER_DIRECTION = 1.0;
-    public static final double RIGHT_PRESSER_DIRECTION = 0.0;
+    public static final double LEFT_PRESSER_DIRECTION = 1;
+    public static final double RIGHT_PRESSER_DIRECTION = 0;
 
     public static final double BRUSH_SPEED = 0.8;
     public static final double ULTRASONIC_DISTANCE_MINIMUM = 25;
+    public static final double RANGE_DISTANCE_MINIMUM = 19;
 
 }
