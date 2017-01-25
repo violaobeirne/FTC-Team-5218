@@ -51,7 +51,6 @@ public class MochaDeadReckonTest extends Robot {
 
         alignWithLine = new TwoWheelDirectDriveDeadReckon(this, TICKS_PER_INCH, TICKS_PER_DEGREE, leftFront, leftRear);
         alignWithLine.addSegment(DeadReckon.SegmentType.STRAIGHT, 15, -0.65);
-        alignWithLine.reverseRight();
 
         whiteLineRightCriteria = new LightSensorCriteria(rightLight, LightSensorCriteria.LightPolarity.WHITE, LIGHT_MIN, LIGHT_MAX);
         whiteLineRightCriteria.setThreshold(0.65);
