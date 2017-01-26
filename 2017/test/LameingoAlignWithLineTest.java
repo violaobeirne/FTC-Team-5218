@@ -61,7 +61,7 @@ public class LameingoAlignWithLineTest extends Robot {
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 
-        alignTask = new AlignWithWhiteLineTask(this, drivetrain, leftSeeBlack, leftSeeWhite, rightSeeBlack, rightSeeWhite);
+        alignTask = new AlignWithWhiteLineTask(this, 0, drivetrain, leftSeeBlack, leftSeeWhite, rightSeeBlack, rightSeeWhite);
     }
 
     @Override
