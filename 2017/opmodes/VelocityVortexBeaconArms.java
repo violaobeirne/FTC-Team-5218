@@ -119,7 +119,7 @@ public class VelocityVortexBeaconArms {
                     stowServoForASecond();
 
                     if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
-                        beaconWorkDone();
+                        firstBeaconWorkDone();
                     }
                 }
             }
@@ -142,7 +142,7 @@ public class VelocityVortexBeaconArms {
         });
     }
 
-    public void beaconWorkDone()
+    public void firstBeaconWorkDone()
     {
         RobotLog.i("163 Queuing BeaconDone AutonomousEvent");
         AutonomousEvent beaconDone = new AutonomousEvent(robot, AutonomousEvent.EventKind.BEACON_DONE);
