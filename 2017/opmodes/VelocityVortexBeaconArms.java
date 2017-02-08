@@ -85,7 +85,7 @@ public class VelocityVortexBeaconArms {
         target = (smartStow + MochaCalibration.BEACON_STOWED_POSITION + (6 * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0));
         RobotLog.i("163 Timer start, moving the servo to " + target);
 
-        servo.setPosition(target);
+        // servo.setPosition(target);
         robot.addTask(new SingleShotTimerTask(robot, 3000) {
             @Override
             public void handleEvent(RobotEvent e) {

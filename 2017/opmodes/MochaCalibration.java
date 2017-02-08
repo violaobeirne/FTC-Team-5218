@@ -23,8 +23,8 @@ public class MochaCalibration {
     public static final double TURN_SPEED = 0.2;
     public static final double MOVE_SPEED = 0.75;
     public static final double LINE_SPEED = 0.2;
-
     public static final double BRUSH_SPEED = 0.8;
+
     public static final double RANGE_DISTANCE_MINIMUM = 12;
 
     public static final double BEACON_TICKS_PER_CM = 5.7742;
