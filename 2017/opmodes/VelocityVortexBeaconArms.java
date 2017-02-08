@@ -13,6 +13,7 @@ import team25core.ColorSensorTask;
 import team25core.DeadReckon;
 import team25core.DeadReckonTask;
 import team25core.LimitSwitchTask;
+import team25core.PeriodicTimerTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
@@ -25,11 +26,10 @@ public class VelocityVortexBeaconArms {
     protected DeadReckon moveToNextButton;
     protected MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons;
     protected boolean isBlueAlliance;
+    protected double smartStow;
+    protected double target = 0;
 
-    protected double RIGHT_DIRECTION = MochaCalibration.RIGHT_PRESSER_DIRECTION;
-    protected double LEFT_DIRECTION = MochaCalibration.LEFT_PRESSER_DIRECTION;
-
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons, double smartStow)
     {
         this.robot = robot;
         this.servo = servo;
@@ -37,6 +37,7 @@ public class VelocityVortexBeaconArms {
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
         this.numberOfBeacons = numberOfBeacons;
+        this.smartStow = smartStow;
     }
 
     public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance)
@@ -81,21 +82,14 @@ public class VelocityVortexBeaconArms {
 
     public void deployServo()
     {
-        RobotLog.i("163 Timer start, moving the servo");
-        runServoWithTimer();
-    }
+        target = (smartStow + MochaCalibration.BEACON_STOWED_POSITION + (6 * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0));
+        RobotLog.i("163 Timer start, moving the servo to " + target);
 
-    public void runServoWithTimer()
-    {
-        servo.setPosition(RIGHT_DIRECTION);
-        robot.addTask(new SingleShotTimerTask(robot, 2000) {
+        servo.setPosition(target);
+        robot.addTask(new SingleShotTimerTask(robot, 3000) {
             @Override
             public void handleEvent(RobotEvent e) {
-                SingleShotTimerEvent event = (SingleShotTimerEvent) e;
-
-                if (event.kind == EventKind.EXPIRED) {
-                    stowServo();
-                }
+                stowServo();
             }
         });
     }
@@ -103,43 +97,10 @@ public class VelocityVortexBeaconArms {
     public void stowServo()
     {
         RobotLog.i("163 Timer start, stowing the servo");
-        if (isBlueAlliance) {
-            servo.setPosition(LEFT_DIRECTION);
-        } else {
-            servo.setPosition(RIGHT_DIRECTION);
+        servo.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
+        if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
+            firstBeaconWorkDone();
         }
-
-        robot.addTask(new SingleShotTimerTask(robot, 1000) {
-            @Override
-            public void handleEvent(RobotEvent e) {
-                SingleShotTimerEvent event = (SingleShotTimerEvent) e;
-
-                this.stop();
-                if (event.kind == EventKind.EXPIRED) {
-                    stowServoForASecond();
-
-                    if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
-                        firstBeaconWorkDone();
-                    }
-                }
-            }
-        });
-    }
-
-    public void stowServoForASecond()
-    {
-        servo.setPosition(LEFT_DIRECTION);
-        robot.addTask(new SingleShotTimerTask(robot, 1000) {
-            @Override
-            public void handleEvent(RobotEvent e)
-            {
-                SingleShotTimerEvent event = (SingleShotTimerEvent) e;
-                if (event.kind == EventKind.EXPIRED) {
-                    RobotLog.i("163 Timer done, finish stowing the servo for a second");
-                    servo.setPosition(0.5);
-                }
-            }
-        });
     }
 
     public void firstBeaconWorkDone()

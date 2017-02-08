@@ -22,7 +22,7 @@ import team25core.RobotEvent;
  * Created by Elizabeth on 1/4/2017.
  */
 
-@Autonomous(name = "TEST Beacon", group = "TEST")
+@Autonomous(name = "TEST Beacon Amrs", group = "TEST")
 public class MochaBeaconArmsTest extends Robot {
 
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
@@ -81,10 +81,8 @@ public class MochaBeaconArmsTest extends Robot {
 
                 switch (color.kind) {
                     case BLUE:
-                        beaconArms.deploy(true, true);
                         break;
                     case RED:
-                        beaconArms.deploy(false, true);
                         break;
                 }
             }
