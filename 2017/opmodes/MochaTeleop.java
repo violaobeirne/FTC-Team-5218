@@ -118,9 +118,9 @@ public class MochaTeleop extends Robot {
         addTask(shootRightBackwards);
 
         /* DRIVER TWO */
-        DeadmanMotorTask capBallUp = new DeadmanMotorTask(this, capball, 0.8, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        DeadmanMotorTask capBallUp = new DeadmanMotorTask(this, capball, 1.0, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
         addTask(capBallUp);
-        DeadmanMotorTask capBallDown = new DeadmanMotorTask(this, capball, -0.8, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        DeadmanMotorTask capBallDown = new DeadmanMotorTask(this, capball, -1.0, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         addTask(capBallDown);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {

@@ -28,6 +28,6 @@ public class MochaCalibration {
     public static final double RANGE_DISTANCE_MINIMUM = 12;
 
     public static final double BEACON_TICKS_PER_CM = 5.7742;
-    public static final double BEACON_STOWED_POSITION = 128/(float)256.0;
+    public static final double BEACON_STOWED_POSITION = 130/(float)256.0;
 
 }

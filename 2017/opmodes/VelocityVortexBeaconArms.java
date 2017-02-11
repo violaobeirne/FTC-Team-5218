@@ -4,6 +4,7 @@ package opmodes;
  * Created by izzielau on 1/2/2017.
  */
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -12,32 +13,38 @@ import team25core.AutonomousEvent;
 import team25core.ColorSensorTask;
 import team25core.DeadReckon;
 import team25core.DeadReckonTask;
+import team25core.FourWheelDirectDriveDeadReckon;
 import team25core.LimitSwitchTask;
 import team25core.PeriodicTimerTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
+import test.ModernRoboticsRangeSensorTest;
 
 public class VelocityVortexBeaconArms {
 
     protected Robot robot;
     protected Servo servo;
+    protected ColorSensor color;
     protected DeviceInterfaceModule module;
     protected DeadReckon moveToNextButton;
+    protected DeadReckon compensationTurn;
     protected MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons;
     protected boolean isBlueAlliance;
-    protected double smartStow;
+    protected double distanceFromWall;
     protected double target = 0;
 
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons, double smartStow)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, ColorSensor color, DeadReckon moveToNextButton, DeadReckon compensationTurn, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons, double distanceFromWall)
     {
         this.robot = robot;
         this.servo = servo;
         this.module = interfaceModule;
+        this.color = color;
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
+        this.compensationTurn = compensationTurn;
         this.numberOfBeacons = numberOfBeacons;
-        this.smartStow = smartStow;
+        this.distanceFromWall = distanceFromWall;
     }
 
     public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance)
@@ -82,8 +89,15 @@ public class VelocityVortexBeaconArms {
 
     public void deployServo()
     {
+
+        double ticksToMove = ((distanceFromWall - 1) * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
+        servo.setPosition(ticksToMove);
         // servo.setPosition(target);
-        robot.addTask(new SingleShotTimerTask(robot, 2000) {
+
+        int seconds = 2000;
+
+        RobotLog.i("163 Deploying servo for " + seconds + " seconds");
+        robot.addTask(new SingleShotTimerTask(robot, seconds) {
             @Override
             public void handleEvent(RobotEvent e) {
                 stowServo();
@@ -91,12 +105,58 @@ public class VelocityVortexBeaconArms {
         });
     }
 
+    public void redeployServo()
+    {
+        robot.addTask(new SingleShotTimerTask(robot, 5000) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                deployServo();
+            }
+        });
+    }
+
     public void stowServo()
+    {
+        RobotLog.i("163 Double-checking the beacon because our color sensor sucks");
+        moveToSecondBeacon();
+        /*
+        robot.addTask(new ColorSensorTask(robot, color, module, false, false, 0) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                ColorSensorEvent event = (ColorSensorEvent) e;
+                if (event.kind == EventKind.BLUE && !isBlueAlliance) {
+                    servo.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
+                    redeployServo();
+                } else if (event.kind == EventKind.RED && isBlueAlliance) {
+                    servo.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
+                    redeployServo();
+                }
+                moveToSecondBeacon();
+            }
+        });
+        */
+    }
+
+    public void moveToSecondBeacon()
     {
         RobotLog.i("163 Timer start, stowing the servo");
         servo.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
-        if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
-            firstBeaconWorkDone();
+
+        if (distanceFromWall >= 20) {
+            RobotLog.i("163 Adding compensation, distance from wall: " + distanceFromWall);
+            robot.addTask(new DeadReckonTask(robot, compensationTurn) {
+                @Override
+                public void handleEvent(RobotEvent e) {
+                    if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
+                        firstBeaconWorkDone();
+                    }
+                }
+            });
+        } else {
+            RobotLog.i("163 Prepping for second beacon, distance from wall: " + distanceFromWall);
+            if (numberOfBeacons == MochaParticleBeaconAutonomous.NumberOfBeacons.TWO) {
+                firstBeaconWorkDone();
+            }
         }
     }
 
