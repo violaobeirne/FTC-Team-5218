@@ -7,7 +7,8 @@ public class MochaCalibration {
 
     public static final int TICKS_PER_DEGREE = 17;
     public static final int TICKS_PER_INCH = 79;
-    public static final double PIVOT_MULTIPLIER = 2.0;
+    public static final double BLUE_PIVOT_MULTIPLIER = 2.7;
+    public static final double RED_PIVOT_MULTIPLIER = 2.0;
 
     public static final double SHOOTER_AUTO_VORTEX = 0.195;
     public static final double SHOOTER_AUTO_CORNER = 0.4125;

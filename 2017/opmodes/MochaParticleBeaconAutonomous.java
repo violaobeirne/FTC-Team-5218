@@ -66,7 +66,6 @@ public class MochaParticleBeaconAutonomous extends Robot {
 
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
-    private final double PIVOT_MULTIPLIER = MochaCalibration.PIVOT_MULTIPLIER;
     private final double TURN_SPEED = MochaCalibration.TURN_SPEED;
     private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
     private final double LINE_SPEED = MochaCalibration.LINE_SPEED;
@@ -234,7 +233,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
         leftSeesBlack = new LightSensorCriteria(leftLight, LightSensorCriteria.LightPolarity.BLACK, LIGHT_MIN, LIGHT_MAX);
         leftSeesBlack.setThreshold(0.65);
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, MochaCalibration.PIVOT_MULTIPLIER,
+        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, MochaCalibration.BLUE_PIVOT_MULTIPLIER,
                 backLeft, frontLeft, backRight, frontRight);
 
         drivetrain.resetEncoders();
@@ -261,7 +260,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
         leftSeesBlack = new LightSensorCriteria(leftLight, LightSensorCriteria.LightPolarity.BLACK, LIGHT_MIN, LIGHT_MAX);
         leftSeesBlack.setThreshold(0.65);
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, MochaCalibration.PIVOT_MULTIPLIER,
+        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, MochaCalibration.RED_PIVOT_MULTIPLIER,
                 frontRight, backRight, frontLeft, backLeft);
 
         drivetrain.resetEncoders();
@@ -311,9 +310,14 @@ public class MochaParticleBeaconAutonomous extends Robot {
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
         alignColorSensorWithButton = new FourWheelDirectDriveDeadReckon
                 (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 2, 0.25 * -MOVE_SPEED);
+        if (isBlueAlliance) {
+            alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 2.5, 0.25 * -MOVE_SPEED);
+        } else {
+            alignColorSensorWithButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 2, 0.25 * -MOVE_SPEED);
+        }
 
         addTask(new DeadReckonTask(this, alignColorSensorWithButton) {
             @Override
@@ -363,7 +367,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
         RobotLog.i("Determining beacon color");
         double readPosition = ((distanceFromWall - 12) * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
         beacon.setPosition(readPosition);
-        addTask(new SingleShotTimerTask(this, 4500) {
+        addTask(new SingleShotTimerTask(this, 4000) {
             @Override
             public void handleEvent(RobotEvent e) {
                 addTask(new ColorSensorTask(robot, color, deviceInterfaceModule, false, false, 0) {

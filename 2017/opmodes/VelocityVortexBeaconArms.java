@@ -90,11 +90,11 @@ public class VelocityVortexBeaconArms {
     public void deployServo()
     {
 
-        double ticksToMove = ((distanceFromWall - 1) * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
+        double ticksToMove = ((distanceFromWall + 2) * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
         servo.setPosition(ticksToMove);
         // servo.setPosition(target);
 
-        int seconds = 2000;
+        int seconds = 2500;
 
         RobotLog.i("163 Deploying servo for " + seconds + " seconds");
         robot.addTask(new SingleShotTimerTask(robot, seconds) {
