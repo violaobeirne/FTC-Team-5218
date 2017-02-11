@@ -1,6 +1,7 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -14,6 +15,7 @@ import team25core.SingleShotTimerTask;
 import team25core.TwoWheelDirectDrivetrain;
 
 @Autonomous(name = "TEST FindTwoBeacons", group = "AutoTest")
+@Disabled
 public class LameingoFindBothBeaconsTest extends Robot {
 
     private DcMotor right;

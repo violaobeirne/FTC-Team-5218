@@ -118,9 +118,9 @@ public class MochaTeleop extends Robot {
         addTask(shootRightBackwards);
 
         /* DRIVER TWO */
-        DeadmanMotorTask capBallUp = new DeadmanMotorTask(this, capball, 0.8, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        DeadmanMotorTask capBallUp = new DeadmanMotorTask(this, capball, 0.8, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
         addTask(capBallUp);
-        DeadmanMotorTask capBallDown = new DeadmanMotorTask(this, capball, -0.8, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        DeadmanMotorTask capBallDown = new DeadmanMotorTask(this, capball, -0.8, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         addTask(capBallDown);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
@@ -129,12 +129,8 @@ public class MochaTeleop extends Robot {
 
                 if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
                     beacon.setPosition(1.0);
-                } else if (event.kind == EventKind.LEFT_TRIGGER_UP) {
-                    beacon.setPosition(0.5);
                 } else if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
-                    beacon.setPosition(0);
-                } else if (event.kind == EventKind.LEFT_BUMPER_UP) {
-                    beacon.setPosition(0.5);
+                    beacon.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     drive.slowDown(true);
                     drive.slowDown(0.4);

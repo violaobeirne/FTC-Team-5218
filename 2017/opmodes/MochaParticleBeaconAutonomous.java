@@ -53,7 +53,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
         DEFAULT,
     }
 
-    protected enum ShootForParticle {
+    protected enum AimForCapBall {
         YES,
         NO,
         DEFAULT,
@@ -62,7 +62,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
     protected Alliance alliance;
     protected StartingPosition startingPosition;
     protected NumberOfBeacons numberOfBeacons;
-    protected ShootForParticle shootForParticle;
+    protected AimForCapBall aimForCapBall;
 
     private final int TICKS_PER_INCH = MochaCalibration.TICKS_PER_INCH;
     private final int TICKS_PER_DEGREE = MochaCalibration.TICKS_PER_DEGREE;
@@ -126,93 +126,10 @@ public class MochaParticleBeaconAutonomous extends Robot {
         if (e instanceof GamepadTask.GamepadEvent) {
             GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
             handleGamepadSelection(event);
-        } else if (e instanceof RunToEncoderValueTask.RunToEncoderValueEvent) {
-            RunToEncoderValueTask.RunToEncoderValueEvent event = (RunToEncoderValueTask.RunToEncoderValueEvent) e;
-            handlePaddleEncoderDone(event);
         } else if (e instanceof AutonomousEvent) {
             AutonomousEvent event = (AutonomousEvent) e;
             handleBeaconWorkDone(event);
         }
-    }
-
-    @Override
-    public void init()
-    {
-        // Assign globals to default states to prevent errors.
-        alliance = Alliance.DEFAULT;
-        startingPosition = StartingPosition.DEFAULT;
-        numberOfBeacons = NumberOfBeacons.DEFAULT;
-        shootForParticle = ShootForParticle.DEFAULT;
-
-        gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
-        addTask(gamepad);
-
-        persistentTelemetryTask = new PersistentTelemetryTask(this);
-        addTask(persistentTelemetryTask);
-
-        persistentTelemetryTask.addData("ALLIANCE", "NOT SELECTED");
-        persistentTelemetryTask.addData("POSITION", "NOT SELECTED");
-        persistentTelemetryTask.addData("NUMBER OF BEACONS", "NOT SELECTED");
-        persistentTelemetryTask.addData("SHOOT FOR PARTICLE", "NOT SELECTED");
-
-        frontLeft = hardwareMap.dcMotor.get("motorFL");
-        frontRight = hardwareMap.dcMotor.get("motorFR");
-        backLeft = hardwareMap.dcMotor.get("motorBL");
-        backRight = hardwareMap.dcMotor.get("motorBR");
-
-        shooterLeft = hardwareMap.dcMotor.get("shooterLeft");
-        shooterRight = hardwareMap.dcMotor.get("shooterRight");
-
-        beacon = hardwareMap.servo.get("beacon");
-        beacon.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
-
-        sbod = hardwareMap.dcMotor.get("brush");
-        paddleCount = 0;
-        isOnSecondBeacon = false;
-        isBlueAlliance = false;
-
-        scoreCenterEncoderTask = new RunToEncoderValueTask(this, sbod, 50, 0.8);
-
-        deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
-        deviceInterfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
-        deviceInterfaceModule.setDigitalChannelState(0, false);
-
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
-        color = hardwareMap.colorSensor.get("color");
-
-    }
-
-    protected void startShooterCorner()
-    {
-        shooterLeft.setPower(SHOOTER_CORNER);
-        shooterRight.setPower(-SHOOTER_CORNER);
-    }
-
-    protected void startShooterVortex()
-    {
-        shooterLeft.setPower(SHOOTER_VORTEX);
-        shooterRight.setPower(-SHOOTER_VORTEX);
-    }
-
-    protected void stopShooter()
-    {
-        shooterLeft.setPower(0);
-        shooterRight.setPower(0);
-    }
-
-    @Override
-    public void start()
-    {
-        if (alliance == Alliance.RED) {
-            redInit();
-            isBlueAlliance = false;
-        } else {
-            blueInit();
-            isBlueAlliance = true;
-        }
-
-        RobotLog.i("163 ========================= START ========================= ");
-        alignToBeacon(45);
     }
 
     public void handleGamepadSelection(GamepadTask.GamepadEvent event) {
@@ -242,17 +159,65 @@ public class MochaParticleBeaconAutonomous extends Robot {
                 persistentTelemetryTask.addData("NUMBER OF BEACONS", "" + numberOfBeacons);
                 break;
             case LEFT_BUMPER_DOWN:
-                shootForParticle = ShootForParticle.YES;
-                persistentTelemetryTask.addData("SHOOT FOR PARTICLE", "" + shootForParticle);
+                aimForCapBall = AimForCapBall.YES;
+                persistentTelemetryTask.addData("PUSH CAP BALL", "" + aimForCapBall);
                 break;
             case LEFT_TRIGGER_DOWN:
-                shootForParticle = ShootForParticle.NO;
-                persistentTelemetryTask.addData("SHOOT FOR PARTICLE", "" + shootForParticle);
+                aimForCapBall = AimForCapBall.NO;
+                persistentTelemetryTask.addData("PUSH CAP BALL", "" + aimForCapBall);
                 break;
         }
     }
 
+    @Override
+    public void init()
+    {
+        // Assign globals to default states to prevent errors.
+        alliance = Alliance.DEFAULT;
+        startingPosition = StartingPosition.DEFAULT;
+        numberOfBeacons = NumberOfBeacons.DEFAULT;
+        aimForCapBall = AimForCapBall.DEFAULT;
+
+        gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
+        addTask(gamepad);
+
+        persistentTelemetryTask = new PersistentTelemetryTask(this);
+        addTask(persistentTelemetryTask);
+
+        persistentTelemetryTask.addData("ALLIANCE", "NOT SELECTED");
+        persistentTelemetryTask.addData("POSITION", "NOT SELECTED");
+        persistentTelemetryTask.addData("NUMBER OF BEACONS", "NOT SELECTED");
+        persistentTelemetryTask.addData("PUSH CAP BALL", "NOT SELECTED");
+
+        frontLeft = hardwareMap.dcMotor.get("motorFL");
+        frontRight = hardwareMap.dcMotor.get("motorFR");
+        backLeft = hardwareMap.dcMotor.get("motorBL");
+        backRight = hardwareMap.dcMotor.get("motorBR");
+
+        shooterLeft = hardwareMap.dcMotor.get("shooterLeft");
+        shooterRight = hardwareMap.dcMotor.get("shooterRight");
+
+        beacon = hardwareMap.servo.get("beacon");
+        beacon.setPosition(MochaCalibration.BEACON_STOWED_POSITION);
+
+        sbod = hardwareMap.dcMotor.get("brush");
+        paddleCount = 0;
+        isOnSecondBeacon = false;
+        isBlueAlliance = false;
+
+        scoreCenterEncoderTask = new RunToEncoderValueTask(this, sbod, 50, 0.8);
+
+        deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
+        deviceInterfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
+        deviceInterfaceModule.setDigitalChannelState(0, false);
+
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+        color = hardwareMap.colorSensor.get("color");
+
+    }
+
     protected void blueInit() {
+
         MOVE_MULTIPLIER = 1;
         TURN_MULTIPLIER = 1;
 
@@ -275,9 +240,11 @@ public class MochaParticleBeaconAutonomous extends Robot {
 
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
+
     }
 
     protected void redInit() {
+
         MOVE_MULTIPLIER = -1;
         TURN_MULTIPLIER = -1;
 
@@ -300,33 +267,22 @@ public class MochaParticleBeaconAutonomous extends Robot {
 
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
+
     }
 
-    /*
-     * TODO: Remove after validating time for particle after pressing beacons.
-     */
-    protected void handleReadyForBeacon(DeadReckon path)
+    @Override
+    public void start()
     {
-        RobotLog.i("Positioning for beacon");
-        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Positioning for beacon");
+        if (alliance == Alliance.RED) {
+            redInit();
+            isBlueAlliance = false;
+        } else {
+            blueInit();
+            isBlueAlliance = true;
+        }
 
-        addTask(new DeadReckonTask(this, path) {
-            @Override
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-
-                switch (event.kind) {
-                    case PATH_DONE:
-                        RobotLog.i("163 Robot positioned for the beacon");
-                        persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Positioned for beacon");
-
-                        // handlePositionedForBeacon();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        RobotLog.i("163 ========================= START ========================= ");
+        alignToBeacon(45);
     }
 
     protected void alignToBeacon(int inchesToDiscard)
@@ -400,40 +356,42 @@ public class MochaParticleBeaconAutonomous extends Robot {
         });
     }
 
+    int counter = 0;
+
     protected void checkForDistanceFromWallUsingMRRange()
     {
-        /* if (distanceFromWall > MochaCalibration.RANGE_DISTANCE_MINIMUM) {
-            ticksToMove = (((distanceFromWall - MochaCalibration.RANGE_DISTANCE_MINIMUM) * MochaCalibration.BEACON_TICKS_PER_CM)/(float)256.0);
-            RobotLog.i("163 Moving the servo to color read position " + (ticksToMove + MochaCalibration.BEACON_STOWED_POSITION));
-            beacon.setPosition(ticksToMove + MochaCalibration.BEACON_STOWED_POSITION);
-            }
-        */
 
-        ticksToMove = (distanceFromWall * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
+        ticksToMove = ((distanceFromWall - 1) * MochaCalibration.BEACON_TICKS_PER_CM/(float)256.0) + MochaCalibration.BEACON_STOWED_POSITION;
         beacon.setPosition(ticksToMove);
-        RobotLog.i("163 Distance from wall: " + distanceFromWall + " posistion: " + ticksToMove);
+        RobotLog.i("163 Distance from wall: " + distanceFromWall + " position: " + ticksToMove);
+
+        counter = 0;
 
         addTask(new PeriodicTimerTask(this, 250) {
             @Override
             public void handleEvent(RobotEvent e)
             {
-                int blue = color.blue();
-                int red = color.red();
+                if ((distanceFromWall < 16) || (counter >= 3)) {
+                    int blue = color.blue();
+                    int red = color.red();
 
-                RobotLog.i("251 COLOR Blue: " + blue);
-                RobotLog.i("251 COLOR Red: " + red);
+                    RobotLog.i("251 COLOR Blue: " + blue);
+                    RobotLog.i("251 COLOR Red: " + red);
 
-                if ((blue > red) && (blue > 287)) {
-                    robot.removeTask(this);
-                    handleAlignedWithColor(ColorSensorTask.EventKind.BLUE);
-                    return;
-                } else if ((red > blue) && (red > 287)) {
-                    robot.removeTask(this);
-                    handleAlignedWithColor(ColorSensorTask.EventKind.RED);
-                    return;
+                    if ((blue > red) && (blue > 295)) {
+                        robot.removeTask(this);
+                        handleAlignedWithColor(ColorSensorTask.EventKind.BLUE);
+                        return;
+                    } else if ((red > blue) && (red > 295)) {
+                        robot.removeTask(this);
+                        handleAlignedWithColor(ColorSensorTask.EventKind.RED);
+                        return;
+                    } else {
+                        // Cannot see beacon yet, don't do anything.
+                        RobotLog.i("251 Can't see beacon");
+                    }
                 } else {
-                    // Cannot see beacon yet, don't do anything.
-                    RobotLog.i("251 Can't see beacon");
+                    counter++;
                 }
             }
         });
@@ -441,9 +399,15 @@ public class MochaParticleBeaconAutonomous extends Robot {
 
     protected void handleAlignedWithColor(ColorSensorTask.EventKind color)
     {
+        double compensation;
+        if (isBlueAlliance) {
+            compensation = 3.25;
+        } else {
+            compensation = 2.5;
+        }
         moveToNextButton = new FourWheelDirectDriveDeadReckon
                 (this, MochaCalibration.TICKS_PER_INCH, MochaCalibration.TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 4, 0.5 * -MochaCalibration.MOVE_SPEED);
+        moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, compensation, 0.5 * -MochaCalibration.MOVE_SPEED);
 
         final double smartStowValue = ticksToMove;
 
@@ -491,35 +455,38 @@ public class MochaParticleBeaconAutonomous extends Robot {
                 alignToBeacon(33);
             }
         } else {
-            RobotLog.i("163 Beacon work called after second beacon");
-        }
-    }
-
-
-    /*
-     * TODO: Remove after validating time for particle after pressing beacons.
-     */
-    protected void handlePaddleEncoderDone(RunToEncoderValueTask.RunToEncoderValueEvent e)
-    {
-        switch (e.kind) {
-            case DONE:
-                if (paddleCount <= 8) {
-                    RobotLog.i("163 Paddle count expired, iteration %d", paddleCount);
-                    persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Paddle count expired, iteration " + paddleCount);
-
-                    addTask(scoreCenterEncoderTask);
-                    paddleCount++;
-                } else {
-                    RobotLog.i("163 Paddle count finished, stopping the shooter");
-                    persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Paddle count done, stopping shooter");
-
-                    stopShooter();
-                    // handleReadyForBeacon(positionForBeacon);
+            RobotLog.i("163 Beacon work called after first beacon");
+            if (e.kind == AutonomousEvent.EventKind.BEACON_DONE) {
+                if (aimForCapBall == AimForCapBall.YES) {
+                    handleReadyForCapBall();
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 
+    public void handleReadyForCapBall()
+    {
+
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        FourWheelDirectDriveDeadReckon targetCapBall = new FourWheelDirectDriveDeadReckon
+                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
+        targetCapBall.addSegment(DeadReckon.SegmentType.TURN, 45, 0.5 * -MOVE_SPEED * MOVE_MULTIPLIER);
+        targetCapBall.addSegment(DeadReckon.SegmentType.STRAIGHT, 45, MOVE_SPEED * MOVE_MULTIPLIER);
+
+        RobotLog.i("163 Targeting the cap ball");
+        addTask(new DeadReckonTask(this, targetCapBall) {
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                if (event.kind == EventKind.PATH_DONE) {
+                    RobotLog.i("163 Finished moving to the center vortex platform");
+                }
+            }
+        });
+    }
 }

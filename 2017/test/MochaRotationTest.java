@@ -53,7 +53,8 @@ public class MochaRotationTest extends OpMode {
         rightLight.enableLed(true);
         leftLight.enableLed(true);
 
-        drivetrain = new FourWheelDirectDrivetrain(0, PIVOT_MOD, backLeft, frontLeft, backRight, frontRight);
+        // drivetrain = new FourWheelDirectDrivetrain(0, PIVOT_MOD, backLeft, frontLeft, backRight, frontRight);
+        drivetrain = new FourWheelDirectDrivetrain(0, PIVOT_MOD, frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
     }
@@ -61,7 +62,7 @@ public class MochaRotationTest extends OpMode {
     @Override
     public void start()
     {
-        state = PIVOT_LEFT;
+        state = PIVOT_RIGHT;
         timer.reset();
     }
 
