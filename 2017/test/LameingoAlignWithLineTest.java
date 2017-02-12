@@ -15,6 +15,7 @@ import team25core.RobotEvent;
 import team25core.TwoWheelDirectDrivetrain;
 
 @Autonomous(name = "TEST AlignWithLine", group = "AutoTest")
+@Disabled
 public class LameingoAlignWithLineTest extends Robot {
 
     private DcMotor right;

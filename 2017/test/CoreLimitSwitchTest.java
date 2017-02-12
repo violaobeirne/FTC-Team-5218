@@ -4,6 +4,7 @@ package test;
  * FTC Team 25: izzielau, October 27, 2015
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 
@@ -12,6 +13,7 @@ import team25core.Robot;
 import team25core.RobotEvent;
 
 @TeleOp(name = "Mocha Limit Switches", group = "5218")
+@Disabled
 public class CoreLimitSwitchTest extends Robot
 {
 

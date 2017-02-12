@@ -15,10 +15,9 @@ import team25core.RobotEvent;
  */
 @Autonomous(name = "TEST Ultrasonic", group = "TEST")
 public class UltrasonicSensorTest extends Robot {
-    private UltrasonicSensor leftSound;
+
     private UltrasonicSensor rightSound;
 
-    private MonitorUltrasonicSensorTask monitorLeft;
     private MonitorUltrasonicSensorTask monitorRight;
 
     @Override
@@ -29,11 +28,7 @@ public class UltrasonicSensorTest extends Robot {
     @Override
     public void init() {
 
-        leftSound = hardwareMap.ultrasonicSensor.get("leftSonic");
-        rightSound = hardwareMap.ultrasonicSensor.get("rightSonic");
-
-        monitorLeft = new MonitorUltrasonicSensorTask(this, leftSound);
-
+        rightSound = hardwareMap.ultrasonicSensor.get("rightSound");
         monitorRight = new MonitorUltrasonicSensorTask(this, rightSound);
     }
 
@@ -45,12 +40,10 @@ public class UltrasonicSensorTest extends Robot {
 
                 switch(event.kind) {
                     case BUTTON_Y_DOWN:
-                        addTask(monitorLeft);
                         removeTask(monitorRight);
                         break;
                     case BUTTON_A_DOWN:
                         addTask(monitorRight);
-                        removeTask(monitorLeft);
                         break;
                 }
             }
