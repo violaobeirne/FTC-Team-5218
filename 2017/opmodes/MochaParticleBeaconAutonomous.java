@@ -444,7 +444,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
 
 
         beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, isBlueAlliance, numberOfBeacons);
-        addTask(new ColorSensorTask(this, color, deviceInterfaceModule, false, true, 0) {
+        ColorSensorTask colorTask = new ColorSensorTask(this, color, deviceInterfaceModule, false, 0) {
             @Override
             public void handleEvent(RobotEvent e) {
                 ColorSensorEvent color = (ColorSensorEvent) e;
@@ -453,39 +453,43 @@ public class MochaParticleBeaconAutonomous extends Robot {
                     persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Color: " + color.kind);
 
                     switch (color.kind) {
-                        case BLUE:
-                            RobotLog.i("163 First attempt, sensed blue");
-                            beaconArms.deploy(true, true);
-                            break;
-                        case RED:
-                            RobotLog.i("163 First attempt, sensed red");
-                            beaconArms.deploy(false, true);
-                            break;
-                        case PURPLE:
-                            RobotLog.i("163 Color sensor is not working");
-                            beaconArms.stowServo();
-                            break;
+                    case BLUE:
+                        RobotLog.i("163 First attempt, sensed blue");
+                        beaconArms.deploy(true, true);
+                        break;
+                    case RED:
+                        RobotLog.i("163 First attempt, sensed red");
+                        beaconArms.deploy(false, true);
+                        break;
+                    case PURPLE:
+                        RobotLog.i("163 Color sensor is not working");
+                        beaconArms.stowServo();
+                        break;
                     }
                 } else {
                     persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Color: " + color.kind);
 
                     switch (color.kind) {
-                        case RED:
-                            RobotLog.i("163 First attempt, sensed red");
-                            beaconArms.deploy(true, true);
-                            break;
-                        case BLUE:
-                            RobotLog.i("163 First attempt, sensed blue");
-                            beaconArms.deploy(false, true);
-                            break;
-                        case PURPLE:
-                            RobotLog.i("163 Color sensor is not working");
-                            beaconArms.stowServo();
-                            break;
+                    case RED:
+                        RobotLog.i("163 First attempt, sensed red");
+                        beaconArms.deploy(true, true);
+                        break;
+                    case BLUE:
+                        RobotLog.i("163 First attempt, sensed blue");
+                        beaconArms.deploy(false, true);
+                        break;
+                    case PURPLE:
+                        RobotLog.i("163 Color sensor is not working");
+                        beaconArms.stowServo();
+                        break;
                     }
                 }
             }
-        });
+        };
+        colorTask.setModeCompare(MochaCalibration.COLOR_THRESHOLD);
+        colorTask.setMsDelay(MochaCalibration.COLOR_READ_DELAY);
+        colorTask.setReflectColor(true, hardwareMap);
+        addTask(colorTask);
     }
 
     public void handleBeaconWorkDone(AutonomousEvent e)

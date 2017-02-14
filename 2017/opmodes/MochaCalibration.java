@@ -31,4 +31,6 @@ public class MochaCalibration {
     public static final double ULTRASONIC_DISTANCE_MINIMUM = 25;
     public static final double RANGE_DISTANCE_MINIMUM = 19;
 
+    public static final int COLOR_THRESHOLD = 267;
+    public static final int COLOR_READ_DELAY = 700;
 }
