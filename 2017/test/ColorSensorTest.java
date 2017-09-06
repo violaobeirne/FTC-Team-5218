@@ -33,7 +33,7 @@ public class ColorSensorTest extends Robot {
     @Override
     public void init() {
         interfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
-        colorRight = AMSColorSensorImproved.create(AMSColorSensor.Parameters.createForAdaFruit(), new I2cDeviceImpl(interfaceModule, 0));
+        // colorRight = AMSColorSensorImproved.create(AMSColorSensor.Parameters.createForAdaFruit(), new I2cDeviceImpl(interfaceModule, 0));
 
         interfaceModule.setDigitalChannelMode(0, DigitalChannelController.Mode.OUTPUT);
         interfaceModule.setDigitalChannelState(0, false);

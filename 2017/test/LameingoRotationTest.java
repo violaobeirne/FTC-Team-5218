@@ -68,7 +68,7 @@ public class LameingoRotationTest extends OpMode {
                 state = LEFT;
                 drivetrain.stop();
             } else {
-                drivetrain.turnRight(SPEED);
+                drivetrain.turn(SPEED);
             }
             break;
         case LEFT:
@@ -78,7 +78,7 @@ public class LameingoRotationTest extends OpMode {
                 state = PIVOT_RIGHT;
                 drivetrain.stop();
             } else {
-                drivetrain.turnLeft(SPEED);
+                drivetrain.turn(-SPEED);
             }
             break;
         case PIVOT_RIGHT:

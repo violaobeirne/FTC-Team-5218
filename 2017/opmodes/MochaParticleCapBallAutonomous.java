@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import team25core.DeadReckon;
+import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.FourWheelDirectDriveDeadReckon;
+import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.LightSensorCriteria;
 import team25core.PersistentTelemetryTask;
@@ -64,17 +64,19 @@ public class MochaParticleCapBallAutonomous extends Robot {
     private DcMotor sbod;
     private LightSensor rightLight;
     private LightSensor leftLight;
+    private FourWheelDirectDrivetrain drivetrain;
+
 
     private RunToEncoderValueTask scoreCenterEncoderTask;
     private PersistentTelemetryTask persistentTelemetryTask;
     private GamepadTask gamepad;
 
 
-    private FourWheelDirectDriveDeadReckon moveAwayFromWallReckonFromCorner;
-    private FourWheelDirectDriveDeadReckon moveAwayFromWallReckonFromVortex;
+    private DeadReckonPath moveAwayFromWallReckonFromCorner;
+    private DeadReckonPath moveAwayFromWallReckonFromVortex;
 
-    private FourWheelDirectDriveDeadReckon pushCapDeadReckonFromCorner;
-    private FourWheelDirectDriveDeadReckon pushCapDeadReckonFromVortex;
+    private DeadReckonPath pushCapDeadReckonFromCorner;
+    private DeadReckonPath pushCapDeadReckonFromVortex;
 
     private LightSensorCriteria whiteLineRightCriteria;
     private LightSensorCriteria whiteLineLeftCriteria;
@@ -162,23 +164,21 @@ public class MochaParticleCapBallAutonomous extends Robot {
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        moveAwayFromWallReckonFromCorner = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 5, -0.3);
+        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
 
-        moveAwayFromWallReckonFromVortex = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveAwayFromWallReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 7, -0.3);
+        moveAwayFromWallReckonFromCorner = new DeadReckonPath();
+        moveAwayFromWallReckonFromCorner.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.3);
 
-        pushCapDeadReckonFromCorner = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pushCapDeadReckonFromCorner.addSegment(DeadReckon.SegmentType.STRAIGHT, 64, -MOVE_SPEED);
+        moveAwayFromWallReckonFromVortex = new DeadReckonPath();
+        moveAwayFromWallReckonFromVortex.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 7, -0.3);
 
-        pushCapDeadReckonFromVortex = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 50, -MOVE_SPEED);
-        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 8, MOVE_SPEED);
-        pushCapDeadReckonFromVortex.addSegment(DeadReckon.SegmentType.STRAIGHT, 8, -MOVE_SPEED);
+        pushCapDeadReckonFromCorner = new DeadReckonPath();
+        pushCapDeadReckonFromCorner.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 64, -MOVE_SPEED);
+
+        pushCapDeadReckonFromVortex = new DeadReckonPath();
+        pushCapDeadReckonFromVortex.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, -MOVE_SPEED);
+        pushCapDeadReckonFromVortex.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, MOVE_SPEED);
+        pushCapDeadReckonFromVortex.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -MOVE_SPEED);
 
     }
 
@@ -223,8 +223,8 @@ public class MochaParticleCapBallAutonomous extends Robot {
         TURN_MULTIPLY = -1;
     }
 
-    protected void initialMove(final DeadReckon path) {
-        addTask(new DeadReckonTask(this, path) {
+    protected void initialMove(final DeadReckonPath path) {
+        addTask(new DeadReckonTask(this, path, drivetrain) {
             public void handleEvent(RobotEvent e)
             {
                 DeadReckonEvent event = (DeadReckonEvent)e;
@@ -288,12 +288,12 @@ public class MochaParticleCapBallAutonomous extends Robot {
         }
     }
 
-    protected void handlePaddleCountFinished(DeadReckon path)
+    protected void handlePaddleCountFinished(DeadReckonPath path)
     {
         RobotLog.i("163 Paddle count finished, moving to cap ball");
         persistentTelemetryTask.addData("AUTONOMOUS STATE: ", "Paddle count done, cap ball commence");
 
-        addTask(new DeadReckonTask(this, path) {
+        addTask(new DeadReckonTask(this, path, drivetrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;

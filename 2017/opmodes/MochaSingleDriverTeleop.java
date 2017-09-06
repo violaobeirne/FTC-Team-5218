@@ -14,11 +14,12 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import team25core.DeadmanMotorTask;
-import team25core.FourWheelDriveTask;
+import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.TankDriveTask;
 
 @TeleOp(name="Baby Mocha", group = "5218")
 public class MochaSingleDriverTeleop extends Robot {
@@ -31,6 +32,7 @@ public class MochaSingleDriverTeleop extends Robot {
     private DcMotor backRight;
     private DcMotor sbod;
     private Servo beacon;
+    private FourWheelDirectDrivetrain drivetrain;
 
     private PersistentTelemetryTask ptt;
 
@@ -52,6 +54,8 @@ public class MochaSingleDriverTeleop extends Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+
         // Hook.
         sbod = hardwareMap.dcMotor.get("brush");
 
@@ -72,7 +76,7 @@ public class MochaSingleDriverTeleop extends Robot {
 
         /* DRIVER ONE */
         // Four motor drive.
-        final FourWheelDriveTask drive = new FourWheelDriveTask(this, frontLeft, frontRight, backLeft, backRight);
+        final TankDriveTask drive = new TankDriveTask(this, drivetrain);
         this.addTask(drive);
 
         // SBOD

@@ -12,9 +12,9 @@ import opmodes.MochaCalibration;
 import opmodes.MochaParticleBeaconAutonomous;
 import opmodes.VelocityVortexBeaconArms;
 import team25core.ColorSensorTask;
-import team25core.DeadReckon;
+import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.FourWheelDirectDriveDeadReckon;
+import team25core.FourWheelDirectDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
 
@@ -41,7 +41,8 @@ public class MochaBeaconArmsTest extends Robot {
     private final int RIGHT_COLOR_PORT = 5;
     private final double MOVE_SPEED = MochaCalibration.MOVE_SPEED;
 
-    private FourWheelDirectDriveDeadReckon moveToNextButton;
+    private FourWheelDirectDrivetrain drivetrain;
+    private DeadReckonPath moveToNextButton;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -56,6 +57,8 @@ public class MochaBeaconArmsTest extends Robot {
         backLeft = hardwareMap.dcMotor.get("motorBL");
         backRight = hardwareMap.dcMotor.get("motorBR");
 
+        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+
         beacon = hardwareMap.servo.get("beacon");
 
         deviceInterfaceModule = hardwareMap.deviceInterfaceModule.get("interface");
@@ -64,11 +67,10 @@ public class MochaBeaconArmsTest extends Robot {
 
         colorRight = hardwareMap.colorSensor.get("colorRight");
 
-        moveToNextButton = new FourWheelDirectDriveDeadReckon
-                (this, TICKS_PER_INCH, TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        moveToNextButton.addSegment(DeadReckon.SegmentType.STRAIGHT, 3, 0.5 * -MOVE_SPEED);
+        moveToNextButton = new DeadReckonPath();
+        moveToNextButton.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3, 0.5 * -MOVE_SPEED);
 
-        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, beacon, true);
+        beaconArms = new VelocityVortexBeaconArms(this, deviceInterfaceModule, moveToNextButton, drivetrain, beacon, true);
 
     }
 
