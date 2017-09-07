@@ -57,7 +57,7 @@ public class MochaBeaconArmsTest extends Robot {
         backLeft = hardwareMap.dcMotor.get("motorBL");
         backRight = hardwareMap.dcMotor.get("motorBR");
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         beacon = hardwareMap.servo.get("beacon");
 
