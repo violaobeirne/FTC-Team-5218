@@ -54,7 +54,7 @@ public class MochaSingleDriverTeleop extends Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         // Hook.
         sbod = hardwareMap.dcMotor.get("brush");

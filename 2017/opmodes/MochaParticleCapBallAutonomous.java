@@ -164,7 +164,7 @@ public class MochaParticleCapBallAutonomous extends Robot {
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         moveAwayFromWallReckonFromCorner = new DeadReckonPath();
         moveAwayFromWallReckonFromCorner.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.3);

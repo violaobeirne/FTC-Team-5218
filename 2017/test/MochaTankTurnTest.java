@@ -48,7 +48,7 @@ public class MochaTankTurnTest extends team25core.Robot{
         backLeft = hardwareMap.dcMotor.get("motorBL");
         backRight = hardwareMap.dcMotor.get("motorBR");
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         foo = new DeadReckonPath();
         foo.addSegment(DeadReckonPath.SegmentType.TURN, 90, .3);

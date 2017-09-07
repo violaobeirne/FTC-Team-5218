@@ -198,7 +198,7 @@ public class MochaParticleBeaconAutonomous extends Robot {
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
         color = hardwareMap.colorSensor.get("color");
 
-        drivetrain = new FourWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, MochaCalibration.PIVOT_MULTIPLIER, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 
