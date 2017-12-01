@@ -50,13 +50,25 @@ public class BeethovenJewelParkAutonomous extends Robot {
     private final double TURN_SPEED = HisaishiCalibration.TURN_SPEED;
     private final double MOVE_SPEED = HisaishiCalibration.MOVE_SPEED;
 
+    public static final double GLYPH_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_OPEN_LEFT_POSITION;
+    public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
+    public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
+    public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
+
+    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
+    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
+    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
+    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
+    public static final double JEWEL_ARM_NEUTRAL = HisaishiCalibration.JEWEL_ARM_NEUTRAL;
+
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
     private Servo glyphLGrabber;
     private Servo glyphRGrabber;
-    private Servo jewelArm;
+    private Servo jewelXServo;
+    private Servo jewelYServo;
 
     private PersistentTelemetryTask persistentTelemetryTask;
     private GamepadTask gamepad;
@@ -88,8 +100,8 @@ public class BeethovenJewelParkAutonomous extends Robot {
         persistentTelemetryTask = new PersistentTelemetryTask(this);
         addTask(persistentTelemetryTask);
 
-        persistentTelemetryTask.addData("ALLIANCE: ", "NOT SELECTED");
-        persistentTelemetryTask.addData("STARTING POSITION: ", "NOT SELECTED");
+        // persistentTelemetryTask.addData("ALLIANCE: ", "NOT SELECTED");
+        // persistentTelemetryTask.addData("STARTING POSITION: ", "NOT SELECTED");
 
         frontLeft = hardwareMap.dcMotor.get("frontL");
         frontRight = hardwareMap.dcMotor.get("frontR");
@@ -108,16 +120,14 @@ public class BeethovenJewelParkAutonomous extends Robot {
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
 
-        // jewelArm = hardwareMap.servo.get("jewelArm");
+        jewelXServo = hardwareMap.servo.get("jewelXAxis");
+        jewelYServo = hardwareMap.servo.get("jewelYAxis");
 
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         pushJewel = new DeadReckonPath();
         moveToSimplePark = new DeadReckonPath();
         moveToPark = new DeadReckonPath();
-
-        glyphLGrabber.setPosition(0.9);
-        glyphRGrabber.setPosition(0.1);
 
         detectParticle();
     }
@@ -127,9 +137,9 @@ public class BeethovenJewelParkAutonomous extends Robot {
         if (alliance == Alliance.RED) {
             if (startingPosition == StartingPosition.R1) {
                 red1Init();
-                glyphLGrabber.setPosition(0);
-                glyphRGrabber.setPosition(1.0);
-                jewelArm.setPosition(0);
+                glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -140,9 +150,9 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 });
             } else if (startingPosition == StartingPosition.R2) {
                 red2Init();
-                glyphLGrabber.setPosition(0);
-                glyphRGrabber.setPosition(1.0);
-                jewelArm.setPosition(0);
+                glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -155,8 +165,9 @@ public class BeethovenJewelParkAutonomous extends Robot {
         } else if (alliance == Alliance.BLUE) {
             if (startingPosition == StartingPosition.B1) {
                 blue1Init();
-                glyphLGrabber.setPosition(0);
-                glyphRGrabber.setPosition(1.0);
+                glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -167,8 +178,9 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 });
             } else if (startingPosition == StartingPosition.B2) {
                 blue2Init();
-                glyphLGrabber.setPosition(0);
-                glyphRGrabber.setPosition(1.0);
+                glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -249,12 +261,12 @@ public class BeethovenJewelParkAutonomous extends Robot {
                         case RED:
                             persistentTelemetryTask.addData("DETECTED COLOR", "RED");
                             RobotLog.i("104 Detected red");
-                            pushJewel.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
+                            jewelXServo.setPosition(JEWEL_ARM_FORWARD);
                             break;
                         case BLUE:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLUE");
                             RobotLog.i("104 Detected blue");
-                            pushJewel.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -MOVE_MULTIPLIER * MOVE_SPEED);
+                            jewelXServo.setPosition(JEWEL_ARM_BACK);
                             break;
                         case BLACK:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLACK");
@@ -293,10 +305,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         if (startingPosition == StartingPosition.B1 || startingPosition == StartingPosition.R1) {
-                            RobotLog.i("104 Starting inital move.");
+                            RobotLog.i("104 Starting initial move.");
                             initialMove(moveToSimplePark);
                         } else if (startingPosition == StartingPosition.B2 || startingPosition == StartingPosition.B2) {
-                            RobotLog.i("104 Starting inital move");
+                            RobotLog.i("104 Starting initial move");
                             initialMove(moveToPark);
                         }
                         break;
@@ -314,14 +326,16 @@ public class BeethovenJewelParkAutonomous extends Robot {
                     case PATH_DONE:
                         if (startingPosition == StartingPosition.R1 || startingPosition == StartingPosition.B1) {
                             RobotLog.i("104 closing glyph arms.");
-                            glyphLGrabber.setPosition(1.0);
-                            glyphRGrabber.setPosition(0);
-                            jewelArm.setPosition(1.0);
+                            glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                            glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                            jewelXServo.setPosition(JEWEL_ARM_NEUTRAL);
+                            jewelYServo.setPosition(JEWEL_ARM_STOW);
                         } else if (startingPosition == StartingPosition.R2 || startingPosition == StartingPosition.B2){
                             RobotLog.i("104 closing glyph arms.");
-                            glyphLGrabber.setPosition(1.0);
-                            glyphRGrabber.setPosition(0);
-                            jewelArm.setPosition(1.0);
+                            glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                            glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                            jewelXServo.setPosition(JEWEL_ARM_NEUTRAL);
+                            jewelYServo.setPosition(JEWEL_ARM_STOW);
                         }
                 }
             }

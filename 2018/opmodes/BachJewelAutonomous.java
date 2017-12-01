@@ -293,10 +293,10 @@ public class BachJewelAutonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         if (startingPosition == StartingPosition.B1 || startingPosition == StartingPosition.R1) {
-                            RobotLog.i("104 Starting inital move.");
+                            RobotLog.i("104 Starting initial move.");
                             initialMove(moveToSimplePark);
                         } else if (startingPosition == StartingPosition.B2 || startingPosition == StartingPosition.B2) {
-                            RobotLog.i("104 Starting inital move");
+                            RobotLog.i("104 Starting initial move");
                             initialMove(moveToPark);
                         }
                         break;

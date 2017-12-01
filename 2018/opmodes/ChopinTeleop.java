@@ -27,7 +27,7 @@ public class ChopinTeleop extends Robot{
     private DcMotor backLeft;
     private DcMotor backRight;
 
-    private DcMotor relicArm;
+    private DcMotor relicExtender;
     private DcMotor relicCaster;
     private Servo relicGrabber;
 
@@ -38,10 +38,25 @@ public class ChopinTeleop extends Robot{
 
     private FourWheelDirectDrivetrain fwd;
 
-    private final double RELIC_ARM_POWER = HisaishiCalibration.RELIC_ARM_POWER;
+    public static final double GLYPH_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_OPEN_LEFT_POSITION;
+    public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
+    public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
+    public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
+
+    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
+    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
+    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
+    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
+    public static final double RELIC_EXTENDER_POWER = HisaishiCalibration.RELIC_EXTENDER_POWER;
+    public static final double RELIC_CASTER_POWER = HisaishiCalibration.RELIC_CASTER_POWER;
+    public static final double RELIC_GRABBER_CLOSE = HisaishiCalibration.RELIC_GRABBER_CLOSE_POSITION;
+    public static final double RELIC_GRABBER_OPEN = HisaishiCalibration.RELIC_GRABBER_OPEN_POSITION;
+
 
     private final double GLYPH_LIFT_ELEVATOR_POWER = HisaishiCalibration.GLYPH_LIFT_ELEVATOR_POWER;
     private final double GLYPH_DROP_ELEVATOR_POWER = HisaishiCalibration.GLYPH_DROP_ELEVATOR_POWER;
+    
+    
 
     @Override
     public void init() {
@@ -56,16 +71,18 @@ public class ChopinTeleop extends Robot{
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE );
 
         fwd = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         // Relic.
-        relicArm = hardwareMap.dcMotor.get("relicExtender");
+        relicExtender = hardwareMap.dcMotor.get("relicExtender");
         relicCaster = hardwareMap.dcMotor.get("relicCaster");
         relicGrabber = hardwareMap.servo.get("relicGrabber");
 
@@ -88,10 +105,9 @@ public class ChopinTeleop extends Robot{
         /* Driver One */
         this.addTask(new TankDriveTask(this, fwd));
 
-
         // Hug & Extend Relic.
-        DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicArm, RELIC_ARM_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
-        DeadmanMotorTask extendRelic = new DeadmanMotorTask(this, relicArm, -RELIC_ARM_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicExtender, RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        DeadmanMotorTask extendRelic = new DeadmanMotorTask(this, relicExtender, -RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         this.addTask(hugRelic);
         this.addTask(extendRelic);
 
@@ -101,33 +117,28 @@ public class ChopinTeleop extends Robot{
         this.addTask(raiseGlyph);
         this.addTask(dropGlyph);
 
+        // Relic.
+        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        this.addTask(castRelic);
+        this.addTask(reelRelic);
+
+
+
         /* Driver Two */
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
-                if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
-                    relicGrabber.setPosition(0);
-                } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
-                    relicGrabber.setPosition(1.0);
-                } else if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    relicArm.setPower(0.6);
+                if (event.kind == EventKind.BUTTON_A_DOWN) {
+                    relicGrabber.setPosition(RELIC_GRABBER_OPEN);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    relicArm.setPower(-0.6);
-                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
-                    relicCaster.setPower(0.75);
-                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
-                    relicCaster.setPower(-0.75);
-                } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_Y_UP) {
-                    relicCaster.setPower(0);
+                    relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    glyphLGrabber.setPosition(0);
-                    glyphRGrabber.setPosition(1.0);
+                    glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
+                    glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
-                    glyphLGrabber.setPosition(0.5);
-                    glyphRGrabber.setPosition(0.5);
-                } else if(event.kind == EventKind.BUTTON_B_DOWN) {
-                    glyphLGrabber.setPosition(1.0);
-                    glyphRGrabber.setPosition(0);
+                    glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+                    glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
                 }
             }
         });
