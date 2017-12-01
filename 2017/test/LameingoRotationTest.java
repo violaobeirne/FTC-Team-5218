@@ -45,7 +45,7 @@ public class LameingoRotationTest extends OpMode {
         right = hardwareMap.dcMotor.get("rightMotor");
         left = hardwareMap.dcMotor.get("leftMotor");
 
-        drivetrain = new TwoWheelDirectDrivetrain(PIVOT_MOD, right, left);
+        drivetrain = new TwoWheelDirectDrivetrain(0, PIVOT_MOD, right, left);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
     }

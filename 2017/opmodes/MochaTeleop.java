@@ -5,7 +5,6 @@ package opmodes;
  * FTC Team 5218: izzielau, October 30, 2016
  */
 
-import com.qualcomm.ftccommon.Device;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,12 +15,13 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import team25core.DeadmanMotorTask;
-import team25core.FourWheelDriveTask;
+import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.LimitSwitchTask;
 import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.TankDriveTask;
 
 @TeleOp(name="5218 Mocha", group = "5218")
 public class MochaTeleop extends Robot {
@@ -43,6 +43,7 @@ public class MochaTeleop extends Robot {
     private DeviceInterfaceModule interfaceModule;
     private LightSensor one;
     private LightSensor two;
+    private FourWheelDirectDrivetrain drivetrain;
 
     private PersistentTelemetryTask ptt;
 
@@ -68,6 +69,8 @@ public class MochaTeleop extends Robot {
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         shooterLeft = hardwareMap.dcMotor.get("shooterLeft");
         shooterRight = hardwareMap.dcMotor.get("shooterRight");
@@ -96,7 +99,7 @@ public class MochaTeleop extends Robot {
 
         /* DRIVER ONE */
         // Four motor drive.
-        final FourWheelDriveTask drive = new FourWheelDriveTask(this, frontLeft, frontRight, backLeft, backRight);
+        final TankDriveTask drive = new TankDriveTask(this, drivetrain);
         this.addTask(drive);
 
         // SBOD

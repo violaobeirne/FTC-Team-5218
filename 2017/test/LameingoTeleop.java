@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.TwoWheelDriveTask;
-import team25core.TwoWheelGearedDriveDeadReckon;
 
 /**
  * FTC Team 25: Created by Katelyn Biesiadecki on 11/12/2016.

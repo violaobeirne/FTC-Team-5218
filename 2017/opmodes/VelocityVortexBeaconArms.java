@@ -10,8 +10,9 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import team25core.AutonomousEvent;
 import team25core.ColorSensorTask;
-import team25core.DeadReckon;
+import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
+import team25core.Drivetrain;
 import team25core.LimitSwitchTask;
 import team25core.Robot;
 import team25core.RobotEvent;
@@ -22,14 +23,15 @@ public class VelocityVortexBeaconArms {
     protected Robot robot;
     protected Servo servo;
     protected DeviceInterfaceModule module;
-    protected DeadReckon moveToNextButton;
+    protected DeadReckonPath moveToNextButton;
     protected MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons;
     protected boolean isBlueAlliance;
+    protected Drivetrain drivetrain;
 
     protected double RIGHT_DIRECTION = MochaCalibration.RIGHT_PRESSER_DIRECTION;
     protected double LEFT_DIRECTION = MochaCalibration.LEFT_PRESSER_DIRECTION;
 
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckonPath moveToNextButton, Drivetrain drivetrain, Servo servo, boolean isBlueAlliance, MochaParticleBeaconAutonomous.NumberOfBeacons numberOfBeacons)
     {
         this.robot = robot;
         this.servo = servo;
@@ -37,15 +39,17 @@ public class VelocityVortexBeaconArms {
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
         this.numberOfBeacons = numberOfBeacons;
+        this.drivetrain = drivetrain;
     }
 
-    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckon moveToNextButton, Servo servo, boolean isBlueAlliance)
+    public VelocityVortexBeaconArms(Robot robot, DeviceInterfaceModule interfaceModule, DeadReckonPath moveToNextButton, Drivetrain drivetrain, Servo servo, boolean isBlueAlliance)
     {
         this.robot = robot;
         this.servo = servo;
         this.module = interfaceModule;
         this.isBlueAlliance = isBlueAlliance;
         this.moveToNextButton = moveToNextButton;
+        this.drivetrain = drivetrain;
     }
 
     public void deploy(boolean sensedMyAlliance, boolean firstButton)
@@ -66,7 +70,7 @@ public class VelocityVortexBeaconArms {
 
     public void handleWrongColor()
     {
-        robot.addTask(new DeadReckonTask(robot, moveToNextButton){
+        robot.addTask(new DeadReckonTask(robot, moveToNextButton, drivetrain){
             @Override
             public void handleEvent(RobotEvent e)
             {

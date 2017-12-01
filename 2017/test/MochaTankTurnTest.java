@@ -10,9 +10,10 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.robot.Robot;
 
 import opmodes.MochaCalibration;
-import team25core.DeadReckon;
+import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.FourWheelPivotTurnDeadReckon;
+import team25core.Drivetrain;
+import team25core.FourWheelDirectDrivetrain;
 import team25core.LightSensorCriteria;
 import team25core.RobotEvent;
 
@@ -27,12 +28,13 @@ public class MochaTankTurnTest extends team25core.Robot{
     private DcMotor backLeft;
     private DcMotor backRight;
 
-    public FourWheelPivotTurnDeadReckon foo;
+    public DeadReckonPath foo;
     public DeadReckonTask fooTask;
     protected LightSensorCriteria whiteLineRightCriteria;
     protected LightSensorCriteria whiteLineLeftCriteria;
     protected LightSensor rightLight;
     protected LightSensor leftLight;
+    protected FourWheelDirectDrivetrain drivetrain;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -46,10 +48,11 @@ public class MochaTankTurnTest extends team25core.Robot{
         backLeft = hardwareMap.dcMotor.get("motorBL");
         backRight = hardwareMap.dcMotor.get("motorBR");
 
-        foo = new FourWheelPivotTurnDeadReckon
-                (this, MochaCalibration.TICKS_PER_INCH, MochaCalibration.TICKS_PER_DEGREE, frontRight, backRight, frontLeft, backLeft);
-        foo.addSegment(DeadReckon.SegmentType.TURN, 90, .3);
-        foo.setMultiplierSide(MochaCalibration.PIVOT_MULTIPLIER, FourWheelPivotTurnDeadReckon.TurningSide.RIGHT);
+        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+
+        foo = new DeadReckonPath();
+        foo.addSegment(DeadReckonPath.SegmentType.TURN, 90, .3);
+        // foo.setMultiplierSide(MochaCalibration.PIVOT_MULTIPLIER, FourWheelPivotTurnDeadReckon.TurningSide.RIGHT);
 
         whiteLineRightCriteria = new LightSensorCriteria(rightLight, LightSensorCriteria.LightPolarity.WHITE, LIGHT_MIN, LIGHT_MAX);
         whiteLineRightCriteria.setThreshold(0.65);
@@ -61,7 +64,7 @@ public class MochaTankTurnTest extends team25core.Robot{
     @Override
     public void start() {
         rightLight.enableLed(true);
-        addTask(new DeadReckonTask(this, foo, whiteLineRightCriteria) {
+        addTask(new DeadReckonTask(this, foo, drivetrain, whiteLineRightCriteria) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
