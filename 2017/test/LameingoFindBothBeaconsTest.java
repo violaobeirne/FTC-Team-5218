@@ -1,21 +1,20 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import opmodes.MochaCalibration;
 import team25core.AlignWithWhiteLineTask;
-import team25core.LightSensorCriteria;
-import team25core.MonitorMotorTask;
 import team25core.OpticalDistanceSensorCriteria;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.SingleShotTimerTask;
 import team25core.TwoWheelDirectDrivetrain;
 
-@Autonomous(name = "TEST AlignWithLine", group = "AutoTest")
-public class LameingoAlignWithLineTest extends Robot {
+@Autonomous(name = "TEST FindTwoBeacons", group = "AutoTest")
+public class LameingoFindBothBeaconsTest extends Robot {
 
     private DcMotor right;
     private DcMotor left;
@@ -61,13 +60,48 @@ public class LameingoAlignWithLineTest extends Robot {
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 
-        alignTask = new AlignWithWhiteLineTask(this, 0, drivetrain, leftSeeBlack, leftSeeWhite, rightSeeBlack, rightSeeWhite);
     }
 
     @Override
     public void start()
     {
-        addTask(alignTask);
+        addTask(new AlignWithWhiteLineTask(this, 70, drivetrain, leftSeeBlack, leftSeeWhite, rightSeeBlack, rightSeeWhite) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                AlignWithWhiteLineEvent ev = (AlignWithWhiteLineEvent) e;
+                if (ev.kind == EventKind.ALIGNED || ev.kind == EventKind.GOOD_ENOUGH) {
+                    RobotLog.i("Aligned with first beacon");
+                    doDelay();
+                } else {
+                    RobotLog.i("Aborted at first beacon");
+                }
+            }
+        });
     }
 
+    public void doDelay()
+    {
+        addTask(new SingleShotTimerTask(this, 4000) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                RobotLog.i("Done with delay");
+                doSecondBeacon();
+            }
+        });
+    }
+
+    public void doSecondBeacon()
+    {
+        addTask(new AlignWithWhiteLineTask(this, 58, drivetrain, leftSeeBlack, leftSeeWhite, rightSeeBlack, rightSeeWhite) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                AlignWithWhiteLineEvent ev = (AlignWithWhiteLineEvent) e;
+                if (ev.kind == EventKind.ALIGNED || ev.kind == EventKind.GOOD_ENOUGH) {
+                    RobotLog.i("Aligned with second beacon");
+                } else {
+                    RobotLog.i("Aborted at second beacon");
+                }
+            }
+        });
+    }
 }
