@@ -57,7 +57,7 @@ public class LameingoAlignWithLineTest extends Robot {
         rightSeeBlack.setName("Right");
         rightSeeWhite.setName("Right");
 
-        drivetrain = new TwoWheelDirectDrivetrain(0, PIVOT_MOD, right, left);
+        drivetrain = new TwoWheelDirectDrivetrain(PIVOT_MOD, right, left);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 
