@@ -13,10 +13,12 @@ public class HisaishiCalibration {
     // glyph mechanisms
     public static final double GLYPH_LIFT_ELEVATOR_POWER = 0.6;
     public static final double GLYPH_DROP_ELEVATOR_POWER = 0.1;
-    public static final double GLYPH_OPEN_LEFT_POSITION = 0.5;
-    public static final double GLYPH_OPEN_RIGHT_POSITION = 0.5;
+    public static final double GLYPH_OPEN_LEFT_POSITION = 0.3;
+    public static final double GLYPH_OPEN_RIGHT_POSITION = 0.7;
     public static final double GLYPH_CLOSE_LEFT_POSITION = 0;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = 1.0;
+    public static final double GLYPH_STOW_LEFT_POSITION = 1.0;
+    public static final double GLYPH_STOW_RIGHT_POSITION = 0;
 
     // jewelarm
     public static final double JEWEL_ARM_DEPLOY = 0.3;

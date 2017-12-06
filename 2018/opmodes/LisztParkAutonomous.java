@@ -2,6 +2,7 @@ package opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -47,6 +48,11 @@ public class LisztParkAutonomous extends Robot{
     private final double TURN_SPEED = HisaishiCalibration.TURN_SPEED;
     private final double MOVE_SPEED = HisaishiCalibration.MOVE_SPEED;
 
+    public static final double GLYPH_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_OPEN_LEFT_POSITION;
+    public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
+    public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
+    public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
+
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -91,25 +97,30 @@ public class LisztParkAutonomous extends Robot{
         backLeft = hardwareMap.dcMotor.get("backL");
         backRight = hardwareMap.dcMotor.get("backR");
 
-        frontLeft.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        frontRight.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backLeft.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backRight.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE );
 
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
 
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+        drivetrain.setMasterMotor(backLeft);
 
         moveToSimplePark = new DeadReckonPath();
         moveToPark = new DeadReckonPath();
 
-        glyphLGrabber.setPosition(0.8);
-        glyphRGrabber.setPosition(0.2);
+        glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
+        glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
     }
 
     @Override
@@ -118,7 +129,7 @@ public class LisztParkAutonomous extends Robot{
             isRedAlliance = true;
             if (startingPosition == StartingPosition.R1) {
                 red1Init();
-                moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
+                moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 33, MOVE_MULTIPLIER * MOVE_SPEED);
                 glyphLGrabber.setPosition(0);
                 glyphRGrabber.setPosition(1.0);
                 addTask(new SingleShotTimerTask(this, 1000) {
@@ -132,7 +143,7 @@ public class LisztParkAutonomous extends Robot{
                 red2Init();
                 glyphLGrabber.setPosition(0);
                 glyphRGrabber.setPosition(1.0);
-                moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
+                moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 32, MOVE_MULTIPLIER * MOVE_SPEED);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -147,7 +158,7 @@ public class LisztParkAutonomous extends Robot{
                 blue1Init();
                 glyphLGrabber.setPosition(0);
                 glyphRGrabber.setPosition(1.0);
-                moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
+                moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 33, MOVE_MULTIPLIER * MOVE_SPEED);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -160,7 +171,7 @@ public class LisztParkAutonomous extends Robot{
                 blue2Init();
                 glyphLGrabber.setPosition(0);
                 glyphRGrabber.setPosition(1.0);
-                moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
+                moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 33, MOVE_MULTIPLIER * MOVE_SPEED);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -231,7 +242,7 @@ public class LisztParkAutonomous extends Robot{
             case RIGHT_BUMPER_DOWN:
                 startingPosition = StartingPosition.B1;
                 persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);
-                break;
+            break;
             case RIGHT_TRIGGER_DOWN:
                 startingPosition = startingPosition.B2;
                 persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);

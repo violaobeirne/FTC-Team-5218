@@ -255,18 +255,15 @@ public class BeethovenJewelParkAutonomous extends Robot {
             @Override
             public void handleEvent(RobotEvent e) {
                 ColorThiefTask.ColorThiefEvent event = (ColorThiefEvent) e;
-                // TODO: add telemetry
                 if (alliance == Alliance.RED) {
                     switch (event.kind) {
                         case RED:
                             persistentTelemetryTask.addData("DETECTED COLOR", "RED");
                             RobotLog.i("104 Detected red");
-                            jewelXServo.setPosition(JEWEL_ARM_FORWARD);
                             break;
                         case BLUE:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLUE");
                             RobotLog.i("104 Detected blue");
-                            jewelXServo.setPosition(JEWEL_ARM_BACK);
                             break;
                         case BLACK:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLACK");
@@ -278,12 +275,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
                         case RED:
                             persistentTelemetryTask.addData("DETECTED COLOR", "RED");
                             RobotLog.i("104 Detected red");
-                            pushJewel.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -MOVE_MULTIPLIER * MOVE_SPEED);
                             break;
                         case BLUE:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLUE");
                             RobotLog.i("104 Detected blue");
-                            pushJewel.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -MOVE_MULTIPLIER * MOVE_SPEED);
                             break;
                         case BLACK:
                             persistentTelemetryTask.addData("DETECTED COLOR", "BLACK");

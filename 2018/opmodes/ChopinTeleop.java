@@ -27,8 +27,8 @@ public class ChopinTeleop extends Robot{
     private DcMotor backLeft;
     private DcMotor backRight;
 
-    private DcMotor relicExtender;
-    private DcMotor relicCaster;
+    // private DcMotor relicExtender;
+    // private DcMotor relicCaster;
     private Servo relicGrabber;
 
     private DcMotor glyphElevator;
@@ -43,10 +43,6 @@ public class ChopinTeleop extends Robot{
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
 
-    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
-    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
-    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
-    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
     public static final double RELIC_EXTENDER_POWER = HisaishiCalibration.RELIC_EXTENDER_POWER;
     public static final double RELIC_CASTER_POWER = HisaishiCalibration.RELIC_CASTER_POWER;
     public static final double RELIC_GRABBER_CLOSE = HisaishiCalibration.RELIC_GRABBER_CLOSE_POSITION;
@@ -82,9 +78,9 @@ public class ChopinTeleop extends Robot{
         fwd = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         // Relic.
-        relicExtender = hardwareMap.dcMotor.get("relicExtender");
-        relicCaster = hardwareMap.dcMotor.get("relicCaster");
-        relicGrabber = hardwareMap.servo.get("relicGrabber");
+        // relicExtender = hardwareMap.dcMotor.get("relicExtender");
+        // relicCaster = hardwareMap.dcMotor.get("relicCaster");
+        // relicGrabber = hardwareMap.servo.get("relicGrabber");
 
 
         //Glyph.
@@ -106,10 +102,10 @@ public class ChopinTeleop extends Robot{
         this.addTask(new TankDriveTask(this, fwd));
 
         // Hug & Extend Relic.
-        DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicExtender, RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
-        DeadmanMotorTask extendRelic = new DeadmanMotorTask(this, relicExtender, -RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
-        this.addTask(hugRelic);
-        this.addTask(extendRelic);
+        // DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicExtender, RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        // DeadmanMotorTask extendRelic = new DeadmanMotorTask(this, relicExtender, -RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        // this.addTask(hugRelic);
+        // this.addTask(extendRelic);
 
         // Glyph.
         DeadmanMotorTask raiseGlyph = new DeadmanMotorTask(this, glyphElevator, GLYPH_LIFT_ELEVATOR_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
@@ -118,21 +114,19 @@ public class ChopinTeleop extends Robot{
         this.addTask(dropGlyph);
 
         // Relic.
-        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
-        this.addTask(castRelic);
-        this.addTask(reelRelic);
-
-
+        // DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        // DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        // this.addTask(castRelic);
+        // this.addTask(reelRelic);
 
         /* Driver Two */
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    relicGrabber.setPosition(RELIC_GRABBER_OPEN);
+                    // relicGrabber.setPosition(RELIC_GRABBER_OPEN);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
+                    // relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                     glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
                     glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
