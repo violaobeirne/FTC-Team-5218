@@ -42,12 +42,13 @@ public class ChopinTeleop extends Robot{
     public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
+    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_LEFT_POSITION;
+    public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_RIGHT_POSITION;
 
     public static final double RELIC_EXTENDER_POWER = HisaishiCalibration.RELIC_EXTENDER_POWER;
     public static final double RELIC_CASTER_POWER = HisaishiCalibration.RELIC_CASTER_POWER;
     public static final double RELIC_GRABBER_CLOSE = HisaishiCalibration.RELIC_GRABBER_CLOSE_POSITION;
     public static final double RELIC_GRABBER_OPEN = HisaishiCalibration.RELIC_GRABBER_OPEN_POSITION;
-
 
     private final double GLYPH_LIFT_ELEVATOR_POWER = HisaishiCalibration.GLYPH_LIFT_ELEVATOR_POWER;
     private final double GLYPH_DROP_ELEVATOR_POWER = HisaishiCalibration.GLYPH_DROP_ELEVATOR_POWER;
@@ -125,8 +126,17 @@ public class ChopinTeleop extends Robot{
                 GamepadEvent event = (GamepadEvent) e;
                 if (event.kind == EventKind.BUTTON_A_DOWN) {
                     // relicGrabber.setPosition(RELIC_GRABBER_OPEN);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     // relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
+                    // TODO: Make this a toggle command.
+                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                    glyphSlider.setPosition(-1.0);
+                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
+                    glyphSlider.setPosition(1.0);
+                } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_B_UP) {
+                    glyphSlider.setPosition(0);
+                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
+                    glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
+                    glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                     glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
                     glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);

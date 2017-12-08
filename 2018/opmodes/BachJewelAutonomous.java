@@ -206,9 +206,11 @@ public class BachJewelAutonomous extends Robot {
                 break;
             case BUTTON_A_DOWN:
                 colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
+                persistentTelemetryTask.addData("POLLING: ", "ON");
                 break;
             case BUTTON_Y_DOWN:
                 colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
+                persistentTelemetryTask.addData("POLLING: ", "OFF");
                 break;
             case LEFT_BUMPER_DOWN:
                 startingPosition = StartingPosition.R1;

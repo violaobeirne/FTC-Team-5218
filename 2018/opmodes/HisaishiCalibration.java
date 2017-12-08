@@ -23,11 +23,11 @@ public class HisaishiCalibration {
     public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = 0.75;
 
     // jewelarm
-    public static final double JEWEL_ARM_DEPLOY = 0.3;
+    public static final double JEWEL_ARM_DEPLOY = (double)(256/256);    // y-axis
     public static final double JEWEL_ARM_NEUTRAL = 0.5;
-    public static final double JEWEL_ARM_STOW = 0.7;
-    public static final double JEWEL_ARM_FORWARD = 0.3;
-    public static final double JEWEL_ARM_BACK = 0.7;
+    public static final double JEWEL_ARM_STOW = (double)(131/256);      // y-axis
+    public static final double JEWEL_ARM_FORWARD = 0.3;                 // x-axis
+    public static final double JEWEL_ARM_BACK = 0.7;                    // x-axis
 
     // relic mechanisms
     public static final double RELIC_GRABBER_OPEN_POSITION = 0.6;
