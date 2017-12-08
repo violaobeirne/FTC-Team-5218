@@ -19,6 +19,8 @@ public class HisaishiCalibration {
     public static final double GLYPH_CLOSE_RIGHT_POSITION = 1.0;
     public static final double GLYPH_STOW_LEFT_POSITION = 1.0;
     public static final double GLYPH_STOW_RIGHT_POSITION = 0;
+    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = 0.25;
+    public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = 0.75;
 
     // jewelarm
     public static final double JEWEL_ARM_DEPLOY = 0.3;
@@ -32,5 +34,4 @@ public class HisaishiCalibration {
     public static final double RELIC_GRABBER_CLOSE_POSITION = 0.3;
     public static final double RELIC_EXTENDER_POWER = 0.5;
     public static final double RELIC_CASTER_POWER = 0.55;
-
 }
