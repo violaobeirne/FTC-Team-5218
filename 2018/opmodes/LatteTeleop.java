@@ -1,6 +1,7 @@
 package opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -19,7 +20,7 @@ import team25core.TankDriveTask;
  * Created by Lizzie on 11/4/2017.
  */
 
-@TeleOp(name = "5218 Teleop")
+@TeleOp(name = "Teleop")
 public class LatteTeleop extends Robot{
 
     private DcMotor frontLeft;
@@ -34,7 +35,7 @@ public class LatteTeleop extends Robot{
     private DcMotor glyphElevator;
     private Servo glyphLGrabber;
     private Servo glyphRGrabber;
-    private Servo glyphSlider;
+    private CRServo glyphSlider;
 
     private FourWheelDirectDrivetrain fwd;
 
@@ -56,6 +57,9 @@ public class LatteTeleop extends Robot{
 
     private final double GLYPH_LIFT_ELEVATOR_POWER = HisaishiCalibration.GLYPH_LIFT_ELEVATOR_POWER;
     private final double GLYPH_DROP_ELEVATOR_POWER = HisaishiCalibration.GLYPH_DROP_ELEVATOR_POWER;
+    public static final double GLYPH_LEFT_SLIDE_POWER = HisaishiCalibration.GLYPH_LEFT_SLIDE_POWER;
+    public static final double GLYPH_RIGHT_SLIDE_POWER = HisaishiCalibration.GLYPH_RIGHT_SLIDE_POWER;
+    public static final double GLYPH_STOP_SLIDE_POWER = HisaishiCalibration.GLYPH_STOP_SLIDE_POWER;
 
     @Override
     public void init() {
@@ -91,7 +95,7 @@ public class LatteTeleop extends Robot{
         glyphElevator = hardwareMap.dcMotor.get("glyphElevator");
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
-        glyphSlider = hardwareMap.servo.get("glyphSlider");
+        glyphSlider = hardwareMap.crservo.get("glyphSlider");
 
     }
 
@@ -136,11 +140,11 @@ public class LatteTeleop extends Robot{
                     // relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
                     // TODO: Make this a toggle command.
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
-                    glyphSlider.setPosition(-1.0);
+                    // glyphSlider.setPower(GLYPH_LEFT_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    glyphSlider.setPosition(1.0);
+                    // glyphSlider.setPower(GLYPH_RIGHT_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_B_UP) {
-                    glyphSlider.setPosition(0);
+                    // glyphSlider.setPower(GLYPH_STOP_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
                     glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
                     glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);
