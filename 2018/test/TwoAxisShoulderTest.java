@@ -1,11 +1,13 @@
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.TwoAxisShoulderTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 
+@Autonomous(name = "Two Axis Shoulder Test")
 public class TwoAxisShoulderTest extends Robot {
 
     Servo xAxis;

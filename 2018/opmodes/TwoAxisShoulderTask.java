@@ -1,5 +1,6 @@
 package opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -57,13 +58,13 @@ public class TwoAxisShoulderTask extends RobotTask {
     /**
      * TODO: Add real constants here.
      */
-    private static final int Y_AXIS_STOWED = 0;
-    private static final int Y_AXIS_DEPLOYED = 0;
-    private static final int X_AXIS_NEUTRAL = 0;
-    private static final int X_AXIS_FORWARD = 0;
-    private static final int X_AXIS_BACK = 0;
+    private static final double Y_AXIS_STOWED = 128.0/256.0;
+    private static final double Y_AXIS_DEPLOYED = 256.0/256.0;
+    private static final double X_AXIS_NEUTRAL = 128.0/256.0;
+    private static final double X_AXIS_FORWARD = 0.0;
+    private static final double X_AXIS_BACK = 1.0;
 
-    private static final int SERVO_DELAY = 700;
+    private static final int SERVO_DELAY = 2000;
 
     private Servo xAxis;
     private Servo yAxis;
@@ -100,7 +101,9 @@ public class TwoAxisShoulderTask extends RobotTask {
     @Override
     public void stop()
     {
-        // Noop.
+        xAxis.setPosition(X_AXIS_NEUTRAL);
+        yAxis.setPosition(Y_AXIS_STOWED);
+        robot.removeTask(this);
     }
 
     private boolean delay()
@@ -138,6 +141,7 @@ public class TwoAxisShoulderTask extends RobotTask {
 
         switch (state) {
             case STOWED:
+                RobotLog.ii(SHOULDER_TAG, "Stowed");
                 yAxis.setPosition(Y_AXIS_DEPLOYED);
                 state = ShoulderState.DEPLOYED;
                 break;
@@ -145,6 +149,7 @@ public class TwoAxisShoulderTask extends RobotTask {
                 if (delay()) {
                     return false;
                 } else {
+                    RobotLog.ii(SHOULDER_TAG, "Deployed");
                     push();
                     state = ShoulderState.PUSHED;
                 }
@@ -153,6 +158,7 @@ public class TwoAxisShoulderTask extends RobotTask {
                 if (delay()) {
                     return false;
                 } else {
+                    RobotLog.ii(SHOULDER_TAG, "Pushed");
                     yAxis.setPosition(Y_AXIS_STOWED);
                     xAxis.setPosition(X_AXIS_NEUTRAL);
                     state = ShoulderState.DONE;
@@ -162,6 +168,7 @@ public class TwoAxisShoulderTask extends RobotTask {
                 if (delay()) {
                     return false;
                 } else {
+                    RobotLog.ii(SHOULDER_TAG, "Done");
                     state = ShoulderState.STOWED;
                     robot.queueEvent(new TwoAxisShoulderEvent(this, EventKind.DONE));
                     return true;
