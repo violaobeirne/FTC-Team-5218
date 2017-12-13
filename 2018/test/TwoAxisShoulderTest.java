@@ -27,8 +27,8 @@ public class TwoAxisShoulderTest extends Robot {
     @Override
     public void init()
     {
-        xAxis = hardwareMap.servo.get("xAxisServo");
-        yAxis = hardwareMap.servo.get("yAxisServo");
+        xAxis = hardwareMap.servo.get("jewelXAxis");
+        yAxis = hardwareMap.servo.get("jewelYAxis");
 
         shoulderTask = new TwoAxisShoulderTask(this, xAxis, yAxis);
         shoulderTask.init();

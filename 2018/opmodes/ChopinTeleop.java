@@ -1,5 +1,6 @@
 package opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -20,6 +21,7 @@ import team25core.TankDriveTask;
  */
 
 @TeleOp(name = "5218 Teleop")
+@Disabled
 public class ChopinTeleop extends Robot{
 
     private DcMotor frontLeft;
@@ -88,7 +90,7 @@ public class ChopinTeleop extends Robot{
         glyphElevator = hardwareMap.dcMotor.get("glyphElevator");
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
-        // glyphSlider = hardwareMap.servo.get("glyphSlider");
+        glyphSlider = hardwareMap.servo.get("glyphSlider");
 
     }
 

@@ -3,6 +3,7 @@ package opmodes;
 import android.util.EventLog;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,6 +27,7 @@ import team25core.SingleShotTimerTask;
  */
 
 @Autonomous (name = "5218 Jewel Autonomous")
+@Disabled
 public class BachJewelAutonomous extends Robot {
     protected enum Alliance {
         BLUE,

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.android.dex.Leb128;
 
 import team25core.ColorThiefTask;
@@ -16,7 +17,6 @@ import team25core.DeadReckonTask;
 import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
-import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
@@ -27,13 +27,13 @@ import team25core.SingleShotTimerTask;
 
 @Autonomous (name = "5218 Jewel + Park Autonomous")
 public class BeethovenJewelParkAutonomous extends Robot {
-    protected enum Alliance {
+    protected enum AllianceColor {
         BLUE,
         RED,
         DEFAULT,
     }
 
-    protected enum StartingPosition {
+    protected enum StartPosition {
         R1,
         R2,
         B1,
@@ -41,11 +41,13 @@ public class BeethovenJewelParkAutonomous extends Robot {
         DEFAULT,
     }
 
-    protected Alliance alliance;
-    protected StartingPosition startingPosition;
+    protected AllianceColor allianceColor;
+    protected StartPosition startPosition;
 
     private static int TURN_MULTIPLIER = 0;
     private static int MOVE_MULTIPLIER = 0;
+
+    private static boolean detectedRed = false;
 
     private final double TURN_SPEED = HisaishiCalibration.TURN_SPEED;
     private final double MOVE_SPEED = HisaishiCalibration.MOVE_SPEED;
@@ -54,12 +56,6 @@ public class BeethovenJewelParkAutonomous extends Robot {
     public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
-
-    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
-    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
-    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
-    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
-    public static final double JEWEL_ARM_NEUTRAL = HisaishiCalibration.JEWEL_ARM_NEUTRAL;
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -70,7 +66,6 @@ public class BeethovenJewelParkAutonomous extends Robot {
     private Servo jewelXServo;
     private Servo jewelYServo;
 
-    private PersistentTelemetryTask persistentTelemetryTask;
     private GamepadTask gamepad;
 
     private DeadReckonPath pushJewel;
@@ -79,6 +74,12 @@ public class BeethovenJewelParkAutonomous extends Robot {
 
     private FourWheelDirectDrivetrain drivetrain;
     private ColorThiefTask colorThiefTask;
+    private TwoAxisShoulderTask shoulderTask;
+
+    private Telemetry.Item particleColor;
+    private Telemetry.Item polling;
+    private Telemetry.Item alliance;
+    private Telemetry.Item startingPosition;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -91,17 +92,16 @@ public class BeethovenJewelParkAutonomous extends Robot {
     @Override
     public void init() {
         // assign gamepad variables to defaults
-        alliance = Alliance.DEFAULT;
-        startingPosition = StartingPosition.DEFAULT;
+        allianceColor = AllianceColor.DEFAULT;
+        startPosition = StartPosition.DEFAULT;
 
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
 
-        persistentTelemetryTask = new PersistentTelemetryTask(this);
-        addTask(persistentTelemetryTask);
-
-        // persistentTelemetryTask.addData("ALLIANCE: ", "NOT SELECTED");
-        // persistentTelemetryTask.addData("STARTING POSITION: ", "NOT SELECTED");
+        alliance = telemetry.addData("Alliance: ", "NOT SELECTED");
+        startingPosition = telemetry.addData("Starting Position: ", "NOT SELECTED");
+        particleColor = telemetry.addData("Jewel Color:", "BLACK");
+        polling = telemetry.addData("Polling:", "OFF");
 
         frontLeft = hardwareMap.dcMotor.get("frontL");
         frontRight = hardwareMap.dcMotor.get("frontR");
@@ -124,6 +124,7 @@ public class BeethovenJewelParkAutonomous extends Robot {
         jewelYServo = hardwareMap.servo.get("jewelYAxis");
 
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+        drivetrain.setMasterMotor(backLeft);
 
         pushJewel = new DeadReckonPath();
         moveToSimplePark = new DeadReckonPath();
@@ -134,12 +135,11 @@ public class BeethovenJewelParkAutonomous extends Robot {
 
     @Override
     public void start() {
-        if (alliance == Alliance.RED) {
-            if (startingPosition == StartingPosition.R1) {
+        if (allianceColor == AllianceColor.RED) {
+            if (startPosition == StartPosition.R1) {
                 red1Init();
                 glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                 glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -148,11 +148,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
                         pushParticle();
                     }
                 });
-            } else if (startingPosition == StartingPosition.R2) {
+            } else if (startPosition == StartPosition.R2) {
                 red2Init();
                 glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                 glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -162,12 +161,11 @@ public class BeethovenJewelParkAutonomous extends Robot {
                     }
                 });
             }
-        } else if (alliance == Alliance.BLUE) {
-            if (startingPosition == StartingPosition.B1) {
+        } else if (allianceColor == AllianceColor.BLUE) {
+            if (startPosition == StartPosition.B1) {
                 blue1Init();
                 glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                 glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -176,11 +174,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
                         pushParticle();
                     }
                 });
-            } else if (startingPosition == StartingPosition.B2) {
+            } else if (startPosition == StartPosition.B2) {
                 blue2Init();
                 glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                 glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                jewelYServo.setPosition(JEWEL_ARM_DEPLOY);
                 addTask(new SingleShotTimerTask(this, 1000) {
                     @Override
                     public void handleEvent(RobotEvent e)
@@ -191,41 +188,43 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 });
             }
         }
-        moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
-        moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
     }
 
     public void handleGamepadSelection(GamepadTask.GamepadEvent event) {
         switch (event.kind) {
             case BUTTON_X_DOWN:
-                alliance = Alliance.BLUE;
-                persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
+                allianceColor = AllianceColor.BLUE;
+                alliance.setValue("BLUE");
                 break;
             case BUTTON_B_DOWN:
-                alliance = Alliance.RED;
-                persistentTelemetryTask.addData("ALLIANCE: ", "" + alliance);
+                allianceColor = AllianceColor.RED;
+                alliance.setValue("RED");
                 break;
             case BUTTON_A_DOWN:
                 colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
+                polling.setValue("ON");
                 break;
             case BUTTON_Y_DOWN:
+                polling.setValue("OFF");
                 colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
                 break;
             case LEFT_BUMPER_DOWN:
-                startingPosition = StartingPosition.R1;
-                persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);
+                startPosition = StartPosition.R1;
+                startingPosition.setValue("R1");
                 break;
             case LEFT_TRIGGER_DOWN:
-                startingPosition = StartingPosition.R2;
-                persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);
+                startPosition = StartPosition.R2;
+                startingPosition.setValue("R2");
                 break;
             case RIGHT_BUMPER_DOWN:
-                startingPosition = StartingPosition.B1;
-                persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);
+                startPosition = StartPosition.B1;
+                startingPosition.setValue("B1");
                 break;
             case RIGHT_TRIGGER_DOWN:
-                startingPosition = startingPosition.B2;
-                persistentTelemetryTask.addData("STARTING POSITION: ", "" + startingPosition);
+                startPosition = StartPosition.B2;
+                startingPosition.setValue("B2");
                 break;
         }
     }
@@ -255,33 +254,37 @@ public class BeethovenJewelParkAutonomous extends Robot {
             @Override
             public void handleEvent(RobotEvent e) {
                 ColorThiefTask.ColorThiefEvent event = (ColorThiefEvent) e;
-                if (alliance == Alliance.RED) {
+                if (allianceColor == AllianceColor.RED) {
                     switch (event.kind) {
                         case RED:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "RED");
+                            particleColor.setValue("RED");
+                            detectedRed = true;
                             RobotLog.i("104 Detected red");
                             break;
                         case BLUE:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "BLUE");
+                            particleColor.setValue("BLUE");
+                            detectedRed = false;
                             RobotLog.i("104 Detected blue");
                             break;
                         case BLACK:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "BLACK");
+                            particleColor.setValue("BLACK");
                             RobotLog.i("104 Detected black");
                             break;
                     }
-                } else if (alliance == Alliance.BLUE) {
+
                     switch(event.kind) {
                         case RED:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "RED");
+                            particleColor.setValue("RED");
+                            detectedRed = true;
                             RobotLog.i("104 Detected red");
                             break;
                         case BLUE:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "BLUE");
+                            particleColor.setValue("BLUE");
+                            detectedRed = false;
                             RobotLog.i("104 Detected blue");
                             break;
                         case BLACK:
-                            persistentTelemetryTask.addData("DETECTED COLOR", "BLACK");
+                            particleColor.setValue("BLACK");
                             RobotLog.i("104 Detected black");
                             break;
                     }
@@ -289,27 +292,43 @@ public class BeethovenJewelParkAutonomous extends Robot {
             }
         };
         this.addTask(colorThiefTask);
+
+        shoulderTask = new TwoAxisShoulderTask(this, jewelXServo, jewelYServo) {
+
+            @Override
+            public void handleEvent(RobotEvent e)
+            {
+                if (startPosition == startPosition.B1 || startPosition == startPosition.R1) {
+                    initialMove(moveToSimplePark);
+                } else if (startPosition == startPosition.B2 || startPosition == startPosition.R2) {
+                    initialMove(moveToPark);
+                }
+            }
+
+        };
+        shoulderTask.init();
+
     }
 
     protected void pushParticle()
     {
-        this.addTask(new DeadReckonTask(this, pushJewel, drivetrain) {
-            @Override
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch(event.kind) {
-                    case PATH_DONE:
-                        if (startingPosition == StartingPosition.B1 || startingPosition == StartingPosition.R1) {
-                            RobotLog.i("104 Starting initial move.");
-                            initialMove(moveToSimplePark);
-                        } else if (startingPosition == StartingPosition.B2 || startingPosition == StartingPosition.B2) {
-                            RobotLog.i("104 Starting initial move");
-                            initialMove(moveToPark);
-                        }
-                        break;
-                }
+        if (startPosition == startPosition.R1 || startPosition == startPosition.R2) {
+            RobotLog.i("104 Starting initial move.");
+            if((detectedRed == true && allianceColor == AllianceColor.RED || (detectedRed == false && allianceColor == AllianceColor.BLUE))) {
+                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.BACKWARD);
+            } else if ((detectedRed == false && allianceColor == AllianceColor.RED) || (detectedRed == true && allianceColor == AllianceColor.BLUE)) {
+                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
             }
-        });
+        } else if (startPosition == startPosition.B1 || startPosition == startPosition.B2) {
+            RobotLog.i("104 Starting initial move");
+            if((detectedRed == true && allianceColor == AllianceColor.RED || (detectedRed == false && allianceColor == AllianceColor.BLUE))) {
+                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
+            } else if ((detectedRed == false && allianceColor == AllianceColor.RED) || (detectedRed == true && allianceColor == AllianceColor.BLUE)) {
+                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.BACKWARD);
+            }
+        }
+
+        this.addTask(shoulderTask);
     }
 
     protected void initialMove(final DeadReckonPath path) {
@@ -319,18 +338,14 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
-                        if (startingPosition == StartingPosition.R1 || startingPosition == StartingPosition.B1) {
+                        if (startPosition == startPosition.R1 || startPosition == startPosition.B1) {
                             RobotLog.i("104 closing glyph arms.");
                             glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                             glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                            jewelXServo.setPosition(JEWEL_ARM_NEUTRAL);
-                            jewelYServo.setPosition(JEWEL_ARM_STOW);
-                        } else if (startingPosition == StartingPosition.R2 || startingPosition == StartingPosition.B2){
+                        } else if (startPosition == startPosition.R2 || startPosition == startPosition.B2){
                             RobotLog.i("104 closing glyph arms.");
                             glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
                             glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-                            jewelXServo.setPosition(JEWEL_ARM_NEUTRAL);
-                            jewelYServo.setPosition(JEWEL_ARM_STOW);
                         }
                 }
             }
