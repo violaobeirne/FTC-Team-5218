@@ -46,10 +46,6 @@ public class LatteTeleop extends Robot{
     public static final double GLYPH_HALF_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_LEFT_POSITION;
     public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_RIGHT_POSITION;
 
-    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
-    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
-    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
-    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
     public static final double RELIC_EXTENDER_POWER = HisaishiCalibration.RELIC_EXTENDER_POWER;
     public static final double RELIC_CASTER_POWER = HisaishiCalibration.RELIC_CASTER_POWER;
     public static final double RELIC_GRABBER_CLOSE = HisaishiCalibration.RELIC_GRABBER_CLOSE_POSITION;

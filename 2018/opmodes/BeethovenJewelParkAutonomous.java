@@ -1,5 +1,6 @@
 package opmodes;
 
+import android.hardware.camera2.CameraDevice;
 import android.util.EventLog;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -80,6 +81,9 @@ public class BeethovenJewelParkAutonomous extends Robot {
     private Telemetry.Item polling;
     private Telemetry.Item alliance;
     private Telemetry.Item startingPosition;
+
+    private boolean pollingOn = false;
+    private boolean flashOn = false;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -189,7 +193,13 @@ public class BeethovenJewelParkAutonomous extends Robot {
             }
         }
         moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToSimplePark.addSegment(DeadReckonPath.SegmentType.TURN, 20, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, MOVE_MULTIPLIER * MOVE_SPEED);
+
         moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToPark.addSegment(DeadReckonPath.SegmentType.TURN, -30, MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, MOVE_MULTIPLIER * MOVE_SPEED);
+
     }
 
     public void handleGamepadSelection(GamepadTask.GamepadEvent event) {
@@ -203,13 +213,22 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 alliance.setValue("RED");
                 break;
             case BUTTON_A_DOWN:
-                colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
-                polling.setValue("ON");
+                if(pollingOn == true) {
+                    polling.setValue("OFF");
+                    colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
+                    pollingOn = false;
+                }
+                else if(pollingOn == false) {
+                    colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
+                    polling.setValue("ON");
+                    pollingOn = true;
+                }
                 break;
             case BUTTON_Y_DOWN:
-                polling.setValue("OFF");
-                colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
-                break;
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(!flashOn);
+                    flashOn = !flashOn;
+
+                    break;
             case LEFT_BUMPER_DOWN:
                 startPosition = StartPosition.R1;
                 startingPosition.setValue("R1");
