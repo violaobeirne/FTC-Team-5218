@@ -5,7 +5,7 @@ package opmodes;
  */
 
 public class HisaishiCalibration {
-    public static final int TICKS_PER_DERGREE = 17;
+    public static final int TICKS_PER_DEGREE = 17;
     public static final int TICKS_PER_INCH = 79;
     public static final double TURN_SPEED = 0.2;
     public static final double MOVE_SPEED = 0.75;

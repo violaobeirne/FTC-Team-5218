@@ -90,7 +90,7 @@ public class ChopinTeleop extends Robot{
         glyphElevator = hardwareMap.dcMotor.get("glyphElevator");
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
-        glyphSlider = hardwareMap.servo.get("glyphSlider");
+        // glyphSlider = hardwareMap.dcMotor.get("glyphSlider");
 
     }
 
