@@ -1,20 +1,14 @@
 package opmodes;
 
-import android.util.EventLog;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
-
-import org.firstinspires.ftc.robotcore.internal.android.dex.Leb128;
 
 import team25core.ColorThiefTask;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.PersistentTelemetryTask;
@@ -52,8 +46,8 @@ public class BachJewelAutonomous extends Robot {
 
     private final double TURN_SPEED = HisaishiCalibration.TURN_SPEED;
     private final double MOVE_SPEED = HisaishiCalibration.MOVE_SPEED;
-    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
-    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
+    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_Y_AXIS_DEPLOYED;
+    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_Y_AXIS_STOWED;
     public static final double GLYPH_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_OPEN_LEFT_POSITION;
     public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;

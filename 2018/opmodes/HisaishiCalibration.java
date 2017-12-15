@@ -25,6 +25,13 @@ public class HisaishiCalibration {
     public static final double GLYPH_RIGHT_SLIDE_POWER = 255;
     public static final double GLYPH_STOP_SLIDE_POWER = 128;
 
+    // jewel
+    public static final double JEWEL_Y_AXIS_DEPLOYED = 130.0/256.0;
+    public static final double JEWEL_Y_AXIS_STOWED = 0.0/256.0;
+    public static final double JEWEL_X_AXIS_NEUTRAL = 108.0/256.0;
+    public static final double JEWEL_X_AXIS_FORWARD = 75.0/256.0;
+    public static final double JEWEL_X_AXIS_BACK = 191.0/256.0;
+
     // relic mechanisms
     public static final double RELIC_GRABBER_OPEN_POSITION = 0.6;
     public static final double RELIC_GRABBER_CLOSE_POSITION = 0.3;
