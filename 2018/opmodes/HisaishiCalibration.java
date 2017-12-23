@@ -32,6 +32,12 @@ public class HisaishiCalibration {
     public static final double JEWEL_X_AXIS_FORWARD = 75.0/256.0;
     public static final double JEWEL_X_AXIS_BACK = 191.0/256.0;
 
+    // Vuforia constants
+    public static final int BLUE_BLUE_LOWER = 0x00;
+    public static final int BLUE_RED_UPPER = 0xff;
+    public static final int RED_RED_LOWER = 0x00;
+    public static final int RED_BLUE_UPPER = 0xff;
+
     // relic mechanisms
     public static final double RELIC_GRABBER_OPEN_POSITION = 0.6;
     public static final double RELIC_GRABBER_CLOSE_POSITION = 0.3;
