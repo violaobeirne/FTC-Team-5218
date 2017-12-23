@@ -58,11 +58,20 @@ public class TwoAxisShoulderTask extends RobotTask {
     /**
      * TODO: Add real constants here.
      */
-    private static final double Y_AXIS_STOWED = 128.0/256.0;
-    private static final double Y_AXIS_DEPLOYED = 256.0/256.0;
-    private static final double X_AXIS_NEUTRAL = 110.0/256.0;
-    private static final double X_AXIS_FORWARD = 0.35;
-    private static final double X_AXIS_BACK = 0.65;
+    private static final double Y_AXIS_STOWED = 0.0/256.0;
+    private static final double Y_AXIS_DEPLOYED = 131.0/256.0;
+    private static final double X_AXIS_NEUTRAL = 108.0/256.0;
+    private static final double X_AXIS_FORWARD = 75.0/256.0;
+    private static final double X_AXIS_BACK = 191.0/256.0;
+
+/*
+    As of December 14th.
+    public static final double JEWEL_Y_AXIS_DEPLOYED = (double)(121/256);    // y-axis
+    public static final double JEWEL_X_AXIS_NEUTRAL = (double)(62/256);    // x-axis
+    public static final double JEWEL_Y_AXIS_STOWED = (double)(0/256);      // y-axis
+    public static final double JEWEL_X_AXIS_FORWARD = (double)(25/256);    // x-axis
+    public static final double JEWEL_X_AXIS_BACK = (double)(119/256);      // x-axis
+ */
 
     private static final int SERVO_DELAY = 750;
 

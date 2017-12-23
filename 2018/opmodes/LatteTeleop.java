@@ -36,6 +36,8 @@ public class LatteTeleop extends Robot{
     private Servo glyphLGrabber;
     private Servo glyphRGrabber;
     private CRServo glyphSlider;
+    private Servo jewelXServo;
+    private Servo jewelYServo;
 
     private FourWheelDirectDrivetrain fwd;
 
@@ -93,6 +95,8 @@ public class LatteTeleop extends Robot{
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
         glyphSlider = hardwareMap.crservo.get("glyphSlider");
 
+        jewelXServo = hardwareMap.servo.get("jewelXAxis");
+        jewelYServo = hardwareMap.servo.get("jewelYAxis");
     }
 
     @Override
@@ -103,7 +107,8 @@ public class LatteTeleop extends Robot{
     @Override
     public void start() {
         /* Driver One */
-        this.addTask(new TankDriveTask(this, fwd));
+        final TankDriveTask task = new TankDriveTask(this, fwd);
+        addTask(task);
 
         // Hug & Extend Relic.
         /*
@@ -112,6 +117,10 @@ public class LatteTeleop extends Robot{
         this.addTask(hugRelic);
         this.addTask(extendRelic);
         */
+
+        // Servos.
+        jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_NEUTRAL);
+        jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
 
         // Glyph.
         DeadmanMotorTask raiseGlyph = new DeadmanMotorTask(this, glyphElevator, GLYPH_LIFT_ELEVATOR_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
@@ -127,6 +136,20 @@ public class LatteTeleop extends Robot{
         this.addTask(reelRelic);
         */
 
+        /* Driver One */
+        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
+            public void handleEvent(RobotEvent e) {
+                GamepadEvent event = (GamepadEvent) e;
+                if (event.kind == EventKind.BUTTON_A_DOWN)
+                {
+                    task.slowDown(true);
+                } else if (event.kind == EventKind.BUTTON_B_DOWN)
+                {
+                    task.slowDown(false);
+                }
+            }
+        });
+
         /* Driver Two */
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
@@ -136,11 +159,11 @@ public class LatteTeleop extends Robot{
                     // relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
                     // TODO: Make this a toggle command.
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
-                    // glyphSlider.setPower(GLYPH_LEFT_SLIDE_POWER);
+                    glyphSlider.setPower(GLYPH_LEFT_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    // glyphSlider.setPower(GLYPH_RIGHT_SLIDE_POWER);
+                    glyphSlider.setPower(GLYPH_RIGHT_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_B_UP) {
-                    // glyphSlider.setPower(GLYPH_STOP_SLIDE_POWER);
+                    glyphSlider.setPower(GLYPH_STOP_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
                     glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
                     glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);

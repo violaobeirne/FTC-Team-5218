@@ -1,7 +1,5 @@
 package test;
 
-import android.util.EventLog;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,11 +18,11 @@ public class JewelArmTest extends Robot {
     private Servo jewelXServo;
     private Servo jewelYServo;
 
-    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_ARM_DEPLOY;
-    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_ARM_STOW;
-    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_ARM_FORWARD;
-    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_ARM_BACK;
-    public static final double JEWEL_ARM_NEUTRAL = HisaishiCalibration.JEWEL_ARM_NEUTRAL;
+    public static final double JEWEL_ARM_DEPLOY = HisaishiCalibration.JEWEL_Y_AXIS_DEPLOYED;
+    public static final double JEWEL_ARM_STOW = HisaishiCalibration.JEWEL_Y_AXIS_STOWED;
+    public static final double JEWEL_ARM_FORWARD = HisaishiCalibration.JEWEL_X_AXIS_FORWARD;
+    public static final double JEWEL_ARM_BACK = HisaishiCalibration.JEWEL_X_AXIS_BACK;
+    public static final double JEWEL_ARM_NEUTRAL = HisaishiCalibration.JEWEL_X_AXIS_NEUTRAL;
 
     public Telemetry.Item servoPosition;
 

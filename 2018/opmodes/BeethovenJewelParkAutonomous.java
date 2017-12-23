@@ -58,6 +58,11 @@ public class BeethovenJewelParkAutonomous extends Robot {
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
 
+    public static final int BLUE_BLUE_LOWER = HisaishiCalibration.BLUE_BLUE_LOWER;
+    public static final int BLUE_RED_UPPER = HisaishiCalibration.BLUE_RED_UPPER;
+    public static final int RED_RED_LOWER = HisaishiCalibration.RED_RED_LOWER;
+    public static final int RED_BLUE_UPPER = HisaishiCalibration.RED_BLUE_UPPER;
+
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -112,14 +117,14 @@ public class BeethovenJewelParkAutonomous extends Robot {
         backLeft = hardwareMap.dcMotor.get("backL");
         backRight = hardwareMap.dcMotor.get("backR");
 
-        frontLeft.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        frontRight.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backLeft.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backRight.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         glyphRGrabber = hardwareMap.servo.get("glyphRightGrabber");
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
@@ -197,9 +202,8 @@ public class BeethovenJewelParkAutonomous extends Robot {
         moveToSimplePark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, MOVE_MULTIPLIER * MOVE_SPEED);
 
         moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, MOVE_MULTIPLIER * MOVE_SPEED);
-        moveToPark.addSegment(DeadReckonPath.SegmentType.TURN, -30, MOVE_MULTIPLIER * MOVE_SPEED);
-        moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, MOVE_MULTIPLIER * MOVE_SPEED);
-
+        moveToPark.addSegment(DeadReckonPath.SegmentType.TURN, 20, -MOVE_MULTIPLIER * MOVE_SPEED);
+        moveToPark.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, MOVE_MULTIPLIER * MOVE_SPEED);
     }
 
     public void handleGamepadSelection(GamepadTask.GamepadEvent event) {
@@ -213,12 +217,12 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 alliance.setValue("RED");
                 break;
             case BUTTON_A_DOWN:
-                if(pollingOn == true) {
+                if(pollingOn) {
                     polling.setValue("OFF");
                     colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
                     pollingOn = false;
                 }
-                else if(pollingOn == false) {
+                else if(!pollingOn) {
                     colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
                     polling.setValue("ON");
                     pollingOn = true;
@@ -227,7 +231,6 @@ public class BeethovenJewelParkAutonomous extends Robot {
             case BUTTON_Y_DOWN:
                     com.vuforia.CameraDevice.getInstance().setFlashTorchMode(!flashOn);
                     flashOn = !flashOn;
-
                     break;
             case LEFT_BUMPER_DOWN:
                 startPosition = StartPosition.R1;
@@ -290,7 +293,7 @@ public class BeethovenJewelParkAutonomous extends Robot {
                             RobotLog.i("104 Detected black");
                             break;
                     }
-
+                } else {
                     switch(event.kind) {
                         case RED:
                             particleColor.setValue("RED");
@@ -310,10 +313,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
                 }
             }
         };
+        colorThiefTask.setThresholds(RED_RED_LOWER, RED_BLUE_UPPER, BLUE_BLUE_LOWER, BLUE_RED_UPPER);
         this.addTask(colorThiefTask);
 
         shoulderTask = new TwoAxisShoulderTask(this, jewelXServo, jewelYServo) {
-
             @Override
             public void handleEvent(RobotEvent e)
             {
@@ -333,17 +336,17 @@ public class BeethovenJewelParkAutonomous extends Robot {
     {
         if (startPosition == startPosition.R1 || startPosition == startPosition.R2) {
             RobotLog.i("104 Starting initial move.");
-            if((detectedRed == true && allianceColor == AllianceColor.RED || (detectedRed == false && allianceColor == AllianceColor.BLUE))) {
+            if (detectedRed) {
                 shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.BACKWARD);
-            } else if ((detectedRed == false && allianceColor == AllianceColor.RED) || (detectedRed == true && allianceColor == AllianceColor.BLUE)) {
+            } else if (!detectedRed) {
                 shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
             }
         } else if (startPosition == startPosition.B1 || startPosition == startPosition.B2) {
             RobotLog.i("104 Starting initial move");
-            if((detectedRed == true && allianceColor == AllianceColor.RED || (detectedRed == false && allianceColor == AllianceColor.BLUE))) {
-                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
-            } else if ((detectedRed == false && allianceColor == AllianceColor.RED) || (detectedRed == true && allianceColor == AllianceColor.BLUE)) {
+            if (!detectedRed) {
                 shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.BACKWARD);
+            } else if (detectedRed) {
+                shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
             }
         }
 
