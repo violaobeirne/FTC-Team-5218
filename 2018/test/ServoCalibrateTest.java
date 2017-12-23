@@ -14,7 +14,6 @@ import team25core.ServoCalibrateTask;
 public class ServoCalibrateTest extends Robot {
 
     private Servo jewelXServo;
-
     private ServoCalibrateTask servoTask;
 
     @Override

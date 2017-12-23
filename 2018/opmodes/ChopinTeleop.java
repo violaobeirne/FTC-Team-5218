@@ -54,8 +54,8 @@ public class ChopinTeleop extends Robot{
 
     private final double GLYPH_LIFT_ELEVATOR_POWER = HisaishiCalibration.GLYPH_LIFT_ELEVATOR_POWER;
     private final double GLYPH_DROP_ELEVATOR_POWER = HisaishiCalibration.GLYPH_DROP_ELEVATOR_POWER;
-    
-    
+
+
 
     @Override
     public void init() {
