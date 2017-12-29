@@ -59,6 +59,8 @@ public class LatteTeleop extends Robot{
     public static final double GLYPH_RIGHT_SLIDE_POWER = HisaishiCalibration.GLYPH_RIGHT_SLIDE_POWER;
     public static final double GLYPH_STOP_SLIDE_POWER = HisaishiCalibration.GLYPH_STOP_SLIDE_POWER;
 
+    private boolean isOpen = false;
+
     @Override
     public void init() {
         // Drivetrain.
@@ -83,11 +85,9 @@ public class LatteTeleop extends Robot{
         fwd = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
 
         // Relic.
-        /*
         relicExtender = hardwareMap.dcMotor.get("relicExtender");
         relicCaster = hardwareMap.dcMotor.get("relicCaster");
         relicGrabber = hardwareMap.servo.get("relicGrabber");
-        */
 
         //Glyph.
         glyphElevator = hardwareMap.dcMotor.get("glyphElevator");
@@ -95,8 +95,13 @@ public class LatteTeleop extends Robot{
         glyphLGrabber = hardwareMap.servo.get("glyphLeftGrabber");
         glyphSlider = hardwareMap.crservo.get("glyphSlider");
 
+        // Jewel.
         jewelXServo = hardwareMap.servo.get("jewelXAxis");
         jewelYServo = hardwareMap.servo.get("jewelYAxis");
+
+        // Initialization positions.
+        jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_NEUTRAL);
+        jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
     }
 
     @Override
@@ -111,16 +116,10 @@ public class LatteTeleop extends Robot{
         addTask(task);
 
         // Hug & Extend Relic.
-        /*
         DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicExtender, RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
         DeadmanMotorTask extendRelic = new DeadmanMotorTask(this, relicExtender, -RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         this.addTask(hugRelic);
         this.addTask(extendRelic);
-        */
-
-        // Servos.
-        jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_NEUTRAL);
-        jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
 
         // Glyph.
         DeadmanMotorTask raiseGlyph = new DeadmanMotorTask(this, glyphElevator, GLYPH_LIFT_ELEVATOR_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
@@ -129,22 +128,18 @@ public class LatteTeleop extends Robot{
         this.addTask(dropGlyph);
 
         // Relic.
-        /*
-        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
         this.addTask(castRelic);
         this.addTask(reelRelic);
-        */
 
         /* Driver One */
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
-                if (event.kind == EventKind.BUTTON_A_DOWN)
-                {
+                if (event.kind == EventKind.BUTTON_A_DOWN) {
                     task.slowDown(true);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN)
-                {
+                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     task.slowDown(false);
                 }
             }
@@ -155,9 +150,13 @@ public class LatteTeleop extends Robot{
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    // relicGrabber.setPosition(RELIC_GRABBER_OPEN);
-                    // relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
-                    // TODO: Make this a toggle command.
+                    if (isOpen) {
+                        relicGrabber.setPosition(RELIC_GRABBER_CLOSE);
+                        isOpen = false;
+                    } else {
+                        relicGrabber.setPosition(RELIC_GRABBER_OPEN);
+                        isOpen = true;
+                    }
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
                     glyphSlider.setPower(GLYPH_LEFT_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
