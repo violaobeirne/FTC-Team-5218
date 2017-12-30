@@ -15,6 +15,7 @@ import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
+import team25core.VuforiaBase;
 
 /**
  * Created by Lizzie on 11/11/2017.
@@ -74,6 +75,7 @@ public class BachJewelAutonomous extends Robot {
 
     private FourWheelDirectDrivetrain drivetrain;
     private ColorThiefTask colorThiefTask;
+    private VuforiaBase vuforiaBase;
 
     @Override
     public void handleEvent(RobotEvent e) {
@@ -86,6 +88,9 @@ public class BachJewelAutonomous extends Robot {
     @Override
     public void init() {
         // assign gamepad variables to defaults
+        vuforiaBase = new VuforiaBase();
+        vuforiaBase.init(this);
+
         alliance = Alliance.DEFAULT;
         startingPosition = StartingPosition.DEFAULT;
 
@@ -248,7 +253,7 @@ public class BachJewelAutonomous extends Robot {
     }
 
     protected void detectParticle() {
-        colorThiefTask = new ColorThiefTask(this) {
+        colorThiefTask = new ColorThiefTask(this, vuforiaBase) {
             @Override
             public void handleEvent(RobotEvent e) {
                 ColorThiefTask.ColorThiefEvent event = (ColorThiefEvent) e;

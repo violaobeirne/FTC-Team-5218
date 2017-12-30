@@ -21,6 +21,7 @@ import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
+import team25core.VuforiaBase;
 
 /**
  * Created by Lizzie on 11/11/2017.
@@ -80,6 +81,7 @@ public class BeethovenJewelParkAutonomous extends Robot {
 
     private FourWheelDirectDrivetrain drivetrain;
     private ColorThiefTask colorThiefTask;
+    private VuforiaBase vuforiaBase;
     private TwoAxisShoulderTask shoulderTask;
 
     private Telemetry.Item particleColor;
@@ -101,6 +103,10 @@ public class BeethovenJewelParkAutonomous extends Robot {
     @Override
     public void init() {
         // assign gamepad variables to defaults
+
+        vuforiaBase = new VuforiaBase();
+        vuforiaBase.init(this);
+
         allianceColor = AllianceColor.DEFAULT;
         startPosition = StartPosition.DEFAULT;
 
@@ -272,7 +278,7 @@ public class BeethovenJewelParkAutonomous extends Robot {
     }
 
     protected void detectParticle() {
-        colorThiefTask = new ColorThiefTask(this) {
+        colorThiefTask = new ColorThiefTask(this, vuforiaBase) {
             @Override
             public void handleEvent(RobotEvent e) {
                 ColorThiefTask.ColorThiefEvent event = (ColorThiefEvent) e;
