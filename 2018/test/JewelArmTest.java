@@ -1,6 +1,7 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,6 +15,7 @@ import team25core.RobotEvent;
  * Created by Lizzie on 12/9/2017.
  */
 @Autonomous(name = "Jewel Arm Test")
+@Disabled
 public class JewelArmTest extends Robot {
     private Servo jewelXServo;
     private Servo jewelYServo;

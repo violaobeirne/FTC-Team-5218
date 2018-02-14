@@ -3,7 +3,7 @@ package test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.TwoAxisShoulderTask;
+import team25core.TwoAxisShoulderTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 

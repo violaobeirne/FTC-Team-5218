@@ -1,5 +1,6 @@
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,6 +15,7 @@ import team25core.ServoCalibrateTask;
  */
 
 @TeleOp(name="TEST Servo")
+@Disabled
 public class StandardServoTest extends Robot{
 
     private Servo servo;
