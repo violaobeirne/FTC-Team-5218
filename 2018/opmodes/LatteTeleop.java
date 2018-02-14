@@ -20,9 +20,9 @@ import team25core.TankDriveTask;
  * Created by Lizzie on 11/4/2017.
  */
 
-@TeleOp(name = "Teleop")
-public class LatteTeleop extends Robot{
-
+@TeleOp(name = "5218 Teleop")
+public class LatteTeleop extends Robot {
+    // Drivetrain and mechanism declarations.
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -41,6 +41,7 @@ public class LatteTeleop extends Robot{
 
     private FourWheelDirectDrivetrain fwd;
 
+    // Constants.
     public static final double GLYPH_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_OPEN_LEFT_POSITION;
     public static final double GLYPH_CLOSE_LEFT_POSITION = HisaishiCalibration.GLYPH_CLOSE_LEFT_POSITION;
     public static final double GLYPH_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_OPEN_RIGHT_POSITION;
@@ -69,20 +70,12 @@ public class LatteTeleop extends Robot{
         backLeft = hardwareMap.dcMotor.get("backL");
         backRight = hardwareMap.dcMotor.get("backR");
 
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
         fwd = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+
+        fwd.resetEncoders();
+        fwd.encodersOn();
+        fwd.setSplitPersonalityMotorDirection(true);
+
 
         // Relic.
         relicExtender = hardwareMap.dcMotor.get("relicExtender");
@@ -100,13 +93,13 @@ public class LatteTeleop extends Robot{
         jewelYServo = hardwareMap.servo.get("jewelYAxis");
 
         // Initialization positions.
-        jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_NEUTRAL);
+        jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_BACK);
         jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
     }
 
     @Override
     public void handleEvent(RobotEvent e) {
-        // Keep scrolling...
+        // Continue on your scrolling adventure...
     }
 
     @Override
@@ -128,12 +121,11 @@ public class LatteTeleop extends Robot{
         this.addTask(dropGlyph);
 
         // Relic.
-        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
         this.addTask(castRelic);
         this.addTask(reelRelic);
 
-        /* Driver One */
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
@@ -141,6 +133,8 @@ public class LatteTeleop extends Robot{
                     task.slowDown(true);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     task.slowDown(false);
+                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+                    jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
                 }
             }
         });
