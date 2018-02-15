@@ -132,15 +132,12 @@ public class BeethovenAutonomous extends Robot {
     @Override
     public void start() {
         RobotLog.i("104 Closing glyph arms and raising glyph.");
-        glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
-        glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
-
+        servoPosClose();
         liftGlyph();
 
         addTask(new SingleShotTimerTask(this, 1000) {
             @Override
-            public void handleEvent(RobotEvent e)
-            {
+            public void handleEvent(RobotEvent e) {
                 RobotLog.i("104 Glyph retrieved, preparing to push particle.");
                 pushParticle();
             }
@@ -158,12 +155,11 @@ public class BeethovenAutonomous extends Robot {
                 alliance.setValue("RED");
                 break;
             case BUTTON_A_DOWN:
-                if(pollingOn) {
+                if (pollingOn) {
                     colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.OFF);
                     vumkTask.setPollingMode(VuMarkIdentificationTask.PollingMode.OFF);
                     pollingOn = false;
-                }
-                else if(!pollingOn) {
+                } else if (!pollingOn) {
                     colorThiefTask.setPollingMode(ColorThiefTask.PollingMode.ON);
                     vumkTask.setPollingMode(VuMarkIdentificationTask.PollingMode.ON);
                     pollingOn = true;
@@ -192,8 +188,7 @@ public class BeethovenAutonomous extends Robot {
         }
     }
 
-    protected void vumarkIdentification()
-    {
+    protected void vumarkIdentification() {
         vumkTask = new VuMarkIdentificationTask(this, vuforiaBase) {
             @Override
             public void handleEvent(RobotEvent e) {
@@ -219,19 +214,16 @@ public class BeethovenAutonomous extends Robot {
         this.addTask(vumkTask);
     }
 
-    protected void liftGlyph()
-    {
+    protected void liftGlyph() {
         // use actual encoder thing
         // will eliminate ghost behavior
         addTask(new SingleShotTimerTask(this, 600) {
             @Override
-            public void handleEvent(RobotEvent e)
-            {
+            public void handleEvent(RobotEvent e) {
                 glyphElevator.setPower(0.6);
                 addTask(new SingleShotTimerTask(this.robot, 700) {
                     @Override
-                    public void handleEvent(RobotEvent e)
-                    {
+                    public void handleEvent(RobotEvent e) {
                         glyphElevator.setPower(0);
                     }
                 });
@@ -267,8 +259,7 @@ public class BeethovenAutonomous extends Robot {
 
         shoulderTask = new TwoAxisShoulderTask(this, jewelXServo, jewelYServo) {
             @Override
-            public void handleEvent(RobotEvent e)
-            {
+            public void handleEvent(RobotEvent e) {
                 initialMove(glyphPath);
             }
 
@@ -276,8 +267,7 @@ public class BeethovenAutonomous extends Robot {
         shoulderTask.init();
     }
 
-    protected void pushParticle()
-    {
+    protected void pushParticle() {
         RobotLog.i("104 knocking opponent's jewel off the platform.");
         if (startPosition == startPosition.R1 || startPosition == startPosition.R2) {
             if (detectedRed) {
@@ -295,8 +285,7 @@ public class BeethovenAutonomous extends Robot {
         this.addTask(shoulderTask);
     }
 
-    protected void pushGlyph()
-    {
+    protected void pushGlyph() {
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3, -0.3);
@@ -313,8 +302,7 @@ public class BeethovenAutonomous extends Robot {
                 switch (event.kind) {
                     case PATH_DONE:
                         RobotLog.i("104 opening glyph arms after path to key column finish.");
-                        glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
-                        glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
+                        servoPosOpen();
                         addTask(new SingleShotTimerTask(this.robot, 500) {
                             @Override
                             public void handleEvent(RobotEvent e) {
@@ -325,5 +313,15 @@ public class BeethovenAutonomous extends Robot {
                 }
             }
         });
+    }
+
+    protected void servoPosOpen() {
+        glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
+    }
+
+    protected void servoPosClose() {
+        glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
     }
 }
