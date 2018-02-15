@@ -17,10 +17,10 @@ public class HisaishiCalibration {
     public static final double GLYPH_OPEN_RIGHT_POSITION = 25.0/256.0;
     public static final double GLYPH_CLOSE_LEFT_POSITION = 145.0/256.0;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = 150.0/256.0;
-    public static final double GLYPH_STOW_LEFT_POSITION = 248.0/256.0;
-    public static final double GLYPH_STOW_RIGHT_POSITION = 46.0/256.0;
-    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = 180.0/256.0;
-    public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = 125.0/256.0;
+    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = 220.0/256.0;
+    public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = 85.0/256.0;
+    public static final double GLYPH_QUARTER_OPEN_LEFT_POSITION = 180.0/256.0;
+    public static final double GLYPH_QUARTER_OPEN_RIGHT_POSITION = 125.0/256.0;
     public static final double GLYPH_LEFT_SLIDE_POWER = -1.0;
     public static final double GLYPH_RIGHT_SLIDE_POWER = 1.0;
     public static final double GLYPH_STOP_SLIDE_POWER = 0.0;

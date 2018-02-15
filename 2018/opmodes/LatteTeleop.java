@@ -1,19 +1,28 @@
 package opmodes;
 
+import android.util.EventLog;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
+import com.vuforia.HINT;
+
+import javax.net.ssl.HostnameVerifier;
 
 import examples.FourWheelDriveTaskExample;
+import team25core.DeadReckonPath;
+import team25core.DeadReckonTask;
 import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.PersistentTelemetryTask;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.SingleShotTimerTask;
 import team25core.TankDriveTask;
 
 /**
@@ -48,6 +57,8 @@ public class LatteTeleop extends Robot {
     public static final double GLYPH_CLOSE_RIGHT_POSITION = HisaishiCalibration.GLYPH_CLOSE_RIGHT_POSITION;
     public static final double GLYPH_HALF_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_LEFT_POSITION;
     public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_HALF_OPEN_RIGHT_POSITION;
+    public static final double GLYPH_QUARTER_OPEN_LEFT_POSITION = HisaishiCalibration.GLYPH_QUARTER_OPEN_LEFT_POSITION;
+    public static final double GLYPH_QUARTER_OPEN_RIGHT_POSITION = HisaishiCalibration.GLYPH_QUARTER_OPEN_RIGHT_POSITION;
 
     public static final double RELIC_EXTENDER_POWER = HisaishiCalibration.RELIC_EXTENDER_POWER;
     public static final double RELIC_CASTER_POWER = HisaishiCalibration.RELIC_CASTER_POWER;
@@ -60,7 +71,10 @@ public class LatteTeleop extends Robot {
     public static final double GLYPH_RIGHT_SLIDE_POWER = HisaishiCalibration.GLYPH_RIGHT_SLIDE_POWER;
     public static final double GLYPH_STOP_SLIDE_POWER = HisaishiCalibration.GLYPH_STOP_SLIDE_POWER;
 
+    private DeadReckonPath depositGlyphPath;
+
     private boolean isOpen = false;
+    private boolean isDown = false;
 
     @Override
     public void init() {
@@ -95,6 +109,8 @@ public class LatteTeleop extends Robot {
         // Initialization positions.
         jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_BACK);
         jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
+
+        depositGlyphPath = new DeadReckonPath();
     }
 
     @Override
@@ -133,8 +149,18 @@ public class LatteTeleop extends Robot {
                     task.slowDown(true);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     task.slowDown(false);
+                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN && event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    if (isDown) {
+                        jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_DEPLOYED);
+                        isDown = false;
+                    } else {
+                        jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
+                        isDown = true;
+                    }
+                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    glyphDeposit();
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
-                    jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
+                    relicExtension();
                 }
             }
         });
@@ -158,16 +184,61 @@ public class LatteTeleop extends Robot {
                 } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_B_UP) {
                     glyphSlider.setPower(GLYPH_STOP_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
-                    glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
-                    glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);
+                    servoHalfOpen();
+                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN && event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    servoQuarterOpen();
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
-                    glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
+                    servoPosOpen();
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
-                    glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
-                    glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+                    servoPosClose();
                 }
             }
         });
     }
+
+    protected void servoPosOpen() {
+        glyphLGrabber.setPosition(GLYPH_OPEN_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
+    }
+
+    protected void servoQuarterOpen() {
+        glyphLGrabber.setPosition(GLYPH_QUARTER_OPEN_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_QUARTER_OPEN_RIGHT_POSITION);
+    }
+
+    protected void servoHalfOpen() {
+        glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);
+    }
+
+    protected void servoPosClose() {
+        glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
+        glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
+    }
+
+    protected void depositPath(){
+        depositGlyphPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.2);
+        depositGlyphPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.5);
+        depositGlyphPath.addSegment(DeadReckonPath.SegmentType.TURN, 140, 0.3);
+
+        this.addTask(new DeadReckonTask(this, depositGlyphPath, fwd));
+    }
+
+    protected void glyphDeposit() {
+        servoPosOpen();
+        addTask(new SingleShotTimerTask(this, 500) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                RobotLog.i("104 Initiating automated glyph placement.");
+                depositPath();
+            }
+        });
+    }
+
+    protected void relicExtension() {
+        // ...more spicy code coming soon
+    }
+
 }
+
+
