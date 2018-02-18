@@ -115,10 +115,14 @@ public class BeethovenAutonomous extends Robot {
         jewelXServo = hardwareMap.servo.get("jewelXAxis");
         jewelYServo = hardwareMap.servo.get("jewelYAxis");
 
+
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setSplitPersonalityMotorDirection(false);
+
+        glyphElevator.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        glyphElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         glyphDeposit = new GlyphDeposits();
         pushGlyph = new DeadReckonPath();
