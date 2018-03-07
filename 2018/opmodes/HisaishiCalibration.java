@@ -12,12 +12,12 @@ public class HisaishiCalibration {
 
     // glyph mechanisms
     public static final double GLYPH_LIFT_ELEVATOR_POWER = 0.6;
-    public static final double GLYPH_DROP_ELEVATOR_POWER = 0.6;
+    public static final double GLYPH_DROP_ELEVATOR_POWER = 0.1;
     public static final double GLYPH_OPEN_LEFT_POSITION = 254.0/256.0;
     public static final double GLYPH_OPEN_RIGHT_POSITION = 22.0/256.0;
     public static final double GLYPH_CLOSE_LEFT_POSITION = 150.0/256.0;
     public static final double GLYPH_CLOSE_RIGHT_POSITION = 136.0/256.0;
-    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = 222.0/256.0;
+    public static final double GLYPH_HALF_OPEN_LEFT_POSITION = 215.0/256.0;
     public static final double GLYPH_HALF_OPEN_RIGHT_POSITION = 87.0/256.0;
     public static final double GLYPH_QUARTER_OPEN_LEFT_POSITION = 161.0/256.0;
     public static final double GLYPH_QUARTER_OPEN_RIGHT_POSITION = 113.0/256.0;
@@ -26,7 +26,7 @@ public class HisaishiCalibration {
     public static final double GLYPH_STOP_SLIDE_POWER = 0.0;
 
     // jewel
-    public static final double JEWEL_Y_AXIS_DEPLOYED = 5.0/256.0;
+    public static final double JEWEL_Y_AXIS_DEPLOYED = 20.0/256.0;
     public static final double JEWEL_Y_AXIS_STOWED = 148.0/256.0;
     public static final double JEWEL_X_AXIS_NEUTRAL = 112.0/256.0;
     public static final double JEWEL_X_AXIS_FORWARD = 80.0/256.0;
@@ -41,7 +41,7 @@ public class HisaishiCalibration {
     // relic mechanisms
     // take heed of integer and double values young grasshopper
     public static final double RELIC_GRABBER_OPEN_POSITION = 130.0/256.0;
-    public static final double RELIC_GRABBER_CLOSE_POSITION = 90.0/256.0;
+    public static final double RELIC_GRABBER_CLOSE_POSITION = 100.0/256.0;
 
     public static final double RELIC_EXTENDER_POWER = 0.5;
     public static final double RELIC_CASTER_POWER = 0.55;

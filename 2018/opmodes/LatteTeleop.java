@@ -29,7 +29,7 @@ import team25core.TankDriveTask;
  * Created by Lizzie on 11/4/2017.
  */
 
-@TeleOp(name = "5218 Teleop")
+@TeleOp(name = "Disbelief Teleop")
 public class LatteTeleop extends Robot {
     // Drivetrain and mechanism declarations.
     private DcMotor frontLeft;
@@ -72,6 +72,7 @@ public class LatteTeleop extends Robot {
     public static final double GLYPH_STOP_SLIDE_POWER = HisaishiCalibration.GLYPH_STOP_SLIDE_POWER;
 
     private DeadReckonPath depositGlyphPath;
+    private TankDriveTask tankDriveTask;
 
     private boolean isOpen = false;
     private boolean isDown = false;
@@ -121,8 +122,8 @@ public class LatteTeleop extends Robot {
     @Override
     public void start() {
         /* Driver One */
-        final TankDriveTask task = new TankDriveTask(this, fwd);
-        addTask(task);
+        tankDriveTask = new TankDriveTask(this, fwd);
+        addTask(tankDriveTask);
 
         // Hug & Extend Relic.
         DeadmanMotorTask hugRelic = new DeadmanMotorTask(this, relicExtender, RELIC_EXTENDER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
@@ -145,11 +146,12 @@ public class LatteTeleop extends Robot {
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
+                RobotLog.i("Gamepad Event", event.kind);
                 if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    task.slowDown(true);
+                    tankDriveTask.slowDown(true);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    task.slowDown(false);
-                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN && event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    tankDriveTask.slowDown(false);
+                } else if (event.kind == EventKind.DPAD_UP_DOWN) {
                     if (isDown) {
                         jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_DEPLOYED);
                         isDown = false;
@@ -157,8 +159,11 @@ public class LatteTeleop extends Robot {
                         jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
                         isDown = true;
                     }
+                } else if (event.kind == EventKind.DPAD_DOWN_DOWN) {
+                    jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_FORWARD);
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    glyphDeposit();
+                    glyphDeposit(this.robot);
+                    RobotLog.i("Glyph deposit method actived.");
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
                     relicExtension();
                 }
@@ -178,15 +183,15 @@ public class LatteTeleop extends Robot {
                         isOpen = true;
                     }
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                    servoPosQuarterOpen();
+                } else if (event.kind == EventKind.DPAD_LEFT_DOWN) {
                     glyphSlider.setPower(GLYPH_LEFT_SLIDE_POWER);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
+                } else if (event.kind == EventKind.DPAD_RIGHT_DOWN) {
                     glyphSlider.setPower(GLYPH_RIGHT_SLIDE_POWER);
-                } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_B_UP) {
+                } else if (event.kind == EventKind.DPAD_LEFT_UP|| event.kind == EventKind.DPAD_RIGHT_UP) {
                     glyphSlider.setPower(GLYPH_STOP_SLIDE_POWER);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
-                    servoHalfOpen();
-                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN && event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    servoQuarterOpen();
+                    servoPosHalfOpen();
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                     servoPosOpen();
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
@@ -201,36 +206,48 @@ public class LatteTeleop extends Robot {
         glyphRGrabber.setPosition(GLYPH_OPEN_RIGHT_POSITION);
     }
 
-    protected void servoQuarterOpen() {
+    protected void servoPosQuarterOpen() {
         glyphLGrabber.setPosition(GLYPH_QUARTER_OPEN_LEFT_POSITION);
         glyphRGrabber.setPosition(GLYPH_QUARTER_OPEN_RIGHT_POSITION);
     }
 
-    protected void servoHalfOpen() {
+    protected void servoPosHalfOpen() {
         glyphLGrabber.setPosition(GLYPH_HALF_OPEN_LEFT_POSITION);
         glyphRGrabber.setPosition(GLYPH_HALF_OPEN_RIGHT_POSITION);
     }
 
-    protected void servoPosClose() {
+    protected void servoPosClose()
+    {
         glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
         glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
     }
 
-    protected void depositPath(){
+    protected void depositPath(Robot robot)
+    {
         depositGlyphPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.2);
         depositGlyphPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.5);
         depositGlyphPath.addSegment(DeadReckonPath.SegmentType.TURN, 140, 0.3);
 
-        this.addTask(new DeadReckonTask(this, depositGlyphPath, fwd));
+        tankDriveTask.stop();
+        robot.addTask(new DeadReckonTask(robot, depositGlyphPath, fwd) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                if(event.kind == EventKind.PATH_DONE) {
+                    addTask(tankDriveTask);
+                    // consider: when does "start" happen?
+                }
+            }
+        });
     }
 
-    protected void glyphDeposit() {
-        servoPosOpen();
-        addTask(new SingleShotTimerTask(this, 500) {
+    protected void glyphDeposit(Robot robot) {
+        servoPosQuarterOpen();
+        robot.addTask(new SingleShotTimerTask(this, 500) {
             @Override
             public void handleEvent(RobotEvent e) {
                 RobotLog.i("104 Initiating automated glyph placement.");
-                depositPath();
+                depositPath(this.robot);
             }
         });
     }
