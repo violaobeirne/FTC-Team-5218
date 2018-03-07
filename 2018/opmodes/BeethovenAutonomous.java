@@ -31,7 +31,7 @@ public class BeethovenAutonomous extends Robot {
         RED,
         DEFAULT,
     }
-
+    // Declare constants and autonomous variables.
     protected AllianceColor allianceColor;
     protected GlyphDeposits.StartingPosition startPosition;
 
@@ -115,10 +115,14 @@ public class BeethovenAutonomous extends Robot {
         jewelXServo = hardwareMap.servo.get("jewelXAxis");
         jewelYServo = hardwareMap.servo.get("jewelYAxis");
 
+
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setSplitPersonalityMotorDirection(false);
+
+        glyphElevator.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        glyphElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         glyphDeposit = new GlyphDeposits();
         pushGlyph = new DeadReckonPath();
@@ -291,6 +295,16 @@ public class BeethovenAutonomous extends Robot {
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3, -0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 4, 0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.3);
+        pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.3);
+        if(startPosition == startPosition.B2 || startPosition == startPosition.R2)
+        {
+            if(allianceColor.equals(AllianceColor.RED)) {
+                pushGlyph.addSegment(DeadReckonPath.SegmentType.TURN, 90, 0.3);
+            }
+            else if(allianceColor.equals(AllianceColor.BLUE)) {
+                pushGlyph.addSegment(DeadReckonPath.SegmentType.TURN, 90, -0.3);
+            }
+        }
 
         this.addTask(new DeadReckonTask(this, pushGlyph, drivetrain));
     }
@@ -324,4 +338,6 @@ public class BeethovenAutonomous extends Robot {
         glyphLGrabber.setPosition(GLYPH_CLOSE_LEFT_POSITION);
         glyphRGrabber.setPosition(GLYPH_CLOSE_RIGHT_POSITION);
     }
+
+    // implement moving back ++ partial extension
 }
