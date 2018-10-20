@@ -45,20 +45,20 @@ public class GlyphDeposits {
 
         paths[StartingPosition.R2.ordinal()][TargetColumn.RIGHT.ordinal()] = new DeadReckonPath();
         paths[StartingPosition.R2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, 0.5);
-        paths[StartingPosition.R2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 8, -0.3);
+        paths[StartingPosition.R2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 15, -0.3);
         paths[StartingPosition.R2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
 
         paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()] = new DeadReckonPath();
         paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
         paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 85, -0.3);
         paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.5);
-        paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 58, 0.3);
+        paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 53, 0.3);
         paths[StartingPosition.R2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
 
         paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()] = new DeadReckonPath();
-        paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
-        paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 85, -0.3);
         paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, 0.5);
+        paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 85, -0.3);
+        paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 17, 0.5);
         paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 60, 0.3);
         paths[StartingPosition.R2.ordinal()][TargetColumn.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
 
@@ -90,9 +90,9 @@ public class GlyphDeposits {
         paths[StartingPosition.B2.ordinal()][TargetColumn.MIDDLE.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
 
         paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()] = new DeadReckonPath();
-        paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.5);
+        paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.5);
         paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 85, -0.3);
-        paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 23, 0.5);
+        paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 17, 0.5);
         paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 60, -0.3);
         paths[StartingPosition.B2.ordinal()][TargetColumn.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
     }

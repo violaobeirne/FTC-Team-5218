@@ -295,16 +295,6 @@ public class BeethovenAutonomous extends Robot {
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3, -0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 4, 0.3);
         pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.3);
-        pushGlyph.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.3);
-        if(startPosition == startPosition.B2 || startPosition == startPosition.R2)
-        {
-            if(allianceColor.equals(AllianceColor.RED)) {
-                pushGlyph.addSegment(DeadReckonPath.SegmentType.TURN, 90, 0.3);
-            }
-            else if(allianceColor.equals(AllianceColor.BLUE)) {
-                pushGlyph.addSegment(DeadReckonPath.SegmentType.TURN, 90, -0.3);
-            }
-        }
 
         this.addTask(new DeadReckonTask(this, pushGlyph, drivetrain));
     }

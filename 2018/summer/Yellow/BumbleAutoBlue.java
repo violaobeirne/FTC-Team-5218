@@ -1,4 +1,4 @@
-package team25core;
+package summer.Yellow;
 /*
  * FTC Team 25: elizabeth, August 12, 2018
  */
@@ -8,6 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import team25core.Alliance;
+import team25core.DeadReckonPath;
+import team25core.DeadReckonTask;
+import team25core.Robot;
+import team25core.RobotEvent;
+import team25core.TwoWheelDirectDrivetrain;
 
 @Autonomous(name = "BumbleBotsAuto BLUE")
 //@Disabled
@@ -72,7 +79,7 @@ public class BumbleAutoBlue extends Robot {
     @Override
     public void start()
     {
-        jewel.setPosition(170);
+        // jewel.setPosition(170);
 
         task = new DeadReckonTask(this, path, drivetrain);
         addTask(task);

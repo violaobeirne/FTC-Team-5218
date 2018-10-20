@@ -27,10 +27,11 @@ public class HisaishiCalibration {
 
     // jewel
     public static final double JEWEL_Y_AXIS_DEPLOYED = 20.0/256.0;
-    public static final double JEWEL_Y_AXIS_STOWED = 148.0/256.0;
+    public static final double JEWEL_Y_AXIS_STOWED = 152.0/256.0;
     public static final double JEWEL_X_AXIS_NEUTRAL = 112.0/256.0;
     public static final double JEWEL_X_AXIS_FORWARD = 80.0/256.0;
     public static final double JEWEL_X_AXIS_BACK = 130.0/256.0;
+    public static final double JEWEL_X_AXIS_STOW = 256.0/256.0;
 
     // Vuforia constants
     public static final int BLUE_BLUE_LOWER = 0x00;

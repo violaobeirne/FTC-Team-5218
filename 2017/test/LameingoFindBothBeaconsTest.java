@@ -56,7 +56,7 @@ public class LameingoFindBothBeaconsTest extends Robot {
         rightSeeBlack.setName("Right");
         rightSeeWhite.setName("Right");
 
-        drivetrain = new TwoWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, PIVOT_MOD, right, left);
+        drivetrain = new TwoWheelDirectDrivetrain(MochaCalibration.TICKS_PER_INCH, right, left);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 

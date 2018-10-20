@@ -1,38 +1,36 @@
-package summer;
+package summer.Orange;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import summer.SummerCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.TwoWheelDirectDrivetrain;
 
 /**
  * Created by Lizzie on 5/17/2018.
  */
 
-public class GreenAutonomous extends Robot {
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
+public class OrangeAutonomous extends Robot {
+    private DcMotor Left;
+    private DcMotor Right;
 
     private Servo servo;
 
-    private FourWheelDirectDrivetrain drivetrain;
+    private TwoWheelDirectDrivetrain drivetrain;
     private DeadReckonPath movePath;
     private DeadReckonTask moveTask;
 
     @Override
     public void init() {
-        frontLeft = hardwareMap.dcMotor.get("frontL");
-        backLeft = hardwareMap.dcMotor.get("backL");
-        frontRight = hardwareMap.dcMotor.get("frontR");
-        backRight = hardwareMap.dcMotor.get("backR");
+        Left = hardwareMap.dcMotor.get("Right");
+        Right = hardwareMap.dcMotor.get("Left");
 
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new TwoWheelDirectDrivetrain(Right, Left);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
 

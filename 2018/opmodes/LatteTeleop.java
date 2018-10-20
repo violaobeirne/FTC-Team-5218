@@ -29,7 +29,7 @@ import team25core.TankDriveTask;
  * Created by Lizzie on 11/4/2017.
  */
 
-@TeleOp(name = "Disbelief Teleop")
+// @TeleOp(name = "Disbelief Teleop")
 public class LatteTeleop extends Robot {
     // Drivetrain and mechanism declarations.
     private DcMotor frontLeft;
@@ -138,8 +138,8 @@ public class LatteTeleop extends Robot {
         this.addTask(dropGlyph);
 
         // Relic.
-        DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_X);
-        DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        final DeadmanMotorTask castRelic = new DeadmanMotorTask(this, relicCaster, -RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_X);
+        final DeadmanMotorTask reelRelic = new DeadmanMotorTask(this, relicCaster, RELIC_CASTER_POWER, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
         this.addTask(castRelic);
         this.addTask(reelRelic);
 
@@ -159,11 +159,14 @@ public class LatteTeleop extends Robot {
                         jewelYServo.setPosition(HisaishiCalibration.JEWEL_Y_AXIS_STOWED);
                         isDown = true;
                     }
+                } else if (event.kind == EventKind.DPAD_LEFT_DOWN) {
+                    jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_STOW);
                 } else if (event.kind == EventKind.DPAD_DOWN_DOWN) {
-                    jewelXServo.setPosition(HisaishiCalibration.JEWEL_X_AXIS_FORWARD);
+                    castRelic.setPower(0.25);
+                    reelRelic.setPower(0.25);
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
-                    glyphDeposit(this.robot);
-                    RobotLog.i("Glyph deposit method actived.");
+                    // glyphDeposit(this.robot);
+                    RobotLog.i("Glyph deposit method activated.");
                 } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
                     relicExtension();
                 }
