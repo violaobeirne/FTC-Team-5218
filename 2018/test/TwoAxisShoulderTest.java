@@ -3,7 +3,7 @@ package test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.TwoAxisShoulderTask;
+import team25core.TwoAxisShoulderTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 
@@ -37,7 +37,7 @@ public class TwoAxisShoulderTest extends Robot {
          * The setDirection() call, in a game autonomous, would be called as a result
          * of a ColorThief event determining jewel color.
          */
-        shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.FORWARD);
+        shoulderTask.setDirection(TwoAxisShoulderTask.ShoulderDirection.BACKWARD);
 
     }
 

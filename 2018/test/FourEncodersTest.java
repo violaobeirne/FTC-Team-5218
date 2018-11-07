@@ -36,7 +36,7 @@ public class FourEncodersTest extends OpMode{
 
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        // frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -45,7 +45,9 @@ public class FourEncodersTest extends OpMode{
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE );
+        // backRight.setDirection(DcMotorSimple.Direction.REVERSE );
+
+
     }
 
     @Override

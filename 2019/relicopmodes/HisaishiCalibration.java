@@ -1,4 +1,4 @@
-package opmodes;
+package relicopmodes;
 
 /**
  * Created by Lizzie on 10/28/2017.

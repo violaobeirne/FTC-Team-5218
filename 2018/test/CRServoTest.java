@@ -1,6 +1,7 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import team25core.GamepadTask;
@@ -11,6 +12,7 @@ import team25core.RobotEvent;
  * Created by Lizzie on 12/9/2017.
  */
 @Autonomous(name = "CRServo Test")
+@Disabled
 public class CRServoTest extends Robot {
     private CRServo glyphSlider;
 
