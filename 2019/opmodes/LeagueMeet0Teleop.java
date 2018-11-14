@@ -54,11 +54,11 @@ public class LeagueMeet0Teleop extends Robot {
                     bungeeBox.setPosition(VivaldiCalibration.BUNGEE_BOX_DEPLOYED);
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
                     bungeeBox.setPosition(VivaldiCalibration.BUNGEE_BOX_LOW_DEPLOYED);
-                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                } else if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
                     bbExtension.setPower(1.0);
-                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+                } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
                     bbExtension.setPower(-1.0);
-                } else if (event.kind == EventKind.RIGHT_BUMPER_UP || event.kind == EventKind.RIGHT_TRIGGER_UP) {
+                } else if (event.kind == EventKind.LEFT_BUMPER_UP || event.kind == EventKind.LEFT_TRIGGER_UP) {
                     bbExtension.setPower(0.0);
                     bbExtension.setPower(0.0);
                 }
