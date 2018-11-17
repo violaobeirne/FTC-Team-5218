@@ -34,6 +34,7 @@ public class LeagueMeet0ChopinAutonomous extends Robot {
     private DcMotor bbExtension;
     private Servo marker;
     private FourWheelDirectDrivetrain drivetrain;
+    private DeadReckonPath exitDepotPath;
 
     private GamepadTask gamepad;
     protected AllianceColor allianceColor;
@@ -74,6 +75,9 @@ public class LeagueMeet0ChopinAutonomous extends Robot {
         dropoff = new MarkerDropoff();
         bungeeBox.setPosition(VivaldiCalibration.BUNGEE_BOX_STOWED);
         marker.setPosition(VivaldiCalibration.MARKER_STOWED);
+
+        exitDepotPath = new DeadReckonPath();
+        exitDepotPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.2);
     }
 
     @Override
@@ -131,13 +135,27 @@ public class LeagueMeet0ChopinAutonomous extends Robot {
         });
     }
 
+    protected void exitDepot(final DeadReckonPath path) {
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+
+                }
+            }
+        });
+    }
+
     protected void dropMarker() {
         addTask(new SingleShotTimerTask(this, 600) {
             @Override
             public void handleEvent(RobotEvent e) {
                 marker.setPosition(VivaldiCalibration.MARKER_DEPLOYED);
+                exitDepot(exitDepotPath);
             }
         });
     }
+
 
 }
