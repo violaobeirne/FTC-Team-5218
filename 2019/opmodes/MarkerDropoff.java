@@ -23,32 +23,39 @@ public class MarkerDropoff {
 
     public MarkerDropoff() {
         paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()] = new DeadReckonPath();
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 17, 0.5);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 90, -0.3);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 70, -0.3);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, 0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 60, 0.3);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, 0.3);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 15, 0.3);
         paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.5);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 90, 0.3);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 45, 0.5);
+        // paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.5);
 
         paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()] = new DeadReckonPath();
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.5);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 65, 0.3);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 31, 0.5);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 221, -0.5);
-        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, 0.5);
-
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 50, 0.3);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, 0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 80, -0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 14, 0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 20, -0.5);
+        paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.5);
+        // paths[MarkerDropoff.StartingPosition.CLOSE.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.5);
 
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()] = new DeadReckonPath();
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 93, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 80, -0.5);
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, 0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 47, -0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 30, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, 0.5);
 
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()] = new DeadReckonPath();
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 93, -0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, 0.5);
-        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 47, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 70, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 15, -0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, 0.5);
+        paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 22, -0.5);
         paths[MarkerDropoff.StartingPosition.FAR.ordinal()][DepotPath.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, 0.5);
     }
 

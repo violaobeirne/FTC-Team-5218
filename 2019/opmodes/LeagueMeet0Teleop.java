@@ -61,6 +61,13 @@ public class LeagueMeet0Teleop extends Robot {
                 } else if (event.kind == EventKind.LEFT_BUMPER_UP || event.kind == EventKind.LEFT_TRIGGER_UP) {
                     bbExtension.setPower(0.0);
                     bbExtension.setPower(0.0);
+                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                    bbExtension.setPower(1.0);
+                } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+                    bbExtension.setPower(-1.0);
+                } else if (event.kind == EventKind.RIGHT_BUMPER_UP || event.kind == EventKind.RIGHT_TRIGGER_UP) {
+                    bbExtension.setPower(0.0);
+                    bbExtension.setPower(0.0);
                 }
             }
         });
