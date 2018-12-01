@@ -41,16 +41,6 @@ public class SuttersTest extends Robot {
     private DeadReckonPath knockRightPath;
     private DeadReckonPath knockPath;
 
-    // declaring mineral detection variables
-    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
-    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
-    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    private static final String VUFORIA_KEY = " ASqh/rz/////AAABmY9M05H8VUa9iKDQrhKP2MmITNlky9LsYv0PfLC4L6MmVTGzL/M3vTfg5WZclp7+8TpRy0gR4q60axtlPTRgEEhN5hRcoLzWcv22WMQc/4jnZ/JU493ZG7QEEbURrKmlPO1PcbeaIq6uRpGz07jLyhnNs+lqwP8nQGfEgxZOOuNlBOteSr/A9jacpx+bHbwyfDuqBZPRGb9oqRI8jYS8pVL4nX0AA4RAcfimis5qWbW6FGKlU9L2W8AwaBd75gh4dQkO3zFItsOhgNVNcFF0COKiJBf4MOFAuWUPPrKrN31lhqGvl0rCK9SX7MrR3OwVSvaA06Zt5wnJ5y7/lYOYF8FTHfO22uIkZz73lOZOwors";
-
-    private VuforiaLocalizer vuforia;
-
-    private TFObjectDetector tfod;
-
     @Override
     public void handleEvent(RobotEvent e) {
         // keep scrolling...nothing to see here
@@ -81,53 +71,13 @@ public class SuttersTest extends Robot {
         knockRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 40, 0.3);
         knockRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
 
-        // gold mineral detection
-
-        initializeVuforia();
-        if ((ClassFactory.getInstance().canCreateTFObjectDetector()) && (tfod != null)) {
-            initializeTfod();
-            tfod.activate();
-
-            List<Recognition> updatedMinerals = tfod.getUpdatedRecognitions();
-            if (updatedMinerals != null) {
-                numberOfMinerals.setValue(updatedMinerals.size());
-                if (updatedMinerals.size() == 3) {
-                    int goldMineralX = -1;
-                    int silverMineral1X = -1;
-                    int silverMineral2X = -1;
-                    for (Recognition recognition : updatedMinerals) {
-                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            goldMineralX = (int) recognition.getLeft();
-                        } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
-                        } else {
-                            silverMineral2X = (int) recognition.getLeft();
-                        }
-                    }
-                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            goldMineralPosition.setValue("LEFT");
-                            knockPath = knockLeftPath;
-                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            goldMineralPosition.setValue("RIGHT");
-                            knockPath = knockRightPath;
-                        } else {
-                            goldMineralPosition.setValue("CENTER");
-                            knockPath = knockCenterPath;
-                        }
-                    }
-                }
-            }
-        }
-        if (tfod != null) {
-            tfod.shutdown();
-        }
-
+        // initializing mineral detection
+        initializeMineralDetection();
     }
 
-    /*
     protected void initializeMineralDetection() {
-        MineralDetectionTask mdTask = new MineralDetectionTask(this) {
+        String cameraName = "mineralCamera";
+        MineralDetectionTask mdTask = new MineralDetectionTask(this, cameraName) {
             public void handleEvent(RobotEvent e) {
                 MineralDetectionEvent event = (MineralDetectionEvent)e;
                 List<Recognition> updatedMinerals = event.minerals;
@@ -167,22 +117,6 @@ public class SuttersTest extends Robot {
         mdTask.setDetectionKind(MineralDetectionTask.DetectionKind.EVERYTHING);
         this.addTask(mdTask);
     }
-    */
-
-    private void initializeVuforia (){
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "mineralCamera");
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-    private void initializeTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
-    }
 
     protected void initialMove(final DeadReckonPath path) {
         addTask(new DeadReckonTask(this, path, drivetrain) {
@@ -195,6 +129,7 @@ public class SuttersTest extends Robot {
             }
         });
     }
+
     @Override
     public void start() {
         initialMove(knockPath);
