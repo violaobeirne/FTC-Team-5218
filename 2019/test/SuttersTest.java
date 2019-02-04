@@ -61,15 +61,15 @@ public class SuttersTest extends Robot {
 
         // initializing paths
         knockLeftPath = new DeadReckonPath();
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 40, -0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
+        knockLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 40, 0.3);
+        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.5);
 
         knockCenterPath = new DeadReckonPath();
-        knockCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.3);
+        knockCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.3);
 
         knockRightPath = new DeadReckonPath();
-        knockRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 40, 0.3);
-        knockRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.5);
+        knockRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
+        knockRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.5);
 
         // initializing mineral detection
         initializeMineralDetection();
