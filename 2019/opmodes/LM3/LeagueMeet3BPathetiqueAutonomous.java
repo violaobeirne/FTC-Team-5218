@@ -4,23 +4,22 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
+import opmodes.ExitDepotDropoff;
+import opmodes.MineralMarkerDropoff;
+import opmodes.MineralUtils;
+import opmodes.VivaldiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.IMULevelSensorCriteria;
 import team25core.MineralDetectionTask;
-import team25core.MonitorMotorTask;
-import team25core.OneWheelDirectDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;
@@ -29,8 +28,11 @@ import team25core.SingleShotTimerTask;
 /**
  * Created by Lizzie on 11/27/2018.
  */
-@Autonomous(name = "League Meet 3 Drop Autonomous")
-public class LeagueMeet3BrentanoAutonomous extends Robot {
+@Autonomous(name = "FINGERS CROSSED Autonomous")
+@Disabled
+public class LeagueMeet3BPathetiqueAutonomous extends Robot {
+
+    private static final String TAG = "Lizzie Auto";
 
     private enum AllianceColor {
         BLUE,
@@ -38,61 +40,64 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
         DEFAULT
     }
 
-    // declaring drivetrain
+    // declaring motors, servos, and drivetrain
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
     private FourWheelDirectDrivetrain drivetrain;
+    private BNO055IMU imu;
+    private DcMotor bungeeBox;
+    // private Servo marker;
 
-    // declaring hanging mechamisms and tasks
-    private DcMotor liftLeft;
-    private DcMotor liftRight;
-    private boolean leftDone = false;
-    private boolean rightDone = false;
-
-    // declaring other tasks and paths
-    private MineralMarkerDropoff dropoff;
-    private DeadReckonPath exitDepotPath;
     private DeadReckonPath knockPath;
+    private MineralMarkerDropoff dropoff;
+
+    private DeadReckonPath exitDepotPath;
+    private ExitDepotDropoff depotDropoff;
+
+    private boolean dropMarkerBoolean = false;
+    // private DcMotor bungeeBox;
 
     // declaring gamepad variables
     private GamepadTask gamepad;
     protected AllianceColor allianceColor;
-    protected MineralMarkerDropoff.DropMarker dropMarker;
-    protected MineralMarkerDropoff.GoldMineralPosition goldMineralPosition;
+    protected MineralUtils.MineralPosition goldMineralPosition;
+    protected MineralUtils.DropMarker dropMarker;
 
     // declaring telemetry item
     private Telemetry.Item allianceItem;
     private Telemetry.Item numberOfMineralsItem;
     private Telemetry.Item goldMineralPositionItem;
     private Telemetry.Item dropMarkerItem;
-    private Telemetry.Item landedItem;
+    private Telemetry.Item doubleSampling;
+    private IMULevelSensorCriteria imuSensor;
 
     @Override
     public void init() {
-        // initializing drivetrain
+        // initializing motors, servos, and drivetrain
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
+        // marker = hardwareMap.servo.get("marker");
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
+        drivetrain.setNoncanonicalMotorDirection();
 
-        // hanging mechanism
-        liftLeft = hardwareMap.dcMotor.get("liftLeft");
-        liftRight = hardwareMap.dcMotor.get("liftRight");
-        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bungeeBox = hardwareMap.dcMotor.get("bungeeBox");
+        bungeeBox.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bungeeBox.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // bungeeBox.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         // depot path
-        exitDepotPath = new DeadReckonPath();
-        exitDepotPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.2);
         knockPath = new DeadReckonPath();
         dropoff = new MineralMarkerDropoff();
+        exitDepotPath = new DeadReckonPath();
+        depotDropoff = new ExitDepotDropoff();
 
         // initializing gamepad variables
         allianceColor = allianceColor.DEFAULT;
@@ -104,9 +109,12 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
         numberOfMineralsItem = telemetry.addData("Number of Minerals: ", "NOT DETECTED");
         goldMineralPositionItem = telemetry.addData("Gold Mineral Position: ", "NOT SELECTED");
         dropMarkerItem = telemetry.addData("Drop Marker", "NOT SELECTED");
-        landedItem = telemetry.addData("Robot Landed", "Hanging around");
+        // doubleSampling = telemetry.addData("Double Sampling: ", "NOT SELECTED");
+
+        imuSensor = new IMULevelSensorCriteria(imu, 2.86);
 
         // initializing mineral detection
+        // marker.setPosition(VivaldiCalibration.MARKER_STOWED);
         initializeMineralDetection();
     }
 
@@ -116,34 +124,24 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
             public void handleEvent(RobotEvent e) {
                 MineralDetectionEvent event = (MineralDetectionEvent) e;
                 List<Recognition> updatedMinerals = event.minerals;
-                if (updatedMinerals != null) {
-                    numberOfMineralsItem.setValue(updatedMinerals.size());
-                    int goldMineralX = -1;
-                    int silverMineral1X = -1;
-                    int silverMineral2X = -1;
-                    for (Recognition recognition : updatedMinerals) {
-                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            goldMineralX = (int) recognition.getLeft();
-                        } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
-                        } else {
-                            silverMineral2X = (int) recognition.getLeft();
-                        }
-                    }
-                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            goldMineralPositionItem.setValue("LEFT");
-                            goldMineralPosition = MineralMarkerDropoff.GoldMineralPosition.LEFT;
-                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            goldMineralPositionItem.setValue("RIGHT");
-                            goldMineralPosition = MineralMarkerDropoff.GoldMineralPosition.RIGHT;
-                        } else {
-                            goldMineralPositionItem.setValue("CENTER");
-                            goldMineralPosition = MineralMarkerDropoff.GoldMineralPosition.CENTER;
-                        }
-                    }
-                }
+                numberOfMineralsItem.setValue(updatedMinerals.size());
+                MineralUtils.MineralPosition goldPos = MineralUtils.determineGoldPosition(updatedMinerals);
+                MineralUtils.sendPositionTelemetry(goldPos, goldMineralPositionItem);
 
+                switch (goldPos) {
+                    case LEFT:
+                        goldMineralPosition = MineralUtils.MineralPosition.LEFT;
+                        break;
+                    case RIGHT:
+                        goldMineralPosition = MineralUtils.MineralPosition.RIGHT;
+                        break;
+                    case CENTER:
+                        goldMineralPosition = MineralUtils.MineralPosition.CENTER;
+                        break;
+                    case UNKNOWN:
+                        goldMineralPosition = MineralUtils.MineralPosition.CENTER;
+                        break;
+                }
             }
         };
         mdTask.init(telemetry, hardwareMap);
@@ -151,45 +149,12 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
         this.addTask(mdTask);
     }
 
-
-    public void liftUp()
-    {
-       addTask(new RunToEncoderValueTask(this, liftLeft, VivaldiCalibration.LIFT_ENCODER_COUNT, VivaldiCalibration.LIFT_LEFT_UP) {
-           public void handleEvent(RobotEvent e) {
-               RunToEncoderValueEvent event = (RunToEncoderValueEvent) e;
-               switch (event.kind) {
-                   case DONE:
-                       RobotLog.i("251: Left done");
-                       liftLeft.setPower(VivaldiCalibration.LIFT_STOP);
-                       leftDone = true;
-               }
-           }
-       });
-
-       addTask(new RunToEncoderValueTask(this, liftRight, VivaldiCalibration.LIFT_ENCODER_COUNT, VivaldiCalibration.LIFT_RIGHT_UP) {
-          public void handleEvent(RobotEvent e) {
-              RunToEncoderValueEvent event = (RunToEncoderValueEvent) e;
-              switch (event.kind) {
-                  case DONE:
-                      RobotLog.i("251: Right done");
-                      liftRight.setPower(VivaldiCalibration.LIFT_STOP);
-                      rightDone = true;
-              }
-          }
-       });
-
-       if(leftDone == true && rightDone == true) {
-           RobotLog.i("251: It works!!!!!! Try initial move!!!! ");
-           // initialMove(knockPath);
-       }
-    }
-
     @Override
     public void start() {
         knockPath = dropoff.getPath(dropMarker, goldMineralPosition);
-        this.addTask(new MonitorMotorTask(this, liftLeft));
-        this.addTask(new MonitorMotorTask(this, liftRight));
-        liftUp();
+        exitDepotPath = depotDropoff.getPath(dropMarker, goldMineralPosition);
+
+        initialMove(knockPath);
     }
 
     @Override
@@ -206,13 +171,24 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
                     allianceItem.setValue("RED");
                     break;
                 case RIGHT_BUMPER_DOWN:
-                    dropMarker = MineralMarkerDropoff.DropMarker.TRUE;
+                    dropMarker = MineralUtils.DropMarker.TRUE;
+                    dropMarkerBoolean = true;
                     dropMarkerItem.setValue("TRUE");
                     break;
                 case LEFT_BUMPER_DOWN:
-                    dropMarker = MineralMarkerDropoff.DropMarker.FALSE;
+                    dropMarker = MineralUtils.DropMarker.FALSE;
+                    dropMarkerBoolean = false;
                     dropMarkerItem.setValue("FALSE");
                     break;
+
+                    /*
+                case RIGHT_TRIGGER_DOWN:
+                    doubleSampling.setValue("TRUE");
+                    break;
+                case LEFT_TRIGGER_DOWN:
+                    doubleSampling.setValue("FALSE");
+                    break;
+                    */
             }
         }
     }
@@ -223,18 +199,36 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
-                    markerDrop();
+                        if (dropMarkerBoolean == true) {
+                            // marker.setPosition(VivaldiCalibration.MARKER_DEPLOYED);
+                            // markerDrop();
+                            lowerBBox();
+                        }
                 }
             }
         });
+    }
+
+    protected void lowerBBox() {
+        RunToEncoderValueTask lowerBoxTask = new RunToEncoderValueTask(this, bungeeBox, VivaldiCalibration.BUNGEE_ENCODER_COUNT, VivaldiCalibration.BUNGEE_BOX_DEPLOY) {
+            @Override
+            public void handleEvent(RobotEvent event) {
+                if (((RunToEncoderValueEvent) event).kind == EventKind.DONE) {
+                    bungeeBox.setPower(0.0);
+                    markerDrop();
+                }
+            }
+        };
+        addTask(lowerBoxTask);
     }
 
     protected void markerDrop() {
         addTask(new SingleShotTimerTask(this, 600) {
             @Override
             public void handleEvent(RobotEvent e) {
-                // drop marker rn
-                exitDepot(exitDepotPath);
+                if (dropMarkerBoolean == true) {
+                    exitDepot(exitDepotPath);
+                }
             }
         });
     }
@@ -245,6 +239,7 @@ public class LeagueMeet3BrentanoAutonomous extends Robot {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
+
                 }
             }
         });

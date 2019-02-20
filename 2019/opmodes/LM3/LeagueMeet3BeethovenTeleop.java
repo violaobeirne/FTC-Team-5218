@@ -1,12 +1,13 @@
 package opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-import team25core.DeadmanMotorTask;
+import opmodes.VivaldiCalibration;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
-import team25core.MotorStallTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;
@@ -16,16 +17,18 @@ import team25core.TankDriveTask;
  * Created by Lizzie on 10/20/2018.
  */
 @TeleOp(name = "League Meet 3 Teleop")
+@Disabled
 public class LeagueMeet3BeethovenTeleop extends Robot {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private DcMotor fourBar;
-    private DcMotor bungeeBox;
+    // private DcMotor fourBar;
+    // private DcMotor bungeeBox;
     private DcMotor liftLeft;
     private DcMotor liftRight;
+    private Servo marker;
     private FourWheelDirectDrivetrain drivetrain;
     private TankDriveTask driveTask;
 
@@ -38,19 +41,20 @@ public class LeagueMeet3BeethovenTeleop extends Robot {
         backRight = hardwareMap.dcMotor.get("backRight");
         liftLeft = hardwareMap.dcMotor.get("liftLeft");
         liftRight = hardwareMap.dcMotor.get("liftRight");
-        fourBar = hardwareMap.dcMotor.get("fourBar");
-        bungeeBox = hardwareMap.dcMotor.get("bungeeBox");
+        // fourBar = hardwareMap.dcMotor.get("fourBar");
+        // bungeeBox = hardwareMap.dcMotor.get("bungeeBox");
+        marker = hardwareMap.servo.get("marker");
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bungeeBox.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bungeeBox.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bungeeBox.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fourBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fourBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        // bungeeBox.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // bungeeBox.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // bungeeBox.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // fourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // fourBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // fourBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        marker.setPosition(VivaldiCalibration.MARKER_STOWED);
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
 
@@ -118,24 +122,31 @@ public class LeagueMeet3BeethovenTeleop extends Robot {
                     liftDown();
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                     liftUp();
+                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                    liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_DOWN);
+                    liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_DOWN);
+                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
+                    liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_UP);
+                    liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_UP);
+                } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_Y_UP) {
+                    liftLeft.setPower(VivaldiCalibration.LIFT_STOP);
+                    liftRight.setPower(VivaldiCalibration.LIFT_STOP);
                 }
             }
         });
 
         // Four
-        DeadmanMotorTask raiseFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
-        addTask(raiseFourBar);
+        // DeadmanMotorTask raiseFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        // addTask(raiseFourBar);
 
-        DeadmanMotorTask lowerFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
-        addTask(lowerFourBar);
+        // DeadmanMotorTask lowerFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        // addTask(lowerFourBar);
 
-        DeadmanMotorTask deployBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_DEPLOY, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(deployBungeeBox);
+        // DeadmanMotorTask deployBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_DEPLOY, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        // addTask(deployBungeeBox);
 
-        DeadmanMotorTask stowBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_STOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_B);
-        addTask(stowBungeeBox);
-
-
+        // DeadmanMotorTask stowBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_STOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        // addTask(stowBungeeBox);
     }
 
     @Override
