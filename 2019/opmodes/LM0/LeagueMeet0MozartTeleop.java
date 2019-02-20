@@ -1,4 +1,4 @@
-package opmodes;
+package opmodes.LM0;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

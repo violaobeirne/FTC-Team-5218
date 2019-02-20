@@ -1,4 +1,4 @@
-package opmodes;
+package opmodes.Utilities;
 
 /**
  * Created by Lizzie on 10/20/2018.

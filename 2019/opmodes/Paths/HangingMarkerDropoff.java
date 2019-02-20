@@ -1,4 +1,4 @@
-package opmodes;
+package opmodes.Paths;
 
 import team25core.DeadReckonPath;
 

@@ -1,10 +1,10 @@
-package opmodes;
+package opmodes.Reggie;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.VivaldiCalibration;
+import opmodes.Utilities.VivaldiCalibration;
 import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;

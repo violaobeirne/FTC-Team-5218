@@ -1,16 +1,12 @@
 package test;
 
-import android.view.ActionProvider;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import opmodes.VivaldiCalibration;
+import opmodes.Utilities.VivaldiCalibration;
 import team25core.GamepadTask;
 import team25core.MonitorMotorTask;
-import team25core.MotorStallTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;

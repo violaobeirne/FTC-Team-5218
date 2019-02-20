@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import opmodes.MarkerDropoff;
-import opmodes.VivaldiCalibration;
+import opmodes.Paths.MarkerDropoff;
+import opmodes.Utilities.VivaldiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.FourWheelDirectDrivetrain;

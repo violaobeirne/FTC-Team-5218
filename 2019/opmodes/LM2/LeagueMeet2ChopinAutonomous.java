@@ -1,4 +1,4 @@
-package opmodes;
+package opmodes.LM2;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
-import opmodes.MineralMarkerDropoff;
-import opmodes.VivaldiCalibration;
+import opmodes.Paths.MineralMarkerDropoff;
+import opmodes.Utilities.VivaldiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.FourWheelDirectDrivetrain;
