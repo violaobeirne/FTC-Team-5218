@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import opmodes.VivaldiCalibration;
 import team25core.DeadmanMotorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
@@ -15,8 +16,8 @@ import team25core.TankDriveTask;
 /**
  * Created by Lizzie on 10/20/2018.
  */
-@TeleOp(name = "ILT Teleop")
-public class ILTLisztTeleop extends Robot {
+@TeleOp(name = "Reggie Teleop")
+public class ReggieLisztTeleop extends Robot {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -116,11 +117,14 @@ public class ILTLisztTeleop extends Robot {
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
+                /*
                 if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
                     liftDown();
                 } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                     liftUp();
-                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                }
+                */
+                if (event.kind == EventKind.BUTTON_X_DOWN) {
                     liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_DOWN);
                     liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_DOWN);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
@@ -134,16 +138,18 @@ public class ILTLisztTeleop extends Robot {
         });
 
         // Four
-        DeadmanMotorTask raiseFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
+        DeadmanMotorTask raiseFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_UP,
+                GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_BUMPER);
         addTask(raiseFourBar);
 
-        DeadmanMotorTask lowerFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
+        DeadmanMotorTask lowerFourBar = new DeadmanMotorTask(this, fourBar, VivaldiCalibration.FOUR_BAR_DOWN,
+                GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_TRIGGER);
         addTask(lowerFourBar);
 
-        DeadmanMotorTask deployBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_DEPLOY, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        DeadmanMotorTask deployBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_DEPLOY, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_TRIGGER);
         addTask(deployBungeeBox);
 
-        DeadmanMotorTask stowBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_STOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_Y);
+        DeadmanMotorTask stowBungeeBox = new DeadmanMotorTask(this, bungeeBox, VivaldiCalibration.BUNGEE_BOX_STOW, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_BUMPER);
         addTask(stowBungeeBox);
     }
 
