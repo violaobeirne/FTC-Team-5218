@@ -1,4 +1,4 @@
-package opmodes;
+package opmodes.Reggie;
 
 import team25core.DeadReckonPath;
 
