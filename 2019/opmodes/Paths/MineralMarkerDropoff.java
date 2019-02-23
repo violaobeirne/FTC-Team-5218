@@ -1,6 +1,6 @@
-package opmodes;
+package opmodes.Paths;
 
-import opmodes.MineralUtils;
+import opmodes.Utilities.MineralUtils;
 import team25core.DeadReckonPath;
 
 /**

@@ -25,13 +25,6 @@ import team25core.SingleShotTimerTask;
  */
 @Autonomous(name = "Reggie Master Autonomous")
 public class ReggieLisztAutonomous extends Robot {
-    /*
-    public enum Hanging {
-        HANGING,
-        NOT_HANGING,
-        DEFAULT,
-    }
-    */
 
     // declaring motors, servos, and drivetrain
     private DcMotor frontLeft;
@@ -42,21 +35,19 @@ public class ReggieLisztAutonomous extends Robot {
     private DcMotor liftLeft;
     private DcMotor liftRight;
 
+    // knock paths and utilities
     private DeadReckonPath knockPath;
     private ReggieDropoffUtil dropoff;
-
     private DeadReckonPath exitDepotPath;
     private ReggieExitDepotDropoff exitDepotDropoff;
-
-    private boolean hangingBoolean = false;
-    private DcMotor bungeeBox;
 
     // declaring gamepad variables
     private GamepadTask gamepad1;
     private GamepadTask gamepad2;
-    protected ReggieDropoffUtil.MineralPosition goldMineralPosition;
-    protected ReggieDropoffUtil.StartingPosition robotStartingPosition;
-    protected ReggieDropoffUtil.EndingPosition robotEndingPosition;
+    public static ReggieDropoffUtil.MineralPosition goldMineralPosition;
+    public static ReggieDropoffUtil.StartingPosition robotStartingPosition;
+    public static ReggieDropoffUtil.EndingPosition robotEndingPosition;
+    public static ReggieDropoffUtil.HangingPosition robotHangingPosition;
 
 
     // declaring telemetry item
@@ -86,11 +77,13 @@ public class ReggieLisztAutonomous extends Robot {
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        /*
         // bungee box initialization
         bungeeBox = hardwareMap.dcMotor.get("bungeeBox");
         bungeeBox.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bungeeBox.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // bungeeBox.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        */
 
         // depot path
         knockPath = new DeadReckonPath();
@@ -148,11 +141,11 @@ public class ReggieLisztAutonomous extends Robot {
 
     @Override
     public void start() {
-        if(hangingBoolean == true) {
+        if(robotHangingPosition == ReggieDropoffUtil.HangingPosition.HANGING) {
             unlatch();
-        } else if (hangingBoolean == false) {
+        } else if (robotHangingPosition == ReggieDropoffUtil.HangingPosition.NOT_HANGING) {
             knockPath = dropoff.getPath(robotStartingPosition, robotEndingPosition, goldMineralPosition);
-            exitDepotPath = exitDepotDropoff.getPath(goldMineralPosition);
+            exitDepotPath = exitDepotDropoff.getPath(robotStartingPosition, robotEndingPosition, goldMineralPosition);
             initialMove(knockPath);
         }
     }
@@ -185,11 +178,11 @@ public class ReggieLisztAutonomous extends Robot {
                     break;
                 case LEFT_BUMPER_DOWN:
                     hangingItem.setValue("HANGING");
-                    hangingBoolean = true;
+                    robotHangingPosition = ReggieDropoffUtil.HangingPosition.HANGING;
                     break;
                 case LEFT_TRIGGER_DOWN:
                     hangingItem.setValue("NOT HANGING");
-                    hangingBoolean = false;
+                    robotHangingPosition = ReggieDropoffUtil.HangingPosition.NOT_HANGING;
                     break;
             }
         }
@@ -223,12 +216,14 @@ public class ReggieLisztAutonomous extends Robot {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
+                        /*
                         if (robotStartingPosition == ReggieDropoffUtil.StartingPosition.DEPOT) {
                             markerDrop();
                         } else {
                             exitDepot(exitDepotPath);
                         }
                         break;
+                        */
                 }
             }
         });
