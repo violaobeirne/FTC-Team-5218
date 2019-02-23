@@ -36,6 +36,12 @@ public class ReggieDropoffUtil {
         UNKNOWN,
     }
 
+    public enum HangingPosition {
+        HANGING,
+        NOT_HANGING,
+        DEFAULT,
+    }
+
     public static void sendPositionTelemetry(MineralPosition pos, Telemetry.Item item) {
         switch (pos) {
             case LEFT:
@@ -98,7 +104,6 @@ public class ReggieDropoffUtil {
         /*
         CRATER CODE: double sampling OR parking in 3 paths
         */
-
         // crater, double sampling, center mineral
         paths[StartingPosition.CRATER.ordinal()][EndingPosition.DOUBLE_SAMPLING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
 
@@ -123,15 +128,26 @@ public class ReggieDropoffUtil {
 
         // depot, parking, center mineral
         paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 1.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8.0, 0.3);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 45.0, 0.5);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 48.0, 0.5);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 60.0, -0.5);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 4.0, 0.3);
+
+        // post marker
 
         // depot, no parking, center mineral
         paths[StartingPosition.DEPOT.ordinal()][EndingPosition.NOT_PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
 
         // depot, parking, left mineral
         paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
-
-        // parking portion
-        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 9.0, 0.5);
 
         // depot, no parking, left mineral
         paths[StartingPosition.DEPOT.ordinal()][EndingPosition.NOT_PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();

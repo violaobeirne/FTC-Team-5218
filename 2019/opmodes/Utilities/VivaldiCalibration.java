@@ -5,7 +5,7 @@ package opmodes.Utilities;
  */
 public class VivaldiCalibration {
     public static final double BUNGEE_BOX_DEPLOY = 0.6;
-    public static final double BUNGEE_BOX_STOW = -0.6;
+    public static final double BUNGEE_BOX_STOW = -0.3;
 
     public static final double MARKER_DEPLOYED = 90.0 / 256.0;
     public static final double MARKER_STOWED = 251.0/256.0;

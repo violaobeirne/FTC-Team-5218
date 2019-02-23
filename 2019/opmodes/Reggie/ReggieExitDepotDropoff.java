@@ -7,24 +7,62 @@ import team25core.DeadReckonPath;
  */
 public class ReggieExitDepotDropoff {
 
-    DeadReckonPath[] paths = new DeadReckonPath[3];
+    ReggieDropoffUtil.StartingPosition StartingPosition = ReggieLisztAutonomous.robotStartingPosition;
+    ReggieDropoffUtil.EndingPosition EndingPosition = ReggieLisztAutonomous.robotEndingPosition;
+    ReggieDropoffUtil.MineralPosition MineralPosition = ReggieLisztAutonomous.goldMineralPosition;
 
+    DeadReckonPath[][][] paths = new DeadReckonPath[2][3][3];
     public ReggieExitDepotDropoff() {
-        // true paths tested on Monday
-        paths[ReggieDropoffUtil.MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
-        paths[ReggieDropoffUtil.MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.5);
-        // straight, 100, -1.0
+        /*
+        CRATER CODE: double sampling OR parking in 3 paths
+        */
 
-        paths[ReggieDropoffUtil.MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
-        paths[ReggieDropoffUtil.MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.5);
-        // straight, 100, -1.0
+        // crater, double sampling, center mineral
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.DOUBLE_SAMPLING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
 
-        paths[ReggieDropoffUtil.MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
-        paths[ReggieDropoffUtil.MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.5);
+        // crater, parking, center
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
+
+        // crater, double sampling, left mineral path
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.DOUBLE_SAMPLING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
+
+        // crater, parking, left mineral path
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
+
+        // crater, double sampling, right mineral path
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.DOUBLE_SAMPLING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
+
+        // crater, parking, right mineral path
+        paths[StartingPosition.CRATER.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
+
+        /*
+        DEPOT CODE: marker dropoff with parking
+        */
+
+        // depot, parking, center mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
+
+        // depot, no parking, center mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.NOT_PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
+
+        // depot, parking, left mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
+
+        // parking portion
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 9.0, 0.5);
+
+        // depot, no parking, left mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.NOT_PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
+
+        // depot, parking, right mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
+
+        // depot, no parking, right mineral
+        paths[StartingPosition.DEPOT.ordinal()][EndingPosition.NOT_PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
     }
 
-    public DeadReckonPath getPath(ReggieDropoffUtil.MineralPosition goldPosition)
+    public DeadReckonPath getPath (ReggieDropoffUtil.StartingPosition start, ReggieDropoffUtil.EndingPosition end, ReggieDropoffUtil.MineralPosition position)
     {
-        return paths[goldPosition.ordinal()];
+        return paths[start.ordinal()][end.ordinal()][position.ordinal()];
     }
 }

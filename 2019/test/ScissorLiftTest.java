@@ -90,9 +90,22 @@ public class ScissorLiftTest extends Robot {
                    liftDown();
                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
                    liftUp();
+               } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_DOWN);
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_DOWN);
+               } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_UP);
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_UP);
+               } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_Y_UP) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_STOP);
+                   liftRight.setPower(VivaldiCalibration.LIFT_STOP);
+               } else if (event.kind == EventKind.BUTTON_A_DOWN) {
+                   liftLeft.setPower(0.0);
+                   liftRight.setPower(0.0);
                }
            }
        });
+
     }
 
     @Override
