@@ -58,6 +58,9 @@ public class SuttersTest extends Robot {
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+        drivetrain.encodersOn();
+        drivetrain.resetEncoders();
+        drivetrain.setNoncanonicalMotorDirection();
 
         // initializing paths
         knockLeftPath = new DeadReckonPath();
@@ -134,5 +137,4 @@ public class SuttersTest extends Robot {
     public void start() {
         initialMove(knockPath);
     }
-
 }

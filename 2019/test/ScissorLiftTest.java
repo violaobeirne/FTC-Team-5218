@@ -83,16 +83,36 @@ public class ScissorLiftTest extends Robot {
     public void start() {
        this.addTask(new MonitorMotorTask(this, liftLeft));
        this.addTask(new MonitorMotorTask(this, liftRight));
-       this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
+       this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
            public void handleEvent(RobotEvent e) {
                GamepadEvent event = (GamepadEvent) e;
-               if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+               if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_UP);
+               } else if (event.kind == EventKind.RIGHT_TRIGGER_DOWN) {
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_DOWN);
+               } else if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_UP);
+               } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_DOWN);
+               } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_DOWN);
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_DOWN);
+               } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_LEFT_UP);
+                   liftRight.setPower(VivaldiCalibration.LIFT_RIGHT_UP);
+               } else if (event.kind == EventKind.BUTTON_X_UP || event.kind == EventKind.BUTTON_Y_UP) {
+                   liftLeft.setPower(VivaldiCalibration.LIFT_STOP);
+                   liftRight.setPower(VivaldiCalibration.LIFT_STOP);
+               } else if (event.kind == EventKind.BUTTON_A_DOWN) {
                    liftDown();
                } else if (event.kind == EventKind.RIGHT_BUMPER_DOWN) {
+               } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                    liftUp();
                }
+
            }
        });
+
     }
 
     @Override

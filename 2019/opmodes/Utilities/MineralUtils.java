@@ -1,11 +1,11 @@
-package opmodes;
+package opmodes.Utilities;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
-import static opmodes.MineralUtils.MineralPosition.UNKNOWN;
+import static opmodes.Utilities.MineralUtils.MineralPosition.UNKNOWN;
 import static team25core.MineralDetectionTask.LABEL_GOLD_MINERAL;
 
 /**
