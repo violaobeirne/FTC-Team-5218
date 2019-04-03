@@ -20,6 +20,7 @@ public class VivaldiCalibration {
     public static final double LIFT_STOP = 0.0;
     public static final double FOUR_BAR_UP = -0.6;
     public static final double FOUR_BAR_DOWN = 0.6;
+    public static final float GYRO_MULTIPLIER = 1.0f;
 
     // light constants for autonomous initialization
     public static final RevBlinkinLedDriver.BlinkinPattern MINERAL_LEFT_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED;
