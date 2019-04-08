@@ -49,7 +49,8 @@ public class SimpleMotionDetectionTest extends Robot {
 
         // imu and lights
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        imu = IMUUtil.getIMU(hardwareMap);
+        IMUUtil imuUtil = new IMUUtil();
+        imu = imuUtil.getIMU(hardwareMap);
     }
 
     @Override
