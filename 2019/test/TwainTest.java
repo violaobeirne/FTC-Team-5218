@@ -1,6 +1,7 @@
 package test;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -20,6 +21,7 @@ import opmodes.Utilities.VivaldiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.FourWheelDirectDrivetrain;
+import team25core.GamepadTask;
 import team25core.IMUGyroTask;
 import team25core.MineralDetectionTask;
 import team25core.Robot;
@@ -30,7 +32,17 @@ import team25core.VuforiaConstants;
 /**
  * Created by Lizzie on 3/31/2019.
  */
+@Autonomous(name = "Twain Test")
 public class TwainTest extends Robot {
+    // enum for mineral detection states
+    public enum MineralDetectionStates {
+        DEFAULT,
+        INIT,
+        ALIGNING,
+        DONE_ALIGNING,
+    }
+
+    MineralDetectionStates mineralDetectionState = MineralDetectionStates.DEFAULT;
 
     // declaring motors, servos, and drivetrain
     private DcMotor frontLeft;
@@ -44,26 +56,29 @@ public class TwainTest extends Robot {
     RevBlinkinLedDriver blinkin;
 
     // camera code
-    private SwitchableCamera switchableCamera;
     private VuforiaLocalizer vuforia;
-    private WebcamName webCam1;
-    private WebcamName webCam2;
+    private MineralDetectionTask mdTask;
+    int goldMineralX;
 
     // declaring telemetry items
     private Telemetry.Item numberOfMineralsItem;
     private Telemetry.Item goldMineralPositionItem;
 
     // declaring DeadReckonPaths
-    private DeadReckonPath knockLeftPath;
-    private DeadReckonPath knockCenterPath;
-    private DeadReckonPath knockRightPath;
-    private DeadReckonPath knockPath;
+    private DeadReckonPath exitLanderPath;
+    private DeadReckonPath setupLeftPath;
+    private DeadReckonPath setupCenterPath;
+    private DeadReckonPath setupRightPath;
+    private DeadReckonPath setupAlignPath;
     private DeadReckonPath liftBufferPath;
-    private DeadReckonPath alignPath;
+
+    private DeadReckonPath secondAlignPath;
+    private DeadReckonPath knockGoldPath;
 
     // declaring dropoff util
     private HoustonDropoffUtil dropoff;
     public static HoustonDropoffUtil.MineralPosition goldMineralPosition;
+    /*
     public static HoustonDropoffUtil.StartingPosition robotStartingPosition;
     public static HoustonDropoffUtil.EndingPosition robotEndingPosition;
     public static HoustonDropoffUtil.HangingPosition robotHangingPosition;
@@ -73,6 +88,7 @@ public class TwainTest extends Robot {
     private DcMotor liftRight;
     private boolean leftLanded = false;
     private boolean rightLanded = false;
+    */
 
     // gyro variables
     private IMUGyroTask gyroTask;
@@ -94,47 +110,49 @@ public class TwainTest extends Robot {
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         // initializing cameras and vuforia
-        this.switchableCamera = (SwitchableCamera)vuforia.getCamera();
-        webCam1 = hardwareMap.get(WebcamName.class, "mineralCamera1");
-        webCam2 = hardwareMap.get(WebcamName.class, "mineralCamera2");
-
-        SwitchableCameraName switchableCameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(webCam1, webCam2);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = VuforiaConstants.VUFORIA_KEY;
-
-        parameters.cameraName = switchableCameraName;
-        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // initializing telemetry items
         numberOfMineralsItem = telemetry.addData("Number of Minerals: ", "NOT SELECTED");
         goldMineralPositionItem = telemetry.addData("Gold Mineral Position: ", "NOT SELECTED");
 
         // initializing DeadReckonPaths
-        knockLeftPath = new DeadReckonPath();
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 1.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
-        knockLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8.0, 0.3);
+        exitLanderPath = new DeadReckonPath();
+        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 1.0, 0.3);
+        exitLanderPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
+        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        exitLanderPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
+        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
 
-        knockCenterPath = new DeadReckonPath();
-        knockCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.3);
+        setupLeftPath = new DeadReckonPath();
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
 
-        knockRightPath = new DeadReckonPath();
-        knockRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
-        knockRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, -0.5);
+        setupCenterPath = new DeadReckonPath();
+        setupCenterPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
+        setupCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        setupCenterPath.addSegment(DeadReckonPath.SegmentType.TURN, 35.0, 0.3);
 
-        knockPath = new DeadReckonPath();
+        setupRightPath = new DeadReckonPath();
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.5);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 45.0, 0.3);
+
+        setupAlignPath = new DeadReckonPath();
+
+        secondAlignPath = new DeadReckonPath();
+        secondAlignPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
+        knockGoldPath = new DeadReckonPath();
+        knockGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20.0, 0.5);
 
         // initializing dropoff util
         dropoff = new HoustonDropoffUtil();
 
-        alignPath = new DeadReckonPath();
-        alignPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.5);
+        // lift error path
+        liftBufferPath = new DeadReckonPath();
+        liftBufferPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.5);
 
+        /*
         // initializing lift variables
         liftLeft = hardwareMap.dcMotor.get("liftLeft");
         liftRight = hardwareMap.dcMotor.get("liftRight");
@@ -142,56 +160,252 @@ public class TwainTest extends Robot {
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        */
 
-        // initializing mineral detection and gyro event
+        // initializating mineral detection state and general gold mineral detection
+        mineralDetectionState = MineralDetectionStates.INIT;
         initializeMineralDetection();
-        handleGyroEvent();
+        // handleGyroEvent();
+
+
     }
 
     protected void initializeMineralDetection() {
-        String cameraName = "mineralCamera";
-        MineralDetectionTask mdTask = new MineralDetectionTask(this, cameraName) {
-            public void handleEvent(RobotEvent e) {
-                MineralDetectionEvent event = (MineralDetectionEvent) e;
-                List<Recognition> updatedMinerals = event.minerals;
-                numberOfMineralsItem.setValue(updatedMinerals.size());
-                HoustonDropoffUtil.MineralPosition goldPos = HoustonDropoffUtil.determineGoldPosition(updatedMinerals);
-                HoustonDropoffUtil.sendPositionTelemetry(goldPos, goldMineralPositionItem);
+        mdTask = new MineralDetectionTask(this, "mineralCamera1", "mineralCamera2") {
+            public void handleEvent (RobotEvent e) {
+                switch(mineralDetectionState) {
+                    case INIT:
+                        MineralDetectionEvent event = (MineralDetectionEvent) e;
+                        List<Recognition> updatedMinerals = event.minerals;
+                        numberOfMineralsItem.setValue(updatedMinerals.size());
+                        HoustonDropoffUtil.MineralPosition goldPos = HoustonDropoffUtil.determineGoldPosition(updatedMinerals);
+                        HoustonDropoffUtil.sendPositionTelemetry(goldPos, goldMineralPositionItem);
 
-                switch (goldPos) {
-                    case LEFT:
-                        goldMineralPosition = HoustonDropoffUtil.MineralPosition.LEFT;
-                        knockPath = knockLeftPath;
-                        blinkin.setPattern(VivaldiCalibration.MINERAL_LEFT_PATTERN);
+                        switch (goldPos) {
+                            case LEFT:
+                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.LEFT;
+                                setupAlignPath = setupLeftPath;
+                                blinkin.setPattern(VivaldiCalibration.MINERAL_LEFT_PATTERN);
+                                break;
+                            case RIGHT:
+                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.RIGHT;
+                                setupAlignPath = setupRightPath;
+                                blinkin.setPattern(VivaldiCalibration.MINERAL_RIGHT_PATTERN);
+                                break;
+                            case CENTER:
+                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
+                                setupAlignPath = setupCenterPath;
+                                blinkin.setPattern(VivaldiCalibration.MINERAL_CENTER_PATTERN);
+                                break;
+                            case UNKNOWN:
+                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
+                                blinkin.setPattern(VivaldiCalibration.MINERAL_UNKNOWN_PATTERN);
+                                setupAlignPath = setupCenterPath;
+                                break;
+                        }
                         break;
-                    case RIGHT:
-                        goldMineralPosition = HoustonDropoffUtil.MineralPosition.RIGHT;
-                        knockPath = knockRightPath;
-                        blinkin.setPattern(VivaldiCalibration.MINERAL_RIGHT_PATTERN);
+
+                    case ALIGNING:
+                        event = (MineralDetectionEvent) e;
+                        Recognition goldMineral;
+                        List<Recognition> singletonMineralList = event.minerals;
+                        goldMineral= singletonMineralList.get(0);
+
+                        goldMineralX = (int) goldMineral.getLeft();
+                        int imageCenter = goldMineral.getImageWidth() / 2;
+                        int mineralCenter = ((int)goldMineral.getWidth() / 2) + goldMineralX;
+                        int offset = java.lang.Math.abs(imageCenter - mineralCenter);
+                        if (Math.abs(offset) < 20) {
+                            mineralDetectionState = MineralDetectionStates.DONE_ALIGNING;
+                        } else if (mineralCenter < imageCenter) {
+                            RobotLog.i("163: Shifting left. %d/%d/%d", imageCenter, mineralCenter, offset);
+                            drivetrain.turn(VivaldiCalibration.TURN_SPEED);
+                            shiftLeft(offset);
+                        } else if (imageCenter < mineralCenter) {
+                            RobotLog.i("163: Shifting right. %d/%d/%d", imageCenter, mineralCenter, offset);
+                            drivetrain.turn(-VivaldiCalibration.TURN_SPEED);
+                            shiftRight(offset);
+                        }
+                        // this.stop();
                         break;
-                    case CENTER:
-                        goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
-                        knockPath = knockCenterPath;
-                        blinkin.setPattern(VivaldiCalibration.MINERAL_CENTER_PATTERN);
-                        break;
-                    case UNKNOWN:
-                        goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
-                        blinkin.setPattern(VivaldiCalibration.MINERAL_UNKNOWN_PATTERN);
-                        knockPath = knockCenterPath;
+
+                    case DONE_ALIGNING:
+                        RobotLog.i("163: Done aligning case in initialize mineral detection.");
+                        event = (MineralDetectionEvent) e;
+                        singletonMineralList = event.minerals;
+                        goldMineral= singletonMineralList.get(0);
+
+                        goldMineralX = (int) goldMineral.getLeft();
+                        imageCenter = goldMineral.getImageWidth() / 2;
+                        mineralCenter = ((int)goldMineral.getWidth() / 2) + goldMineralX;
+                        offset = java.lang.Math.abs(imageCenter - mineralCenter);
+                        if (mineralCenter < imageCenter) {
+                            RobotLog.i("163: Shifting left. %d/%d/%d", imageCenter, mineralCenter, offset);
+                            drivetrain.turn(VivaldiCalibration.TURN_SPEED);
+                            shiftLeft(offset);
+                        } else if (imageCenter < mineralCenter) {
+                            RobotLog.i("163: Shifting right. %d/%d/%d", imageCenter, mineralCenter, offset);
+                            drivetrain.turn(-VivaldiCalibration.TURN_SPEED);
+                            shiftRight(offset);
+                        }
+                        this.stop();
                         break;
                 }
             }
         };
         mdTask.init(telemetry, hardwareMap);
         mdTask.setDetectionKind(MineralDetectionTask.DetectionKind.EVERYTHING);
-        this.addTask(mdTask);
+        addTask(mdTask);
     }
 
     @Override
     public void start() {
-        liftUp();
+        mdTask.stop();
+        initialMove(exitLanderPath);
     }
 
+    public void initialMove(DeadReckonPath path) {
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent (RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        setupAlign(setupAlignPath);
+                }
+            }
+        });
+    }
+
+    public void setupAlign(DeadReckonPath path) {
+        RobotLog.i("163: Center on mineral");
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent (RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        initializeMineralAlignment();
+                }
+            }
+        });
+    }
+
+    public void initializeMineralAlignment() {
+        RobotLog.i("163: Initializing mineral alignment.");
+        mdTask.toggleCamera();
+        mdTask.setDetectionKind(MineralDetectionTask.DetectionKind.LARGEST_GOLD);
+        mineralDetectionState = MineralDetectionStates.ALIGNING;
+        addTask(mdTask);
+    }
+
+    public void shiftLeft(int correction) {
+        double degrees = correction * VivaldiCalibration.GYRO_MULTIPLIER;
+        RobotLog.i("163: Shifting left: " + degrees + " degrees.");
+        gyroTask = new IMUGyroTask(this, imu, (int)degrees, true) {
+            @Override
+            public void handleEvent (RobotEvent event) {
+                if(((IMUGyroEvent) event).kind == EventKind.HIT_TARGET) {
+                    RobotLog.i("163: Hit target shifting left.");
+                    drivetrain.stop();
+                    if (mineralDetectionState == MineralDetectionStates.DONE_ALIGNING) {
+                        knockGold(knockGoldPath);
+                    } else {
+                        secondAlignment(secondAlignPath);
+                    }
+                } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
+                    RobotLog.i("163: Past target shifting left.");
+                    drivetrain.turn(VivaldiCalibration.TURN_SPEED / 2);
+                }
+            }
+        };
+        gyroTask.init();
+        addTask(gyroTask);
+    }
+
+    public void shiftRight(int correction) {
+        double degrees = correction * VivaldiCalibration.GYRO_MULTIPLIER;
+        RobotLog.i("163: Shifting right: " + degrees + " degrees.");
+        gyroTask = new IMUGyroTask(this, imu, (int)degrees, true) {
+            @Override
+            public void handleEvent (RobotEvent event) {
+                if(((IMUGyroEvent) event).kind == EventKind.HIT_TARGET) {
+                    RobotLog.i("163: Hit target shifting right.");
+                    drivetrain.stop();
+                    if (mineralDetectionState == MineralDetectionStates.DONE_ALIGNING) {
+                        knockGold(knockGoldPath);
+                    } else {
+                        secondAlignment(secondAlignPath);
+                    }
+                } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
+                    RobotLog.i("163: Past target shifting right.");
+                    drivetrain.turn(VivaldiCalibration.TURN_SPEED / 2);
+                }
+            }
+        };
+        gyroTask.init();
+        addTask(gyroTask);
+    }
+
+
+    public void secondAlignment(DeadReckonPath path) {
+        RobotLog.i("163: Second align path.");
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent (RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        addTask(mdTask);
+                        mineralDetectionState = MineralDetectionStates.DONE_ALIGNING;
+
+                }
+            }
+        });
+    }
+
+    public void knockGold(DeadReckonPath path) {
+        RobotLog.i("163: Knock gold path.");
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent (RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void handleEvent(RobotEvent e) {
+        /*
+        if (e instanceof GamepadTask.GamepadEvent) {
+            // starting position, hanging, parking, gold mineral position, double sampling
+            GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
+            switch (event.kind) {
+                case BUTTON_X_DOWN:
+                    RobotLog.i("163: Pattern LEFT.");
+                    goldMineralPosition = HoustonDropoffUtil.MineralPosition.LEFT;
+                    setupAlignPath = setupLeftPath;
+                    blinkin.setPattern(VivaldiCalibration.MINERAL_LEFT_PATTERN);
+                    break;
+                case BUTTON_B_DOWN:
+                    RobotLog.i("163: Pattern RIGHT.");
+                    goldMineralPosition = HoustonDropoffUtil.MineralPosition.RIGHT;
+                    setupAlignPath = setupRightPath;
+                    blinkin.setPattern(VivaldiCalibration.MINERAL_RIGHT_PATTERN);
+                    break;
+                case BUTTON_A_DOWN:
+                    RobotLog.i("163: Pattern CENTER.");
+                    goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
+                    setupAlignPath = setupCenterPath;
+                    blinkin.setPattern(VivaldiCalibration.MINERAL_CENTER_PATTERN);
+                    break;
+            }
+        }
+        */
+    }
+
+
+    /*
     public void liftUp()
     {
         RobotLog.i("251 - Going UP");
@@ -236,7 +450,7 @@ public class TwainTest extends Robot {
             public void handleEvent (RobotEvent event) {
                 if(((IMUGyroEvent) event).kind == EventKind.HIT_TARGET) {
                     drivetrain.stop();
-                    doneAligning(alignPath);
+                    doneAligning(liftBufferPath);
                 } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
                     drivetrain.turn(VivaldiCalibration.TURN_SPEED / 2);
                 }
@@ -251,77 +465,10 @@ public class TwainTest extends Robot {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
-                       initialMove(knockPath);
+                       initialMove(setupAlignPath);
                 }
             }
         });
     }
-
-    public void initialMove(DeadReckonPath path) {
-        addTask(new DeadReckonTask(this, path, drivetrain) {
-            public void handleEvent (RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case PATH_DONE:
-                        initializeMineralAlignment();
-                }
-            }
-        });
-    }
-
-    public void initializeMineralAlignment() {
-        toggleCamera();
-        String cameraName = "mineralCamera";
-        MineralDetectionTask mdTask = new MineralDetectionTask(this, cameraName) {
-            public void handleEvent (RobotEvent e) {
-                MineralDetectionEvent event = (MineralDetectionEvent) e;
-                List<Recognition> updatedMinerals = event.minerals;
-                if (updatedMinerals != null) {
-                    if (updatedMinerals.size() == 1) {
-                        int goldMineral = -1;
-                        for (Recognition recognition : updatedMinerals) {
-                            if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                goldMineral = (int) recognition.getLeft();
-                                int imageCenter = recognition.getImageWidth() / 2;
-                                float mineralCenter = recognition.getWidth() + recognition.getLeft();
-                                float offset = java.lang.Math.abs(imageCenter - mineralCenter);
-
-                                if(mineralCenter < imageCenter) {
-                                    shiftRight(offset);
-                                    // gonna sleep and continue tmmrw
-                                } else if (imageCenter < mineralCenter) {
-                                    shiftLeft(offset);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    public void shiftLeft(float correction) {
-        float turnSlope = correction * VivaldiCalibration.GYRO_MULTIPLIER;
-    }
-
-    public void shiftRight(float correction) {
-
-    }
-
-    public void toggleCamera() {
-        if (switchableCamera != null) {
-            if (switchableCamera.getActiveCamera().equals(webCam1)) {
-                switchableCamera.setActiveCamera(webCam2);
-                RobotLog.i("163: Switching to camera 2.");
-            } else {
-                switchableCamera.setActiveCamera(webCam1);
-                RobotLog.i("4042: Switching to camera 1.");
-            }
-        }
-    }
-
-    @Override
-    public void handleEvent(RobotEvent e) {
-        // nothing to see here...keep scrolling
-    }
+    */
 }
