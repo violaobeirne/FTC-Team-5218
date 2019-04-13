@@ -72,7 +72,7 @@ public class TwainTest extends Robot {
     private DeadReckonPath setupAlignPath;
     private DeadReckonPath liftBufferPath;
 
-    private DeadReckonPath secondAlignPath;
+    private DeadReckonPath approachingGoldPath;
     private DeadReckonPath knockGoldPath;
 
     // declaring dropoff util
@@ -92,6 +92,7 @@ public class TwainTest extends Robot {
 
     // gyro variables
     private IMUGyroTask gyroTask;
+    private boolean approaching = true;
 
     @Override
     public void init() {
@@ -140,10 +141,10 @@ public class TwainTest extends Robot {
 
         setupAlignPath = new DeadReckonPath();
 
-        secondAlignPath = new DeadReckonPath();
-        secondAlignPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
+        approachingGoldPath = new DeadReckonPath();
+        approachingGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20.0, 0.5);
         knockGoldPath = new DeadReckonPath();
-        knockGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20.0, 0.5);
+        knockGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
 
         // initializing dropoff util
         dropoff = new HoustonDropoffUtil();
@@ -220,33 +221,22 @@ public class TwainTest extends Robot {
                         } else if (mineralCenter < imageCenter) {
                             RobotLog.i("163: Shifting left. %d/%d/%d", imageCenter, mineralCenter, offset);
                             drivetrain.turn(VivaldiCalibration.TURN_SPEED);
-                            shiftLeft(offset);
+                            // shiftLeft(offset);
                         } else if (imageCenter < mineralCenter) {
                             RobotLog.i("163: Shifting right. %d/%d/%d", imageCenter, mineralCenter, offset);
                             drivetrain.turn(-VivaldiCalibration.TURN_SPEED);
-                            shiftRight(offset);
+                            // shiftRight(offset);
                         }
                         // this.stop();
                         break;
 
                     case DONE_ALIGNING:
                         RobotLog.i("163: Done aligning case in initialize mineral detection.");
-                        event = (MineralDetectionEvent) e;
-                        singletonMineralList = event.minerals;
-                        goldMineral= singletonMineralList.get(0);
-
-                        goldMineralX = (int) goldMineral.getLeft();
-                        imageCenter = goldMineral.getImageWidth() / 2;
-                        mineralCenter = ((int)goldMineral.getWidth() / 2) + goldMineralX;
-                        offset = java.lang.Math.abs(imageCenter - mineralCenter);
-                        if (mineralCenter < imageCenter) {
-                            RobotLog.i("163: Shifting left. %d/%d/%d", imageCenter, mineralCenter, offset);
-                            drivetrain.turn(VivaldiCalibration.TURN_SPEED);
-                            shiftLeft(offset);
-                        } else if (imageCenter < mineralCenter) {
-                            RobotLog.i("163: Shifting right. %d/%d/%d", imageCenter, mineralCenter, offset);
-                            drivetrain.turn(-VivaldiCalibration.TURN_SPEED);
-                            shiftRight(offset);
+                        if (approaching == true) {
+                            approachGold(approachingGoldPath);
+                            approaching = false;
+                        } else {
+                            knockGold(knockGoldPath);
                         }
                         this.stop();
                         break;
@@ -309,7 +299,7 @@ public class TwainTest extends Robot {
                     if (mineralDetectionState == MineralDetectionStates.DONE_ALIGNING) {
                         knockGold(knockGoldPath);
                     } else {
-                        secondAlignment(secondAlignPath);
+                        approachGold(approachingGoldPath);
                     }
                 } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
                     RobotLog.i("163: Past target shifting left.");
@@ -333,7 +323,7 @@ public class TwainTest extends Robot {
                     if (mineralDetectionState == MineralDetectionStates.DONE_ALIGNING) {
                         knockGold(knockGoldPath);
                     } else {
-                        secondAlignment(secondAlignPath);
+                        approachGold(approachingGoldPath);
                     }
                 } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
                     RobotLog.i("163: Past target shifting right.");
@@ -346,15 +336,15 @@ public class TwainTest extends Robot {
     }
 
 
-    public void secondAlignment(DeadReckonPath path) {
-        RobotLog.i("163: Second align path.");
+    public void approachGold(DeadReckonPath path) {
+        RobotLog.i("163: Approaching gold");
         addTask(new DeadReckonTask(this, path, drivetrain) {
             public void handleEvent (RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
+                        mineralDetectionState = MineralDetectionStates.ALIGNING;
                         addTask(mdTask);
-                        mineralDetectionState = MineralDetectionStates.DONE_ALIGNING;
 
                 }
             }
