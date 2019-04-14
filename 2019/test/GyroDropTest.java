@@ -79,6 +79,7 @@ public class GyroDropTest extends Robot {
               if(((IMUGyroEvent) event).kind == EventKind.HIT_TARGET) {
                   drivetrain.stop();
                   addTask(moveTask);
+                  gyroItem.setValue("At target.");
               } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
                   drivetrain.turn(turnSpeed / 2);
               }
