@@ -56,9 +56,9 @@ public class TwainTest extends Robot {
     RevBlinkinLedDriver blinkin;
 
     // camera code
-    private VuforiaLocalizer vuforia;
     private MineralDetectionTask mdTask;
     int goldMineralX;
+    private boolean approaching = true;
 
     // declaring telemetry items
     private Telemetry.Item numberOfMineralsItem;
@@ -92,7 +92,6 @@ public class TwainTest extends Robot {
 
     // gyro variables
     private IMUGyroTask gyroTask;
-    private boolean approaching = true;
 
     @Override
     public void init() {
@@ -109,8 +108,6 @@ public class TwainTest extends Robot {
         // initializing imu and lights
         imu = hardwareMap.get(BNO055IMU.class, "IMU");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-
-        // initializing cameras and vuforia
 
         // initializing telemetry items
         numberOfMineralsItem = telemetry.addData("Number of Minerals: ", "NOT SELECTED");
@@ -167,8 +164,6 @@ public class TwainTest extends Robot {
         mineralDetectionState = MineralDetectionStates.INIT;
         initializeMineralDetection();
         // handleGyroEvent();
-
-
     }
 
     protected void initializeMineralDetection() {
