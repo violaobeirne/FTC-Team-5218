@@ -144,7 +144,7 @@ public class HoustonBachAutonomous extends Robot {
 
         setupLeftPath = new DeadReckonPath();
         setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
-        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8.0, 0.3);
         setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 20.0, 0.3);
 
         setupCenterPath = new DeadReckonPath();
