@@ -4,20 +4,13 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.SwitchableCameraName;
 
 import java.util.List;
 
-import opmodes.Houston.HoustonDropoffUtil;
 import opmodes.Utilities.VivaldiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
@@ -28,16 +21,14 @@ import team25core.MineralDetectionTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.RunToEncoderValueTask;
-import team25core.SingleShotTimerTask;
-import team25core.VuforiaConstants;
 
 /**
  * Created by Lizzie on 11/27/2018.
  */
-@Autonomous(name = "Houston Master Autonomous")
-public class HoustonBachAutonomous extends Robot {
+@Autonomous(name = "Houston DEPOT Autonomous")
+public class HoustonBaroqueAutonomous extends Robot {
 
-    private final static String TAG = "HoustonBachAutonomous";
+    private final static String TAG = "HoustonDepotAutonomous";
 
     // declaring motors, servos, and drivetrain
     private DcMotor frontLeft;
@@ -57,11 +48,9 @@ public class HoustonBachAutonomous extends Robot {
 
     // imu and lights
     BNO055IMU imu;
-    RevBlinkinLedDriver blinkin;
+    // RevBlinkinLedDriver blinkin;
 
     // knock paths and utilities
-    private DeadReckonPath liftBufferPath;
-    private DeadReckonPath exitLanderPath;
     private DeadReckonPath setupLeftPath;
     private DeadReckonPath setupCenterPath;
     private DeadReckonPath setupRightPath;
@@ -69,17 +58,15 @@ public class HoustonBachAutonomous extends Robot {
     private DeadReckonPath approachingGoldPath;
     private DeadReckonPath knockGoldPath;
     private DeadReckonPath knockDepotPath;
-    private DeadReckonPath exitDepotPath;
-    private HoustonDropoffUtil dropoff;
-    private HoustonExitDepotUtil exitDepotDropoff;
+    private HoustonBaroqueDropoffUtil dropoff;
+    private HoustonBaroqueExitDepotUtil exitDepotDropoff;
 
     // declaring gamepad variables
     private GamepadTask gamepad1;
     private GamepadTask gamepad2;
-    public static HoustonDropoffUtil.MineralPosition goldMineralPosition;
-    public static HoustonDropoffUtil.EndingPosition robotEndingPosition;
-    public static HoustonDropoffUtil.HangingPosition robotHangingPosition;
-
+    public static HoustonBaroqueDropoffUtil.MineralPosition goldMineralPosition;
+    public static HoustonBaroqueDropoffUtil.EndingPosition robotEndingPosition;
+    public static HoustonBaroqueDropoffUtil.HangingPosition robotHangingPosition;
 
     // declaring telemetry item
     private Telemetry.Item numberOfMineralsItem;
@@ -90,7 +77,7 @@ public class HoustonBachAutonomous extends Robot {
     // camera code
     private MineralDetectionTask mdTask;
     int goldMineralX;
-    private boolean approaching = true;
+    private boolean approaching = false;
 
     // enum for mineral detection states
     public enum MineralDetectionStates {
@@ -127,48 +114,35 @@ public class HoustonBachAutonomous extends Robot {
         bungeeBox.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // bungeeBox.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // imu and lights
-        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        // imu and light = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         imu = hardwareMap.get(BNO055IMU.class, "IMU");
 
-        // Deadreckon path and utilities
-        liftBufferPath = new DeadReckonPath();
-        liftBufferPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 1, 0.3);
-
-        exitLanderPath = new DeadReckonPath();
-        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 1.0, 0.3);
-        exitLanderPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
-        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-        exitLanderPath.addSegment(DeadReckonPath.SegmentType.TURN, 10.0, 0.3);
-        exitLanderPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-
         setupLeftPath = new DeadReckonPath();
-        setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
-        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-        setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 20.0, 0.3);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5.0, 0.3);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.TURN, 23.0, -0.7);
+        setupLeftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.7);
 
         setupCenterPath = new DeadReckonPath();
-        setupCenterPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
-        setupCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.3);
-        setupCenterPath.addSegment(DeadReckonPath.SegmentType.TURN, 35.0, 0.3);
+        setupCenterPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.5);
+        setupCenterPath.addSegment(DeadReckonPath.SegmentType.TURN, 5, -0.5);
 
         setupRightPath = new DeadReckonPath();
-        setupRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 30, 0.3);
-        setupRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3.0, 0.5);
-        setupRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 45.0, 0.3);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5.0, 0.5);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.TURN, 28.0, 0.5);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
+        setupRightPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15.0, -0.5);
 
         setupAlignPath = new DeadReckonPath();
 
         approachingGoldPath = new DeadReckonPath();
-        approachingGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
+        approachingGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2.0, 0.5);
 
         knockGoldPath = new DeadReckonPath();
-        knockGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12.0, 0.5);
+        knockGoldPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
 
         knockDepotPath = new DeadReckonPath();
-        dropoff = new HoustonDropoffUtil();
-        exitDepotPath = new DeadReckonPath();
-        exitDepotDropoff = new HoustonExitDepotUtil();
+        dropoff = new HoustonBaroqueDropoffUtil();
+        exitDepotDropoff = new HoustonBaroqueExitDepotUtil();
 
         // initializing gamepad variables
         gamepad1 = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
@@ -197,28 +171,28 @@ public class HoustonBachAutonomous extends Robot {
                         MineralDetectionEvent event = (MineralDetectionEvent) e;
                         List<Recognition> updatedMinerals = event.minerals;
                         numberOfMineralsItem.setValue(updatedMinerals.size());
-                        HoustonDropoffUtil.MineralPosition goldPos = HoustonDropoffUtil.determineGoldPosition(updatedMinerals);
-                        HoustonDropoffUtil.sendPositionTelemetry(goldPos, goldMineralPositionItem);
+                        HoustonBaroqueDropoffUtil.MineralPosition goldPos = HoustonBaroqueDropoffUtil.determineGoldPosition(updatedMinerals);
+                        HoustonBaroqueDropoffUtil.sendPositionTelemetry(goldPos, goldMineralPositionItem);
 
                         switch (goldPos) {
                             case LEFT:
-                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.LEFT;
+                                goldMineralPosition = HoustonBaroqueDropoffUtil.MineralPosition.LEFT;
                                 setupAlignPath = setupLeftPath;
-                                blinkin.setPattern(VivaldiCalibration.MINERAL_LEFT_PATTERN);
+                                // blinkin.setPattern(VivaldiCalibration.MINERAL_LEFT_PATTERN);
                                 break;
                             case RIGHT:
-                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.RIGHT;
+                                goldMineralPosition = HoustonBaroqueDropoffUtil.MineralPosition.RIGHT;
                                 setupAlignPath = setupRightPath;
-                                blinkin.setPattern(VivaldiCalibration.MINERAL_RIGHT_PATTERN);
+                                // blinkin.setPattern(VivaldiCalibration.MINERAL_RIGHT_PATTERN);
                                 break;
                             case CENTER:
-                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
+                                goldMineralPosition = HoustonBaroqueDropoffUtil.MineralPosition.CENTER;
                                 setupAlignPath = setupCenterPath;
-                                blinkin.setPattern(VivaldiCalibration.MINERAL_CENTER_PATTERN);
+                                // blinkin.setPattern(VivaldiCalibration.MINERAL_CENTER_PATTERN);////
                                 break;
-                            case UNKNOWN:
-                                goldMineralPosition = HoustonDropoffUtil.MineralPosition.CENTER;
-                                blinkin.setPattern(VivaldiCalibration.MINERAL_UNKNOWN_PATTERN);
+                            case DEFAULT:
+                                goldMineralPosition = HoustonBaroqueDropoffUtil.MineralPosition.CENTER;
+                                // blinkin.setPattern(VivaldiCalibration.MINERAL_UNKNOWN_PATTERN);
                                 setupAlignPath = setupCenterPath;
                                 break;
                         }
@@ -233,7 +207,7 @@ public class HoustonBachAutonomous extends Robot {
                         goldMineralX = (int) goldMineral.getLeft();
                         int imageCenter = goldMineral.getImageWidth() / 2;
                         int mineralCenter = ((int)goldMineral.getWidth() / 2) + goldMineralX;
-                        int offset = java.lang.Math.abs(imageCenter - mineralCenter);
+                        int offset = Math.abs(imageCenter - mineralCenter);
                         if (Math.abs(offset) < VivaldiCalibration.OFFSET_SLOP) {
                             mineralDetectionState = MineralDetectionStates.DONE_ALIGNING;
                         } else if (mineralCenter < imageCenter) {
@@ -247,7 +221,6 @@ public class HoustonBachAutonomous extends Robot {
                         }
                         // this.stop();
                         break;
-
                     case DONE_ALIGNING:
                         RobotLog.ii(TAG, "163: Done aligning case in initialize mineral detection.");
                         if (approaching == true) {
@@ -274,19 +247,19 @@ public class HoustonBachAutonomous extends Robot {
             switch (event.kind) {
                 case BUTTON_X_DOWN:
                     endingPositionItem.setValue("PARKING");
-                    robotEndingPosition = HoustonDropoffUtil.EndingPosition.PARKING;
+                    robotEndingPosition = HoustonBaroqueDropoffUtil.EndingPosition.PARKING;
                     break;
                 case BUTTON_Y_DOWN:
                     endingPositionItem.setValue("NOT PARKING");
-                    robotEndingPosition = HoustonDropoffUtil.EndingPosition.NOT_PARKING;
+                    robotEndingPosition = HoustonBaroqueDropoffUtil.EndingPosition.NOT_PARKING;
                     break;
                 case LEFT_BUMPER_DOWN:
                     hangingItem.setValue("HANGING");
-                    robotHangingPosition = HoustonDropoffUtil.HangingPosition.HANGING;
+                    robotHangingPosition = HoustonBaroqueDropoffUtil.HangingPosition.HANGING;
                     break;
                 case LEFT_TRIGGER_DOWN:
                     hangingItem.setValue("NOT HANGING");
-                    robotHangingPosition = HoustonDropoffUtil.HangingPosition.NOT_HANGING;
+                    robotHangingPosition = HoustonBaroqueDropoffUtil.HangingPosition.NOT_HANGING;
                     break;
             }
         }
@@ -299,7 +272,6 @@ public class HoustonBachAutonomous extends Robot {
             public void handleEvent (RobotEvent event) {
                 if(((IMUGyroEvent) event).kind == EventKind.HIT_TARGET) {
                     drivetrain.stop();
-                    bufferMove(liftBufferPath);
                 } else if (((IMUGyroEvent) event).kind == EventKind.PAST_TARGET) {
                     drivetrain.turn(VivaldiCalibration.TURN_SPEED / 2);
                 }
@@ -311,16 +283,14 @@ public class HoustonBachAutonomous extends Robot {
     @Override
     public void start() {
         mdTask.stop();
-        if(robotHangingPosition == HoustonDropoffUtil.HangingPosition.HANGING) {
-            blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_HANGING_PATTERN);
+        if (robotHangingPosition == HoustonBaroqueDropoffUtil.HangingPosition.HANGING) {
+            // blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_HANGING_PATTERN);
             unlatch();
             knockDepotPath = dropoff.getPath(robotEndingPosition, goldMineralPosition);
-            exitDepotPath = exitDepotDropoff.getPath(robotEndingPosition, goldMineralPosition);
-        } else if (robotHangingPosition == HoustonDropoffUtil.HangingPosition.NOT_HANGING) {
-            blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_LANDED_PATTERN);
+        } else if (robotHangingPosition == HoustonBaroqueDropoffUtil.HangingPosition.NOT_HANGING) {
+            // blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_LANDED_PATTERN);
             knockDepotPath = dropoff.getPath(robotEndingPosition, goldMineralPosition);
-            exitDepotPath = exitDepotDropoff.getPath(robotEndingPosition, goldMineralPosition);
-            initialMove(exitLanderPath);
+            initialMove(setupAlignPath);
         }
     }
 
@@ -335,7 +305,7 @@ public class HoustonBachAutonomous extends Robot {
                     liftLeft.setPower(0.0);
                     leftLanded = true;
                     if (rightLanded == true) {
-                        initialStraighten();
+                        initialMove(knockDepotPath);
                     }
                 }
             }
@@ -349,7 +319,7 @@ public class HoustonBachAutonomous extends Robot {
                     liftRight.setPower(0.0);
                     rightLanded = true;
                     if (leftLanded == true) {
-                        initialStraighten();
+                        initialMove(knockDepotPath);
                     }
                 }
             } };
@@ -357,30 +327,6 @@ public class HoustonBachAutonomous extends Robot {
         addTask(rightTask);
     }
 
-    public void bufferMove(final DeadReckonPath path)
-    {
-        RobotLog.ii(TAG, "Buffer move start");
-        addTask(new DeadReckonTask(this, path, drivetrain) {
-            public void handleEvent (RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case PATH_DONE:
-                        RobotLog.ii(TAG, "Buffer move done");
-                        initialMove(exitLanderPath);
-                        blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_PARKING_PATTERN);
-                        break;
-                }
-            }
-        });
-    }
-
-    public void initialStraighten()
-    {
-        RobotLog.ii(TAG, "Initial straighten");
-        addTask(gyroTask);
-        drivetrain.turn(-VivaldiCalibration.TURN_SPEED);
-        blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_LANDED_PATTERN);
-    }
 
     protected void initialMove(final DeadReckonPath path) {
         RobotLog.ii(TAG, "Initial move start");
@@ -390,21 +336,8 @@ public class HoustonBachAutonomous extends Robot {
                 switch (event.kind) {
                     case PATH_DONE:
                         RobotLog.ii(TAG, "Initial move done");
-                        setupAlign(setupAlignPath);
-                        break;
-                }
-            }
-        });
-    }
-
-    public void setupAlign(DeadReckonPath path) {
-        RobotLog.ii(TAG, "163: Center on mineral");
-        addTask(new DeadReckonTask(this, path, drivetrain) {
-            public void handleEvent (RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case PATH_DONE:
                         initializeMineralAlignment();
+                        break;
                 }
             }
         });
@@ -412,7 +345,7 @@ public class HoustonBachAutonomous extends Robot {
 
     public void initializeMineralAlignment() {
         RobotLog.ii(TAG, "163: Initializing mineral alignment.");
-        mdTask.toggleCamera();
+        // mdTask.toggleCamera();
         mdTask.setDetectionKind(MineralDetectionTask.DetectionKind.LARGEST_GOLD);
         mineralDetectionState = MineralDetectionStates.ALIGNING;
         addTask(mdTask);
@@ -463,8 +396,7 @@ public class HoustonBachAutonomous extends Robot {
         addTask(new RunToEncoderValueTask(this, bungeeBox, 50, 0.3) {
             @Override
             public void handleEvent(RobotEvent e) {
-                blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_MARKER_DROP_PATTERN);
-                exitDepot(exitDepotPath);
+                // blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_MARKER_DROP_PATTERN);
                 // retractArm();
             }
         });
@@ -474,7 +406,6 @@ public class HoustonBachAutonomous extends Robot {
         addTask(new RunToEncoderValueTask(this, bungeeBox, 50, -0.3) {
             @Override
             public void handleEvent(RobotEvent e) {
-                exitDepot(exitDepotPath);
             }
         });
     }
@@ -487,7 +418,7 @@ public class HoustonBachAutonomous extends Robot {
                 switch (event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: You're done, congrats!");
-                        blinkin.setPattern(VivaldiCalibration.AUTONOMUOS_DONE_PATTERN);
+                        // blinkin.setPattern(VivaldiCalibration.AUTONOMOUS_DONE_PATTERN);
 
                 }
             }
