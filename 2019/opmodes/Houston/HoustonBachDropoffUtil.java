@@ -7,13 +7,13 @@ import java.util.List;
 
 import team25core.DeadReckonPath;
 
-import static opmodes.Houston.HoustonDropoffUtil.MineralPosition.UNKNOWN;
+import static opmodes.Houston.HoustonBachDropoffUtil.MineralPosition.DEFAULT;
 import static team25core.MineralDetectionTask.LABEL_GOLD_MINERAL;
 
 /**
  * Created by Lizzie on 2/6/2019.
  */
-public class HoustonDropoffUtil {
+public class HoustonBachDropoffUtil {
 
     // groundwork for autonomous variables
     public enum EndingPosition {
@@ -26,7 +26,7 @@ public class HoustonDropoffUtil {
         LEFT,
         RIGHT,
         CENTER,
-        UNKNOWN,
+        DEFAULT,
     }
 
     public enum HangingPosition {
@@ -69,6 +69,31 @@ public class HoustonDropoffUtil {
                 // two mineral detection code
                 if (goldMineralX != -1 && silverMineral1X != -1) {
                     if (goldMineralX < silverMineral1X) {
+                        return MineralPosition.LEFT;
+                    } else if (goldMineralX > silverMineral1X) {
+                        return MineralPosition.CENTER;
+                    }
+                } else if (silverMineral1X != -1 && silverMineral2X != -1) {
+                    return MineralPosition.RIGHT;
+                }
+            } else if (size == 3) {
+                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                        return MineralPosition.LEFT;
+                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                        return MineralPosition.RIGHT;
+                    } else {
+                        return MineralPosition.CENTER;
+                    }
+                }
+            }
+
+            /*
+            int size = minerals.size();
+            if (size == 2) {
+                // two mineral detection code
+                if (goldMineralX != -1 && silverMineral1X != -1) {
+                    if (goldMineralX < silverMineral1X) {
                         return MineralPosition.CENTER;
                     } else if (goldMineralX > silverMineral1X) {
                         return MineralPosition.RIGHT;
@@ -87,55 +112,43 @@ public class HoustonDropoffUtil {
                     }
                 }
             }
+            */
         }
-        return UNKNOWN;
+        return MineralPosition.DEFAULT;
     }
 
     DeadReckonPath[][] paths = new DeadReckonPath[2][3];
 
-    public HoustonDropoffUtil() {
+    public HoustonBachDropoffUtil() {
         /*
         DEPOT CODE: marker dropoff with parking
         */
 
         // depot, parking, center mineral
         paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 20, -0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 25.0, 0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 50.0, -0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20.0, 0.5);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15.0, 0.5);
 
         // depot, no parking, center mineral
         paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.CENTER.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 35.0, -0.5);
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.CENTER.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 25.0, 0.5);
 
         // depot, parking, left mineral
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 25.0, 0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 28.0, 0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20.0, 0.5);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2.0, 0.5);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 23.0, -0.5);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
 
         // depot, no parking, left mineral
         paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 30.0, 0.3);
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 25.0, 0.5);
 
         // depot, parking, right mineral
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.7);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 35.0, -0.3);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15.0, 0.8);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 45.0, -0.3);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 32.0, 0.5);
-        paths[EndingPosition.PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 65.0, 0.3);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()] = new DeadReckonPath();
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 12.0, -0.3);
+        paths[EndingPosition.PARKING.ordinal()][MineralPosition.LEFT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, 0.5);
 
         // depot, no parking, right mineral
         paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.RIGHT.ordinal()] = new DeadReckonPath();
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 30.0, -0.3);
-        paths[EndingPosition.NOT_PARKING.ordinal()][MineralPosition.RIGHT.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 16.0, 0.5);
     }
 
-    public DeadReckonPath getPath (HoustonDropoffUtil.EndingPosition end, HoustonDropoffUtil.MineralPosition position) { return paths[end.ordinal()][position.ordinal()];
+    public DeadReckonPath getPath (HoustonBachDropoffUtil.EndingPosition end, HoustonBachDropoffUtil.MineralPosition position) { return paths[end.ordinal()][position.ordinal()];
     }
 }
