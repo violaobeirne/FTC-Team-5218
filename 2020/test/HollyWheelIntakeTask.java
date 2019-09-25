@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import team25core.Robot;
 import team25core.RobotTask;
 
-public class WheelIntakeTask extends RobotTask
+public class HollyWheelIntakeTask extends RobotTask
 {
     protected Robot robot;
     protected DcMotor rightIntake;
@@ -49,7 +49,7 @@ public class WheelIntakeTask extends RobotTask
     public double right;
     public double left;
 
-    public WheelIntakeTask(Robot robot, DcMotor intakeRight, DcMotor intakeLeft)
+    public HollyWheelIntakeTask(Robot robot, DcMotor intakeRight, DcMotor intakeLeft)
     {
         super(robot);
 

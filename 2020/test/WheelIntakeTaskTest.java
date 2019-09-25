@@ -30,7 +30,6 @@
  *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,7 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import team25core.Robot;
 import team25core.RobotEvent;
 
-@TeleOp(name = "FourWheelDriveTaskExample")
+@TeleOp(name = "WheelIntake0921Test")
 //@Disabled
 public class WheelIntakeTaskTest extends Robot {
 
@@ -54,7 +53,9 @@ public class WheelIntakeTaskTest extends Robot {
 
     @Override
     public void init()
+
     {
+        //make sure "LeftIntake" etc. aligns with configurations in phone or align "LeftIntake" w/phone
         leftIntake = hardwareMap.get(DcMotor.class, "LeftIntake");
         rightIntake = hardwareMap.get(DcMotor.class, "RightIntake");
 
@@ -63,7 +64,7 @@ public class WheelIntakeTaskTest extends Robot {
     @Override
     public void start()
     {
-        this.addTask(new WheelIntakeTask(this, leftIntake, rightIntake));
+        this.addTask(new HollyWheelIntakeTask(this, leftIntake, rightIntake));
     }
 
 }
