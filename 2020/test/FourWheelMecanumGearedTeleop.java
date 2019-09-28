@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) September 2017 FTC Teams 25/5218
  *
@@ -34,70 +33,48 @@
 
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import team25core.Robot;
-import team25core.RobotTask;
+import team25core.RobotEvent;
+import team25core.TankMechanumControlScheme;
+import team25core.TeleopDriveTask;
 
-public class HollyWheelIntakeTask extends RobotTask
-{
-    protected Robot robot;
-    protected DcMotor rightIntake;
-    protected DcMotor leftIntake;
+@TeleOp(name = "FourWheelMecanumGearedTeleop") //@Teleop is an annotation
+//@Disabled, so you can see on phone
+public class FourWheelMecanumGearedTeleop extends Robot {
 
-    public double right;
-    public double left;
+    private DcMotor frontLeft; //declaration, private = just class. declaring variables
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
 
-    public HollyWheelIntakeTask(Robot robot, DcMotor intakeRight, DcMotor intakeLeft)
+    private TeleopDriveTask driveTask;
+
+    private static final int TICKS_PER_INCH = 79;
+
+    @Override
+    public void handleEvent(RobotEvent e)
     {
-        super(robot);
-
-        this.rightIntake = intakeRight;
-        this.leftIntake = intakeLeft;
-        this.robot = robot;
-    }
-
-    private void getButton() {
-
-        Gamepad gamepad = robot.gamepad1;
-        if (gamepad.a) {
-            left = 1.0;
-            right = -1.0;
-        }
-        if (gamepad.b) {
-            left = -1.0;
-            right = 1.0;
-        }
-        else {
-            left = 0;
-            right = 0;
-        }
+       // Nothing to do here...
     }
 
     @Override
-    public void start()
+    public void init()
     {
-        // Nothing.
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1); //passing gamepad
+
+        driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
     }
 
     @Override
-    public void stop()
-    {
-        robot.removeTask(this);
-    }
+    public void start(){this.addTask(driveTask);}
 
-    @Override
-    public boolean timeslice()
-    {
-        getButton();
-        leftIntake.setPower(left);
-        rightIntake.setPower(right);
-
-        robot.telemetry.addData("L: ", left);
-        robot.telemetry.addData("R: ", right);
-
-        return false;
-    }
 
 }
