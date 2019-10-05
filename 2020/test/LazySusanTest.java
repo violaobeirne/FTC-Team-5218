@@ -34,11 +34,10 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import opmodes.HisaishiCalibration;
 
+import opmodes.HisaishiCalibration;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.Robot;
@@ -57,10 +56,6 @@ public class LazySusanTest extends Robot {
     private Servo susan;
 
     private FourWheelDirectDrivetrain drivetrain;
-
-    private static final double OPEN_SERVO = 0;
-    private static final double CLOSE_SERVO = 180;
-    private static final int TICKS_PER_INCH = 79;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -87,8 +82,6 @@ public class LazySusanTest extends Robot {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         susan = hardwareMap.get(Servo.class, "susan");
-
-        susan.setPosition(OPEN_SERVO);
 
         GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
