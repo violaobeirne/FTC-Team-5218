@@ -96,7 +96,6 @@ public class LazySusanTest extends Robot {
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
 
-
     @Override
     public void start()
     {
