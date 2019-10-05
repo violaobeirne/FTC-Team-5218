@@ -57,12 +57,10 @@ public class WheelIntakeTest extends Robot {
                     leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_COLLECT);
                     rightIntake.setPower(HisaishiCalibration.INTAKE_RIGHT_COLLECT);
                     break;
-
                 case BUTTON_B_DOWN:
                     leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_DISPENSE);
                     rightIntake.setPower(HisaishiCalibration.INTAKE_RIGHT_DISPENSE);
                     break;
-
                 case BUTTON_X_UP:
                 case BUTTON_B_UP:
                     leftIntake.setPower(0.0);

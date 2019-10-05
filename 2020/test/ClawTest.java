@@ -52,12 +52,10 @@ public class ClawTest extends Robot {
     {
        if (e instanceof GamepadTask.GamepadEvent) {
            GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
            switch (event.kind) {
                case BUTTON_X_DOWN:
                    claw.setPosition(HisaishiCalibration.CLAW_CLOSE);
                    break;
-
                case BUTTON_Y_DOWN:
                    claw.setPosition(HisaishiCalibration.CLAW_OPEN);
                    break;

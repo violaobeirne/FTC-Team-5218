@@ -51,16 +51,13 @@ public class TwoBarTest extends Robot {
     {
         if (e instanceof GamepadTask.GamepadEvent) {
             GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
             switch (event.kind) {
                 case RIGHT_BUMPER_DOWN:
                     twoBar.setPower(HisaishiCalibration.TBAR_ARM_UP);
                     break;
-
                 case RIGHT_TRIGGER_DOWN:
                     twoBar.setPower(HisaishiCalibration.TBAR_ARM_DOWN);
                     break;
-
                 case RIGHT_TRIGGER_UP:
                 case RIGHT_BUMPER_UP:
                     twoBar.setPower(0.0);
