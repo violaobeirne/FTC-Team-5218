@@ -30,76 +30,63 @@
  *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import opmodes.HisaishiCalibration;
 
-import team25core.FourWheelDirectDrivetrain;
+import opmodes.HisaishiCalibration;
 import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
-import team25core.TankDriveTask;
 
-@TeleOp(name = "LazySusanTest")
-//@Disabled
-public class LazySusanTest extends Robot {
+@TeleOp(name = "Wheel Intake Test")
+public class WheelIntakeTest extends Robot {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    private Servo susan;
-
-    private FourWheelDirectDrivetrain drivetrain;
-
-    private static final double OPEN_SERVO = 0;
-    private static final double CLOSE_SERVO = 180;
-    private static final int TICKS_PER_INCH = 79;
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
 
     @Override
     public void handleEvent(RobotEvent e)
     {
-       if (e instanceof GamepadTask.GamepadEvent) {
-           GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
+        if (e instanceof GamepadTask.GamepadEvent) {
+            GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
 
-           switch (event.kind) {
-               case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
-                   break;
-               case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
-                   break;
-           }
-       }
+            switch (event.kind) {
+                case BUTTON_X_DOWN:
+                    leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_COLLECT);
+                    rightIntake.setPower(HisaishiCalibration.INTAKE_RIGHT_COLLECT);
+                    break;
+
+                case BUTTON_B_DOWN:
+                    leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_DISPENSE);
+                    rightIntake.setPower(HisaishiCalibration.INTAKE_RIGHT_DISPENSE);
+                    break;
+
+                case BUTTON_X_UP:
+                case BUTTON_B_UP:
+                    leftIntake.setPower(0.0);
+                    rightIntake.setPower(0.0);
+                    break;
+            }
+        }
     }
 
     @Override
     public void init()
-    {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
 
-        susan.setPosition(OPEN_SERVO);
+    {
+        //make sure "LeftIntake" etc. aligns with configurations in phone or align "LeftIntake" w/phone
+        leftIntake = hardwareMap.get(DcMotor.class, "leftIntake");
+        rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
 
         GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
-
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
-
 
     @Override
     public void start()
     {
-        this.addTask(new TankDriveTask(this, drivetrain));
     }
+
 }

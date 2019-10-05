@@ -35,32 +35,17 @@ package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import opmodes.HisaishiCalibration;
 
-import team25core.FourWheelDirectDrivetrain;
+import opmodes.HisaishiCalibration;
 import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
-import team25core.TankDriveTask;
 
-@TeleOp(name = "LazySusanTest")
+@TeleOp(name = "Claw Test")
 //@Disabled
-public class LazySusanTest extends Robot {
-
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    private Servo susan;
-
-    private FourWheelDirectDrivetrain drivetrain;
-
-    private static final double OPEN_SERVO = 0;
-    private static final double CLOSE_SERVO = 180;
-    private static final int TICKS_PER_INCH = 79;
+public class ClawTest extends Robot {
+    private Servo claw;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -70,10 +55,11 @@ public class LazySusanTest extends Robot {
 
            switch (event.kind) {
                case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
+                   claw.setPosition(HisaishiCalibration.CLAW_CLOSE);
                    break;
-               case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
+
+               case BUTTON_Y_DOWN:
+                   claw.setPosition(HisaishiCalibration.CLAW_OPEN);
                    break;
            }
        }
@@ -82,24 +68,16 @@ public class LazySusanTest extends Robot {
     @Override
     public void init()
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
-
-        susan.setPosition(OPEN_SERVO);
-
+        claw = hardwareMap.servo.get("claw");
         GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
-
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
 
 
     @Override
     public void start()
     {
-        this.addTask(new TankDriveTask(this, drivetrain));
+
     }
+
 }

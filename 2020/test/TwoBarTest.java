@@ -30,76 +30,58 @@
  *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import opmodes.HisaishiCalibration;
 
-import team25core.FourWheelDirectDrivetrain;
+import opmodes.HisaishiCalibration;
+import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
-import team25core.TankDriveTask;
 
-@TeleOp(name = "LazySusanTest")
-//@Disabled
-public class LazySusanTest extends Robot {
+@TeleOp(name = "Two Bar Test")
+public class TwoBarTest extends Robot {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    private Servo susan;
-
-    private FourWheelDirectDrivetrain drivetrain;
-
-    private static final double OPEN_SERVO = 0;
-    private static final double CLOSE_SERVO = 180;
-    private static final int TICKS_PER_INCH = 79;
+    private DcMotor twoBar;
 
     @Override
     public void handleEvent(RobotEvent e)
     {
-       if (e instanceof GamepadTask.GamepadEvent) {
-           GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
+        if (e instanceof GamepadTask.GamepadEvent) {
+            GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
 
-           switch (event.kind) {
-               case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
-                   break;
-               case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
-                   break;
-           }
-       }
+            switch (event.kind) {
+                case RIGHT_BUMPER_DOWN:
+                    twoBar.setPower(HisaishiCalibration.TBAR_ARM_UP);
+                    break;
+
+                case RIGHT_TRIGGER_DOWN:
+                    twoBar.setPower(HisaishiCalibration.TBAR_ARM_DOWN);
+                    break;
+
+                case RIGHT_TRIGGER_UP:
+                case RIGHT_BUMPER_UP:
+                    twoBar.setPower(0.0);
+                    break;
+            }
+        }
     }
 
     @Override
-    public void init()
-    {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
-
-        susan.setPosition(OPEN_SERVO);
-
-        GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
-        addTask(gamepad);
-
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+    public void init() {
+        twoBar = hardwareMap.dcMotor.get("twoBar");
+        {
+            //make sure "LeftIntake" etc. aligns with configurations in phone or align "LeftIntake" w/phone
+            GamepadTask gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
+            addTask(gamepad);
+        }
     }
-
 
     @Override
     public void start()
     {
-        this.addTask(new TankDriveTask(this, drivetrain));
     }
+
 }
