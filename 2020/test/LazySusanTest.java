@@ -60,7 +60,6 @@ public class LazySusanTest extends Robot {
                case BUTTON_X_DOWN:
                    susan.setPower(HisaishiCalibration.SUSAN_LEFT);
                    break;
-
                case BUTTON_Y_DOWN:
                    susan.setPower(HisaishiCalibration.SUSAN_RIGHT);
                    break;
@@ -76,11 +75,9 @@ public class LazySusanTest extends Robot {
         addTask(gamepad);
     }
 
-
     @Override
     public void start()
     {
 
     }
-
 }

@@ -27,12 +27,10 @@ public class LiftTest extends Robot {
 
         if (e instanceof GamepadTask.GamepadEvent) {
             GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
             switch (event.kind) {
                 case BUTTON_X_DOWN:
                     lift.setPower(HisaishiCalibration.LIFT_UP);
                     break;
-
                 case BUTTON_Y_DOWN:
                     lift.setPower(HisaishiCalibration.LIFT_DOWN);
                     break;
