@@ -36,6 +36,7 @@ package test;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
@@ -49,10 +50,8 @@ public class FourWheelMecanumGearedTeleop extends Robot {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-
+    private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
-
-    private static final int TICKS_PER_INCH = 79;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -68,13 +67,18 @@ public class FourWheelMecanumGearedTeleop extends Robot {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
+        drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1); //passing gamepad
 
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
     }
 
     @Override
-    public void start(){this.addTask(driveTask);}
+    public void start(){
+        this.addTask(driveTask);
+
+
+    }
 
 
 }

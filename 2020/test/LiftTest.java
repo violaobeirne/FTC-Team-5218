@@ -34,6 +34,7 @@ public class LiftTest extends Robot {
                 case BUTTON_Y_DOWN:
                     lift.setPower(HisaishiCalibration.LIFT_DOWN);
                     break;
+
             }
         }
     }
