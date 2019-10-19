@@ -30,68 +30,41 @@
  *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.HisaishiCalibration;
-import team25core.FourWheelDirectDrivetrain;
-import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
-import team25core.TankDriveTask;
 
-@TeleOp(name = "LazySusanTest")
+@TeleOp(name = "WheelIntake0921Test")
 //@Disabled
-public class LazySusanTest extends Robot {
+public class WheelIntakeTaskTest extends Robot {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    private Servo susan;
-
-    private FourWheelDirectDrivetrain drivetrain;
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
 
     @Override
     public void handleEvent(RobotEvent e)
     {
-       if (e instanceof GamepadTask.GamepadEvent) {
-           GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
-           switch (event.kind) {
-               case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
-                   break;
-               case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
-                   break;
-           }
-       }
+       // Nothing to do here...
     }
 
     @Override
     public void init()
+
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
+        //make sure "LeftIntake" etc. aligns with configurations in phone or align "LeftIntake" w/phone
+        leftIntake = hardwareMap.get(DcMotor.class, "LeftIntake");
+        rightIntake = hardwareMap.get(DcMotor.class, "RightIntake");
 
-        GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
-        addTask(gamepad);
-
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
 
     @Override
     public void start()
     {
-        this.addTask(new TankDriveTask(this, drivetrain));
+        this.addTask(new test.WheelIntakeTask(this, leftIntake, rightIntake));
     }
+
 }

@@ -35,43 +35,28 @@ package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.HisaishiCalibration;
-import team25core.FourWheelDirectDrivetrain;
-import team25core.GamepadTask;
+import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
-import team25core.TankDriveTask;
+import team25core.TankMechanumControlScheme;
+import team25core.TeleopDriveTask;
 
-@TeleOp(name = "LazySusanTest")
-//@Disabled
-public class LazySusanTest extends Robot {
+@TeleOp(name = "FourWheelMecanumGearedTeleop") //@Teleop is an annotation
+//@Disabled, so you can see on phone
+public class FourWheelMecanumGearedTeleop extends Robot {
 
-    private DcMotor frontLeft;
+    private DcMotor frontLeft; //declaration, private = just class. declaring variables
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-
-    private Servo susan;
-
-    private FourWheelDirectDrivetrain drivetrain;
+    private MechanumGearedDrivetrain drivetrain;
+    private TeleopDriveTask driveTask;
 
     @Override
     public void handleEvent(RobotEvent e)
     {
-       if (e instanceof GamepadTask.GamepadEvent) {
-           GamepadTask.GamepadEvent event = (GamepadTask.GamepadEvent) e;
-
-           switch (event.kind) {
-               case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
-                   break;
-               case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
-                   break;
-           }
-       }
+       // Nothing to do here...
     }
 
     @Override
@@ -81,17 +66,19 @@ public class LazySusanTest extends Robot {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
 
-        GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
-        addTask(gamepad);
+        drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1); //passing gamepad
 
-        drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
+        driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
     }
 
     @Override
-    public void start()
-    {
-        this.addTask(new TankDriveTask(this, drivetrain));
+    public void start(){
+        this.addTask(driveTask);
+
+
     }
+
+
 }

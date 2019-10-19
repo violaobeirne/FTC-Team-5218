@@ -1,7 +1,4 @@
 package opmodes;
-import team25core.Robot;
-import team25core.RobotEvent;
-
 /**
  * Created by Lizzie on 10/1/2019.
  */
@@ -31,8 +28,8 @@ public class HisaishiCalibration {
     public static final double TBAR_ARM_DOWN = -0.3;
 
     // claw
-    public static final double CLAW_OPEN = 50.0/256.0;
-    public static final double CLAW_CLOSE = 200.0 / 256.0;
+    public static final double CLAW_OPEN = 225.0/256.0; //version 1: 50, version 2: 225
+    public static final double CLAW_CLOSE = 168.0 / 256.0; //version 1: 200, version 2: 168
 
     // lift
     public static final double LIFT_UP = 0.5;
@@ -40,17 +37,11 @@ public class HisaishiCalibration {
 
 
     /* REV HUB 1 CONFIGURATION
-        MOTORS (PROTOTYPE)
-            0 - "barArm"        - two bar arm
-            1 - "leftIntake"    - wheel intake left
-            2 - "rightIntake"   - wheel intake right
-            3 - "lift"          - cascading lift
-
-        MOTORS (SOMEDAY)
-            0 - "frontLeft"     - drivetrain front left
-            1 - "frontRIght"    - drivetrain front right
-            2 - "backLeft"      - drivetrain back left
-            3. - "backRight"    - drivetrain back right
+        MOTORS (MECHANISMS)
+            0 - "leftIntake"    - wheel intake left
+            1 - "rightIntake"   - wheel intake right
+            2 - "lift"          - cascading lift
+            3 -
 
         SERVOS
             0 - "susan"         - lazy susan
@@ -58,5 +49,12 @@ public class HisaishiCalibration {
             2 - "rightArm"      - foundation migration right arm
             3 - "claw"          - claw
             4 -
+     */
+    /* REV HUB 2 CONFIGURATION
+        MOTORS (DRIVETRAIN)
+            0 - "frontLeft"     - drivetrain front left
+            1 - "frontRIght"    - drivetrain front right
+            2 - "backLeft"      - drivetrain back left
+            3. - "backRight"    - drivetrain back right
      */
 }

@@ -37,25 +37,33 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.HisaishiCalibration;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.TankDriveTask;
 
-@TeleOp(name = "LazySusanTest")
+@TeleOp(name = "ServoTest1")
 //@Disabled
-public class LazySusanTest extends Robot {
+public class ServoTest extends Robot {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
 
-    private Servo susan;
+    private Servo rightServo;
+    private Servo leftServo;
+
+    private final double OPEN_RIGHT_SERVO = 138;
+    private final double OPEN_LEFT_SERVO = 156;
+
+    private final double CLOSE_RIGHT_SERVO = 38;
+    private final double CLOSE_LEFT_SERVO = 256;
 
     private FourWheelDirectDrivetrain drivetrain;
+
+    private static final int TICKS_PER_INCH = 79;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -65,10 +73,13 @@ public class LazySusanTest extends Robot {
 
            switch (event.kind) {
                case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
+                   rightServo.setPosition(OPEN_RIGHT_SERVO);
+                   leftServo.setPosition(OPEN_LEFT_SERVO);
                    break;
+
                case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
+                   rightServo.setPosition(CLOSE_RIGHT_SERVO);
+                   leftServo.setPosition(CLOSE_LEFT_SERVO);
                    break;
            }
        }
@@ -81,7 +92,12 @@ public class LazySusanTest extends Robot {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        susan = hardwareMap.get(Servo.class, "susan");
+
+        rightServo = hardwareMap.servo.get("rightServo");
+        leftServo = hardwareMap.servo.get("leftServo");
+
+        rightServo.setPosition(0);
+        leftServo.setPosition(0);
 
         GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
@@ -89,9 +105,11 @@ public class LazySusanTest extends Robot {
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
     }
 
+
     @Override
     public void start()
     {
         this.addTask(new TankDriveTask(this, drivetrain));
     }
+
 }
