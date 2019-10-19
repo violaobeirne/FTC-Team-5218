@@ -36,25 +36,31 @@ public class HisaishiCalibration {
     public static final double LIFT_DOWN = -0.5;
 
 
-    /* REV HUB 1 CONFIGURATION
+    /*
+    REV EXPANSION HUB 4 CONFIGURATION (FRONT OF ROBOT)
         MOTORS (MECHANISMS)
-            0 - "leftIntake"    - wheel intake left
-            1 - "rightIntake"   - wheel intake right
-            2 - "lift"          - cascading lift
+            0 - "frontLeft"     - drivetrain front left
+            1 - "frontRight"    - drivetrain front right
+            2 - "leftIntake"    - active wheel intake left
+            3 - "rightIntake"   - active wheel intake right
+
+        SERVOS
+            0 -
+            1 -
+            2 -
             3 -
+
+     REV CONTROL HUB 1 CONFIGURATION (BACK OF ROBOT)
+        MOTORS (DRIVETRAIN)
+            0 - "backLeft"     - drivetrain back left
+            1 - "backRight"    - drivetrain back right
+            2 - "lift"         - cascading lift
+            3 - ""
 
         SERVOS
             0 - "susan"         - lazy susan
-            1 - "leftArm"       = foundation migration left arm
+            1 - "leftArm"       - foundation migration left arm
             2 - "rightArm"      - foundation migration right arm
             3 - "claw"          - claw
-            4 -
-     */
-    /* REV HUB 2 CONFIGURATION
-        MOTORS (DRIVETRAIN)
-            0 - "frontLeft"     - drivetrain front left
-            1 - "frontRIght"    - drivetrain front right
-            2 - "backLeft"      - drivetrain back left
-            3. - "backRight"    - drivetrain back right
      */
 }
