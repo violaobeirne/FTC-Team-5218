@@ -34,6 +34,7 @@
 package test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.HisaishiCalibration;
@@ -45,6 +46,7 @@ import team25core.RobotEvent;
 //@Disabled
 public class ClawTest extends Robot {
     private Servo claw;
+    private DcMotor lift;
 
     @Override
     public void handleEvent(RobotEvent e)
@@ -58,6 +60,15 @@ public class ClawTest extends Robot {
                case BUTTON_Y_DOWN:
                    claw.setPosition(HisaishiCalibration.CLAW_OPEN);
                    break;
+               case RIGHT_BUMPER_DOWN:
+                   lift.setPower(HisaishiCalibration.LIFT_UP);
+                   break;
+               case RIGHT_TRIGGER_DOWN:
+                   lift.setPower(HisaishiCalibration.LIFT_DOWN);
+                   break;
+               case RIGHT_BUMPER_UP: case RIGHT_TRIGGER_UP:
+                   lift.setPower(0.0);
+                   break;
            }
        }
     }
@@ -66,6 +77,7 @@ public class ClawTest extends Robot {
     public void init()
     {
         claw = hardwareMap.servo.get("claw");
+        lift = hardwareMap.dcMotor.get("lift");
         GamepadTask gamepad= new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
         addTask(gamepad);
     }
