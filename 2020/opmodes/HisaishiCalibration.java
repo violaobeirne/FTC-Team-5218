@@ -6,11 +6,11 @@ public class HisaishiCalibration {
 
     /* PROTOTYPES */
     // foundation migration
-    public static final double ARM_LEFT_DOWN = 0/360;
-    public static final double ARM_LEFT_STOW = 360/360;
+    public static final double ARM_LEFT_DOWN = 143/360; //before 0
+    public static final double ARM_LEFT_STOW = 91/360; //before 360
 
     public static final double ARM_RIGHT_DOWN = 0/360;
-    public static final double ARM_RIGHT_STOW = 360/360;
+    public static final double ARM_RIGHT_STOW = 54/360; //before 360
 
     // lazy susan
     public static final double SUSAN_LEFT = -1;
