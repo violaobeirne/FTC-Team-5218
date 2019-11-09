@@ -65,10 +65,10 @@ public class LazySusanTest extends Robot {
 
            switch (event.kind) {
                case BUTTON_X_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
+                   susan.setPosition(HisaishiCalibration.SUSAN_STOW);
                    break;
                case BUTTON_B_DOWN:
-                   susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
+                   susan.setPosition(HisaishiCalibration.SUSAN_OUT);
                    break;
            }
        }

@@ -7,6 +7,7 @@ public class HisaishiCalibration {
     /* PROTOTYPES */
     // foundation migration
 <<<<<<< HEAD
+<<<<<<< HEAD
     public static final double ARM_LEFT_DOWN = 143/360; //before 0
     public static final double ARM_LEFT_STOW = 91/360; //before 360
 
@@ -19,10 +20,17 @@ public class HisaishiCalibration {
     public static final double ARM_RIGHT_DOWN = 0.0/360.0;
     public static final double ARM_RIGHT_STOW = 256.0/256.0;
 >>>>>>> upstream/master
+=======
+    public static final double ARM_LEFT_DOWN = 151.0/256.0;
+    public static final double ARM_LEFT_STOW = 95.0/256.0;
+
+    public static final double ARM_RIGHT_DOWN = 8.0/360.0;
+    public static final double ARM_RIGHT_STOW = 57.0/256.0;
+>>>>>>> 7a3198a131fc54c745bc9f2514ed2480e41b4497
 
     // lazy susan
-    public static final double SUSAN_STOW = 50.0/256.0;
-    public static final double SUSAN_OUT = 50.0/256.0;
+    public static final double SUSAN_STOW = 60.0/256.0;
+    public static final double SUSAN_OUT = 80.0/256.0;
 
     // active wheel intake
     public static final double INTAKE_LEFT_COLLECT = 0.5;
@@ -39,11 +47,11 @@ public class HisaishiCalibration {
     public static final double NEW_CLAW_OPEN = 225.0/256.0; //version 1: 50, version 2: 225
     public static final double NEW_CLAW_CLOSE = 160.0 / 256.0; //version 1: 200, version 2: 168
     public static final double OLD_CLAW_OPEN = 50.0/256.0;
-    public static final double OLD_CLAW_CLOSE = 200.0/256.0;
+    public static final double OLD_CLAW_CLOSE = 150.0/256.0;
 
     // lift
-    public static final double LIFT_UP = 0.5;
-    public static final double LIFT_DOWN = -0.5;
+    public static final double LIFT_UP = -0.5;
+    public static final double LIFT_DOWN = 0.5;
 
 
     /*
