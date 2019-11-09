@@ -2,6 +2,7 @@ package opmodes.LM0;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.HisaishiCalibration;
@@ -36,6 +37,8 @@ public class MozartLM0Teleop extends Robot {
     private DcMotor lift;
     private Servo claw;
     private Servo susan;
+    private Servo leftArm;
+    private Servo rightArm;
 
     public void handleEvent (RobotEvent e) {
 
@@ -47,9 +50,12 @@ public class MozartLM0Teleop extends Robot {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        leftArm = hardwareMap.servo.get("leftArm");
+        rightArm = hardwareMap.servo.get("rightArm");
+
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
-        allianceColor = allianceColor.DEFAULT;
+        drivetrain.setNoncanonicalMotorDirection();
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
         lift = hardwareMap.dcMotor.get("lift");
         claw = hardwareMap.servo.get("claw");
@@ -78,6 +84,23 @@ public class MozartLM0Teleop extends Robot {
                     susan.setPosition(HisaishiCalibration.SUSAN_OUT);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
                     susan.setPosition(HisaishiCalibration.SUSAN_STOW);
+                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
+                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
+                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
+                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
+                }
+            }
+        });
+
+        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
+            public void handleEvent(RobotEvent e) {
+                GamepadEvent event = (GamepadEvent) e;
+                if (event.kind == EventKind.BUTTON_A_DOWN) {
+                    driveTask.slowDown(false);
+                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
+                     driveTask.slowDown(true);
                 }
             }
         });
