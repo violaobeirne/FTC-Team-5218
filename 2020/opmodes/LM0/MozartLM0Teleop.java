@@ -1,9 +1,10 @@
-package opmodes;
+package opmodes.LM0;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import opmodes.HisaishiCalibration;
 import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
@@ -12,7 +13,7 @@ import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
-@TeleOp(name = "LM0 Telop")
+@TeleOp(name = "5218 LM0 Teleop")
 public class MozartLM0Teleop extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
@@ -35,12 +36,12 @@ public class MozartLM0Teleop extends Robot {
     private DcMotor backRight;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
     private DcMotor lift;
     private Servo claw;
+
     private DcMotor leftArm;
     private DcMotor rightArm;
+
     private Servo susan;
 
     public void handleEvent (RobotEvent e) {
@@ -55,7 +56,9 @@ public class MozartLM0Teleop extends Robot {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
+        allianceColor = allianceColor.DEFAULT;
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
+
         leftIntake = hardwareMap.get(DcMotor.class, "leftIntake"); //wheel intake
         rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
         leftArm = hardwareMap.get(DcMotor.class, "leftArm"); //foundation mover
@@ -65,6 +68,7 @@ public class MozartLM0Teleop extends Robot {
         susan = hardwareMap.servo.get("susan"); //lazy susan
         // GamepadTask gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2);
         // addTask(gamepad);
+
     }
 
     @Override
@@ -82,6 +86,7 @@ public class MozartLM0Teleop extends Robot {
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
+<<<<<<< HEAD:2020/opmodes/MozartLM0Teleop.java
                 switch (event.kind){
                     case BUTTON_A_DOWN: //wheel intake
                         leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_COLLECT);
@@ -134,6 +139,16 @@ public class MozartLM0Teleop extends Robot {
                     case BUTTON_B_DOWN:
                         driveTask.slowDown(true);
                         break;
+=======
+                if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
+                    claw.setPosition(HisaishiCalibration.OLD_CLAW_OPEN);
+                } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
+                    claw.setPosition(HisaishiCalibration.OLD_CLAW_CLOSE);
+                } else if (event.kind == EventKind.BUTTON_A_DOWN) {
+                    susan.setPosition(HisaishiCalibration.SUSAN_OUT);
+                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
+                    susan.setPosition(HisaishiCalibration.SUSAN_STOW);
+>>>>>>> upstream/master:2020/opmodes/LM0/MozartLM0Teleop.java
                 }
             }
         });

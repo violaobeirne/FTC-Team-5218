@@ -6,15 +6,23 @@ public class HisaishiCalibration {
 
     /* PROTOTYPES */
     // foundation migration
+<<<<<<< HEAD
     public static final double ARM_LEFT_DOWN = 143/360; //before 0
     public static final double ARM_LEFT_STOW = 91/360; //before 360
 
     public static final double ARM_RIGHT_DOWN = 0/360;
     public static final double ARM_RIGHT_STOW = 54/360; //before 360
+=======
+    public static final double ARM_LEFT_DOWN = 256.0/256.0;
+    public static final double ARM_LEFT_STOW = 256.0/256.0;
+
+    public static final double ARM_RIGHT_DOWN = 0.0/360.0;
+    public static final double ARM_RIGHT_STOW = 256.0/256.0;
+>>>>>>> upstream/master
 
     // lazy susan
-    public static final double SUSAN_LEFT = -1;
-    public static final double SUSAN_RIGHT = 1;
+    public static final double SUSAN_STOW = 50.0/256.0;
+    public static final double SUSAN_OUT = 50.0/256.0;
 
     // active wheel intake
     public static final double INTAKE_LEFT_COLLECT = 0.5;
@@ -28,8 +36,10 @@ public class HisaishiCalibration {
     public static final double TBAR_ARM_DOWN = -0.3;
 
     // claw
-    public static final double CLAW_OPEN = 225.0/256.0; //version 1: 50, version 2: 225
-    public static final double CLAW_CLOSE = 168.0 / 256.0; //version 1: 200, version 2: 168
+    public static final double NEW_CLAW_OPEN = 225.0/256.0; //version 1: 50, version 2: 225
+    public static final double NEW_CLAW_CLOSE = 160.0 / 256.0; //version 1: 200, version 2: 168
+    public static final double OLD_CLAW_OPEN = 50.0/256.0;
+    public static final double OLD_CLAW_CLOSE = 200.0/256.0;
 
     // lift
     public static final double LIFT_UP = 0.5;
@@ -44,9 +54,8 @@ public class HisaishiCalibration {
             2 - "leftIntake"    - active wheel intake left
             3 - "rightIntake"   - active wheel intake right
 
-        SERVOS
-            0 -
-            1 -
+            0 - "leftArm"       - foundation migration left arm
+            1 - "rightArm"      - foundation migration right arm
             2 -
             3 -
 
@@ -55,12 +64,13 @@ public class HisaishiCalibration {
             0 - "backLeft"     - drivetrain back left
             1 - "backRight"    - drivetrain back right
             2 - "lift"         - cascading lift
-            3 - ""
+            3 -
 
         SERVOS
             0 - "susan"         - lazy susan
-            1 - "leftArm"       - foundation migration left arm
-            2 - "rightArm"      - foundation migration right arm
-            3 - "claw"          - claw
+            1 - "claw"          - claw
+            2 -
+            3 -
+        SERVOS
      */
 }
