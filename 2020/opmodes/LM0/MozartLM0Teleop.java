@@ -53,16 +53,18 @@ public class MozartLM0Teleop extends Robot {
 
     public void init()
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft"); //drivetrain
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
         drivetrain.setNoncanonicalMotorDirection();
+
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
+
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
 
         leftIntake = hardwareMap.get(DcMotor.class, "leftIntake"); //wheel intake
@@ -92,7 +94,6 @@ public class MozartLM0Teleop extends Robot {
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
-<<<<<<< HEAD:2020/opmodes/MozartLM0Teleop.java
                 switch (event.kind){
                     case BUTTON_A_DOWN: //wheel intake
                         leftIntake.setPower(HisaishiCalibration.INTAKE_LEFT_COLLECT);
@@ -122,6 +123,7 @@ public class MozartLM0Teleop extends Robot {
                 }
                 }
         });
+
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1){
             public void handleEvent(RobotEvent e){
                 GamepadEvent event = (GamepadEvent) e;
@@ -145,38 +147,8 @@ public class MozartLM0Teleop extends Robot {
                     case BUTTON_B_DOWN:
                         driveTask.slowDown(true);
                         break;
-=======
-                if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
-                    claw.setPosition(HisaishiCalibration.OLD_CLAW_OPEN);
-                } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
-                    claw.setPosition(HisaishiCalibration.OLD_CLAW_CLOSE);
-                } else if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    susan.setPosition(HisaishiCalibration.SUSAN_OUT);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    susan.setPosition(HisaishiCalibration.SUSAN_STOW);
-<<<<<<< HEAD
->>>>>>> upstream/master:2020/opmodes/LM0/MozartLM0Teleop.java
-=======
-                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
-                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
-                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
-                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
-                }
             }
         });
 
-        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
-            public void handleEvent(RobotEvent e) {
-                GamepadEvent event = (GamepadEvent) e;
-                if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    driveTask.slowDown(false);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                     driveTask.slowDown(true);
->>>>>>> 7a3198a131fc54c745bc9f2514ed2480e41b4497
-                }
-            }
-        });
     }
 }
