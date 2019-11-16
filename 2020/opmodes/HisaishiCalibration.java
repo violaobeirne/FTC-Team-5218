@@ -41,8 +41,8 @@ public class HisaishiCalibration {
     /*
     REV EXPANSION HUB 4 CONFIGURATION (FRONT OF ROBOT)
         MOTORS (MECHANISMS)
-            0 - "frontLeft"     - drivetrain front left
-            1 - "frontRight"    - drivetrain front right
+            0 - "frontRight"     - drivetrain front left
+            1 - "frontLeft"    - drivetrain front right
             2 - "leftIntake"    - active wheel intake left
             3 - "rightIntake"   - active wheel intake right
 
@@ -53,8 +53,8 @@ public class HisaishiCalibration {
 
      REV CONTROL HUB 1 CONFIGURATION (BACK OF ROBOT)
         MOTORS (DRIVETRAIN)
-            0 - "backLeft"     - drivetrain back left
-            1 - "backRight"    - drivetrain back right
+            0 - "backRight"     - drivetrain back left
+            1 - "backLeft"    - drivetrain back right
             2 - "lift"         - cascading lift
             3 -
 

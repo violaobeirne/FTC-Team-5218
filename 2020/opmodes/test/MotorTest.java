@@ -1,8 +1,7 @@
-package opmodes.LM0;
+package opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.HisaishiCalibration;
@@ -14,8 +13,8 @@ import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
-@TeleOp(name = "5218 LM0 Teleop")
-public class MozartLM0Teleop extends Robot {
+@TeleOp(name = "Motor Test")
+public class MotorTest extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
 
@@ -74,37 +73,17 @@ public class MozartLM0Teleop extends Robot {
         addTask(liftUp);
         DeadmanMotorTask liftDown = new DeadmanMotorTask(this, lift, HisaishiCalibration.LIFT_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_TRIGGER);
         addTask(liftDown);
+    }
 
-        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
-            public void handleEvent(RobotEvent e) {
-                GamepadEvent event = (GamepadEvent) e;
-                if (event.kind == EventKind.LEFT_BUMPER_DOWN) {
-                    claw.setPosition(HisaishiCalibration.OLD_CLAW_OPEN);
-                } else if (event.kind == EventKind.LEFT_TRIGGER_DOWN) {
-                    claw.setPosition(HisaishiCalibration.OLD_CLAW_CLOSE);
-                } else if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    susan.setPosition(HisaishiCalibration.SUSAN_OUT);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    susan.setPosition(HisaishiCalibration.SUSAN_STOW);
-                } else if (event.kind == EventKind.BUTTON_X_DOWN) {
-                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
-                } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
-                    leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
-                }
-            }
-        });
-
-        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
-            public void handleEvent(RobotEvent e) {
-                GamepadEvent event = (GamepadEvent) e;
-                if (event.kind == EventKind.BUTTON_A_DOWN) {
-                    driveTask.slowDown(false);
-                } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                    driveTask.slowDown(true);
-                }
-            }
-        });
+    @Override
+    public void loop()
+    {
+        super.loop();
+        if (gamepad1.a) {
+            backLeft.setPower(0.3);
+        }
+        if (gamepad1.b) {
+            frontLeft.setPower(0.3);
+        }
     }
 }

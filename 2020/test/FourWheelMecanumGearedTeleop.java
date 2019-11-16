@@ -33,6 +33,7 @@
 
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -42,8 +43,8 @@ import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
-@TeleOp(name = "FourWheelMecanumGearedTeleop") //@Teleop is an annotation
-//@Disabled, so you can see on phone
+@TeleOp(name = "FourWheelMecanumGearedTeleop")
+@Disabled
 public class FourWheelMecanumGearedTeleop extends Robot {
 
     private DcMotor frontLeft; //declaration, private = just class. declaring variables
@@ -76,8 +77,6 @@ public class FourWheelMecanumGearedTeleop extends Robot {
     @Override
     public void start(){
         this.addTask(driveTask);
-
-
     }
 
 
