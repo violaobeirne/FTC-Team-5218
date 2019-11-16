@@ -46,16 +46,18 @@ public class MozartLM0Teleop extends Robot {
 
     public void init()
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft"); //drivetrain
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
         drivetrain.setNoncanonicalMotorDirection();
+
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
+
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
         lift = hardwareMap.dcMotor.get("lift");
         claw = hardwareMap.servo.get("claw");
@@ -100,7 +102,7 @@ public class MozartLM0Teleop extends Robot {
                 if (event.kind == EventKind.BUTTON_A_DOWN) {
                     driveTask.slowDown(false);
                 } else if (event.kind == EventKind.BUTTON_B_DOWN) {
-                     driveTask.slowDown(true);
+                    driveTask.slowDown(true);
                 }
             }
         });
