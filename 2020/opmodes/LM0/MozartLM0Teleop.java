@@ -2,7 +2,6 @@ package opmodes.LM0;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.HisaishiCalibration;
@@ -35,20 +34,18 @@ public class MozartLM0Teleop extends Robot {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
     private DcMotor lift;
     private Servo claw;
-
-    private DcMotor leftArm;
-    private DcMotor rightArm;
 
     private Servo susan;
     private Servo leftArm;
     private Servo rightArm;
 
     public void handleEvent (RobotEvent e) {
-
     }
 
     public void init()
@@ -69,8 +66,6 @@ public class MozartLM0Teleop extends Robot {
 
         leftIntake = hardwareMap.get(DcMotor.class, "leftIntake"); //wheel intake
         rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
-        leftArm = hardwareMap.get(DcMotor.class, "leftArm"); //foundation mover
-        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
         lift = hardwareMap.dcMotor.get("lift"); //lift
         claw = hardwareMap.servo.get("claw"); //claw
         susan = hardwareMap.servo.get("susan"); //lazy susan
@@ -109,37 +104,37 @@ public class MozartLM0Teleop extends Robot {
                         rightIntake.setPower(0.0);
                         break;
                     case LEFT_BUMPER_DOWN: //claw
-                        claw.setPosition(HisaishiCalibration.CLAW_CLOSE);
+                        // claw.setPosition(HisaishiCalibration.CLAW_CLOSE);
                         break;
                     case LEFT_TRIGGER_DOWN:
-                        claw.setPosition(HisaishiCalibration.CLAW_OPEN);
+                        // claw.setPosition(HisaishiCalibration.CLAW_OPEN);
                         break;
                     case BUTTON_X_DOWN: //lazy susan
-                        susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
+                        // susan.setPosition(HisaishiCalibration.SUSAN_LEFT);
                         break;
                     case BUTTON_Y_DOWN:
-                        susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
+                        // susan.setPosition(HisaishiCalibration.SUSAN_RIGHT);
                         break;
                 }
                 }
         });
 
-        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1){
-            public void handleEvent(RobotEvent e){
+        this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
+            public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
                     case RIGHT_BUMPER_DOWN: //foundation arms
-                        leftArm.setPower(HisaishiCalibration.ARM_LEFT_STOW);
-                        rightArm.setPower(HisaishiCalibration.ARM_RIGHT_STOW);
+                        // leftArm.setPower(HisaishiCalibration.ARM_LEFT_STOW);
+                        // rightArm.setPower(HisaishiCalibration.ARM_RIGHT_STOW);
                         break;
                     case RIGHT_TRIGGER_DOWN:
-                        leftArm.setPower(HisaishiCalibration.ARM_LEFT_DOWN);
-                        rightArm.setPower(HisaishiCalibration.ARM_RIGHT_DOWN);
+                        // leftArm.setPower(HisaishiCalibration.ARM_LEFT_DOWN);
+                        // rightArm.setPower(HisaishiCalibration.ARM_RIGHT_DOWN);
                         break;
                     case RIGHT_TRIGGER_UP:
                     case RIGHT_BUMPER_UP:
-                        leftArm.setPower(0.0);
-                        rightArm.setPower(0.0);
+                        // leftArm.setPower(0.0);
+                        // rightArm.setPower(0.0);
                         break;
                     case BUTTON_A_DOWN: //drivetrain
                         driveTask.slowDown(false);
@@ -147,6 +142,7 @@ public class MozartLM0Teleop extends Robot {
                     case BUTTON_B_DOWN:
                         driveTask.slowDown(true);
                         break;
+                }
             }
         });
 
