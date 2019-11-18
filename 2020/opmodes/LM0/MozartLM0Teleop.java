@@ -53,7 +53,7 @@ public class MozartLM0Teleop extends Robot {
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
+        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
         drivetrain.setNoncanonicalMotorDirection();
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
