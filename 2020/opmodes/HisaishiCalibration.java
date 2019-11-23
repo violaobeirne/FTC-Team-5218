@@ -9,6 +9,9 @@ public class HisaishiCalibration {
     public static final double FOUNDATION_MIGRATION_DOWN = 235.0/256.0;
     public static final double FOUNDATIOIN_MIGRATION_STOW = 95.0/256.0;
 
+    public static final double ARM_LEFT_DOWN = 151.0/256.0;
+    public static final double ARM_LEFT_STOW = 95.0/256.0;
+
     //public static final double ARM_RIGHT_DOWN = 8.0/360.0;
     //public static final double ARM_RIGHT_STOW = 57.0/256.0;
 
