@@ -6,12 +6,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import opmodes.HisaishiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.DeadmanMotorTask;
-import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
-import team25core.MecanumWheelDriveTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
@@ -20,7 +18,7 @@ import team25core.TankMechanumControlScheme;
 /**
  * Created by Lizzie on 11/2/2019.
  */
-@Autonomous(name = "5218 LM0 Autonomous")
+@Autonomous(name = "5218 LM0 Autonomous 1")
 public class MozartLM0Autonomous extends Robot {
     // drivetrain and mechanisms declaration
     private DcMotor frontLeft;
@@ -31,7 +29,7 @@ public class MozartLM0Autonomous extends Robot {
     private Servo susan;
     private Servo claw;
     private Servo leftArm;
-    private Servo rightArm;
+    //private Servo rightArm;
     private MechanumGearedDrivetrain drivetrain;
 
     // gamepad and telemetry declaration
@@ -42,6 +40,8 @@ public class MozartLM0Autonomous extends Robot {
 
     // skybridge constant declaration
     private DeadReckonPath initialPath;
+    private DeadReckonPath pullBackPath;
+    private DeadReckonPath moveUnderBridgePath;
     private MozartSkybridgePath skybridgePath;
     private MozartSkybridgePath.AllianceColor allianceColor;
     private MozartSkybridgePath.StartingPosition startingPosition;
@@ -56,8 +56,8 @@ public class MozartLM0Autonomous extends Robot {
         lift = hardwareMap.dcMotor.get("lift");
         susan = hardwareMap.servo.get("susan");
         claw = hardwareMap.servo.get("claw");
-        leftArm = hardwareMap.servo.get("leftArm");
-        rightArm = hardwareMap.servo.get("rightArm");
+        leftArm = hardwareMap.servo.get("foundationMigration");
+        //rightArm = hardwareMap.servo.get("rightArm");
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
@@ -76,6 +76,10 @@ public class MozartLM0Autonomous extends Robot {
         initialPath = new DeadReckonPath();
         allianceColor = allianceColor.DEFAULT;
         startingPosition = startingPosition.DEFAULT;
+        pullBackPath = new DeadReckonPath();
+        pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, -0.2);
+        moveUnderBridgePath = new DeadReckonPath();
+
     }
 
     @Override
@@ -88,6 +92,11 @@ public class MozartLM0Autonomous extends Robot {
 
     @Override
     public void start() {
+        if (allianceColor == allianceColor.RED){
+            moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
+        } else {
+            moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, 0.2);
+        }
         initialPath = skybridgePath.getPath(allianceColor, startingPosition);
         initialMove(initialPath);
     }
@@ -112,9 +121,8 @@ public class MozartLM0Autonomous extends Robot {
                 break;
         }
     }
-
-    public void initialMove(final DeadReckonPath path) {
-        addTask(new DeadReckonTask(this, path, drivetrain) {
+    public void moveUnderBridge() {
+        addTask(new DeadReckonTask(this, moveUnderBridgePath, drivetrain) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonTask.DeadReckonEvent event = (DeadReckonTask.DeadReckonEvent) e;
                 switch(event.kind) {
@@ -124,7 +132,30 @@ public class MozartLM0Autonomous extends Robot {
             }
         });
     }
-
-
-
+    public void pullBack() {
+        addTask(new DeadReckonTask(this, pullBackPath, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonTask.DeadReckonEvent event = (DeadReckonTask.DeadReckonEvent) e;
+                switch(event.kind) {
+                    case PATH_DONE:
+                        RobotLog.i("163: PATH DONE");
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                        moveUnderBridge();
+                }
+            }
+        });
+    }
+    public void initialMove(final DeadReckonPath path) {
+        addTask(new DeadReckonTask(this, path, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonTask.DeadReckonEvent event = (DeadReckonTask.DeadReckonEvent) e;
+                switch(event.kind) {
+                    case PATH_DONE:
+                        RobotLog.i("163: PATH DONE");
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                        pullBack();
+                }
+            }
+        });
+    }
 }

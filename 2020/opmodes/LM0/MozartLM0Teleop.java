@@ -2,7 +2,6 @@ package opmodes.LM0;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import opmodes.HisaishiCalibration;
@@ -53,7 +52,7 @@ public class MozartLM0Teleop extends Robot {
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
+        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
         drivetrain.setNoncanonicalMotorDirection();
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
@@ -88,10 +87,10 @@ public class MozartLM0Teleop extends Robot {
                     susan.setPosition(HisaishiCalibration.SUSAN_STOW);
                 } else if (event.kind == EventKind.BUTTON_X_DOWN) {
                     leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
+                    //rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
                 } else if (event.kind == EventKind.BUTTON_Y_DOWN) {
                     leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
-                    rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
+                    //rightArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
                 }
             }
         });
