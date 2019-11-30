@@ -1,4 +1,4 @@
-package opmodes.LM0;
+package opmodes.LM1;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import opmodes.HisaishiCalibration;
+import opmodes.LM1.VivaldiSkybridgePath;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.GamepadTask;
@@ -19,7 +20,7 @@ import team25core.TankMechanumControlScheme;
  * Created by Lizzie on 11/2/2019.
  */
 @Autonomous(name = "5218 LM0 Autonomous 1")
-public class MozartLM0Autonomous extends Robot {
+public class VivaldiLM1Autonomous extends Robot {
     // drivetrain and mechanisms declaration
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -28,8 +29,7 @@ public class MozartLM0Autonomous extends Robot {
     private DcMotor lift;
     private Servo susan;
     private Servo claw;
-    private Servo leftArm;
-    //private Servo rightArm;
+    private Servo arm;
     private MechanumGearedDrivetrain drivetrain;
 
     // gamepad and telemetry declaration
@@ -42,9 +42,9 @@ public class MozartLM0Autonomous extends Robot {
     private DeadReckonPath initialPath;
     private DeadReckonPath pullBackPath;
     private DeadReckonPath moveUnderBridgePath;
-    private MozartSkybridgePath skybridgePath;
-    private MozartSkybridgePath.AllianceColor allianceColor;
-    private MozartSkybridgePath.StartingPosition startingPosition;
+    private VivaldiSkybridgePath skybridgePath;
+    private VivaldiSkybridgePath.AllianceColor allianceColor;
+    private VivaldiSkybridgePath.StartingPosition startingPosition;
 
     @Override
     public void init() {
@@ -56,8 +56,7 @@ public class MozartLM0Autonomous extends Robot {
         lift = hardwareMap.dcMotor.get("lift");
         susan = hardwareMap.servo.get("susan");
         claw = hardwareMap.servo.get("claw");
-        leftArm = hardwareMap.servo.get("foundationMigration");
-        //rightArm = hardwareMap.servo.get("rightArm");
+        arm = hardwareMap.servo.get("arm");
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
@@ -72,13 +71,14 @@ public class MozartLM0Autonomous extends Robot {
         startPos = telemetry.addData("Starting Position: ", "NOT SELECTED");
         path = telemetry.addData("Path: ", "NOT SELECTED");
 
-        skybridgePath = new MozartSkybridgePath();
+        skybridgePath = new VivaldiSkybridgePath();
         initialPath = new DeadReckonPath();
         allianceColor = allianceColor.DEFAULT;
         startingPosition = startingPosition.DEFAULT;
         pullBackPath = new DeadReckonPath();
-        pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, -0.2);
+        pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4);
         moveUnderBridgePath = new DeadReckonPath();
+        arm.setPosition(HisaishiCalibration.ARM_STOW);
 
     }
 
@@ -92,10 +92,11 @@ public class MozartLM0Autonomous extends Robot {
 
     @Override
     public void start() {
+        arm.setPosition(HisaishiCalibration.ARM_STOW);
         if (allianceColor == allianceColor.RED){
-            moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
+            // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
         } else {
-            moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, 0.2);
+            // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, 0.2);
         }
         initialPath = skybridgePath.getPath(allianceColor, startingPosition);
         initialMove(initialPath);
@@ -139,8 +140,8 @@ public class MozartLM0Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
-                        moveUnderBridge();
+                        arm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                        // moveUnderBridge();
                 }
             }
         });
@@ -152,7 +153,7 @@ public class MozartLM0Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                        arm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
                         pullBack();
                 }
             }

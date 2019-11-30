@@ -1,5 +1,6 @@
 package opmodes.LM0;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +15,7 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "5218 LM0 Teleop")
+@Disabled
 public class MozartLM0Teleop extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
