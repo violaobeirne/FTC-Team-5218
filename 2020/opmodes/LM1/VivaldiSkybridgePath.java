@@ -27,22 +27,14 @@ public class VivaldiSkybridgePath {
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.4); //forward to latch, 12
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 12, -0.4); //sideways to latch, 12
-        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, -0.4); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, -0.8); //forward to latch, 12
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 12, 0.2); //forward to latch, 12
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.4); //forward to latch, 12
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, -0.4); //forward to latch, 12
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 6, 0.4); //forward to latch, 12
-        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 6, 0.4); //forward to latch, 12
-
-
-
-
-
-
-
+        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 12, 0.4); //forward to latch, 12
 
         // paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); //forward to latch, 30
-
         // paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 22, -0.8); //forward to latch, 30
         // paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 33.25, -0.6); //right, -35.25
         // paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 3.25, -0.6); //right, -35.25
@@ -51,21 +43,30 @@ public class VivaldiSkybridgePath {
 
         // BLUE ALLIANCE, LOADING SIDE
         paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
-        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.2); //forward, 20
-        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 8, 0.2); //forward, 20
+        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, 0.2); //forward, 20
+        paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 10, -0.8); //forward, 20
+
         // paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, -62, 0.2); //left to latch, -62
         //paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
 
         // RED ALLIANCE, BUILDING SIDE
         paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
-        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 25, 0.2); //forward, 30
-        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.2); //left, 35.25
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.4); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 12, 0.4); //sideways to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, -0.8); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 12, 0.2); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 20, 0.4); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, -0.4); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 6, -0.4); //forward to latch, 12
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 12, -0.4); //forward to latch, 12
 
         //paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
 
         // RED ALLIANCE, LOADING SIDE
         paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
-        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2); //forward, 20
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 12, 0.2); //forward, 20
+        paths[VivaldiSkybridgePath.AllianceColor.RED.ordinal()][VivaldiSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 10, -0.8); //forward, 20
+
         //paths[VivaldiSkybridgePath.AllianceColor.BLUE.ordinal()][VivaldiSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
     }
 
