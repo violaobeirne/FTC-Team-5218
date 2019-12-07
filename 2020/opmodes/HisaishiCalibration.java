@@ -7,7 +7,7 @@ public class HisaishiCalibration {
     /* PROTOTYPES */
     // foundation migration
     public static final double ARM_DOWN = 146/256.0; //235
-    public static final double ARM_STOW = 0/256.0; //95
+    //public static final double ARM_STOW = 0/256.0; //95
 
     public static final double ARM_LEFT_DOWN = 151.0/256.0;
     public static final double ARM_LEFT_STOW = 95.0/256.0;
