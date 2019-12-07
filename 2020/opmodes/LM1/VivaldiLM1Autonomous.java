@@ -29,7 +29,8 @@ public class VivaldiLM1Autonomous extends Robot {
     private DcMotor lift;
     private Servo susan;
     private Servo claw;
-    private Servo arm;
+    private Servo leftArm;
+    private Servo rigthArm;
     private MechanumGearedDrivetrain drivetrain;
 
     // gamepad and telemetry declaration
@@ -56,12 +57,14 @@ public class VivaldiLM1Autonomous extends Robot {
         lift = hardwareMap.dcMotor.get("lift");
         susan = hardwareMap.servo.get("susan");
         claw = hardwareMap.servo.get("claw");
-        arm = hardwareMap.servo.get("arm");
+        leftArm = hardwareMap.servo.get("leftArm");
+        rigthArm = hardwareMap.servo.get("rightArm");
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
         drivetrain.encodersOn();
         drivetrain.resetEncoders();
+        drivetrain.setNoncanonicalMotorDirection();
 
         // gamepad and telemtry initialization
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
@@ -78,7 +81,8 @@ public class VivaldiLM1Autonomous extends Robot {
         pullBackPath = new DeadReckonPath();
         pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4);
         moveUnderBridgePath = new DeadReckonPath();
-        arm.setPosition(HisaishiCalibration.ARM_STOW);
+
+        //arm.setPosition(HisaishiCalibration.ARM_STOW);
 
     }
 
@@ -92,7 +96,7 @@ public class VivaldiLM1Autonomous extends Robot {
 
     @Override
     public void start() {
-        arm.setPosition(HisaishiCalibration.ARM_STOW);
+        //arm.setPosition(HisaishiCalibration.ARM_STOW);
         if (allianceColor == allianceColor.RED){
             // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
         } else {
@@ -140,7 +144,8 @@ public class VivaldiLM1Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        arm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
                         // moveUnderBridge();
                 }
             }
@@ -153,7 +158,8 @@ public class VivaldiLM1Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        arm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
                         pullBack();
                 }
             }
