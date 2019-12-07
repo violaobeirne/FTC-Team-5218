@@ -144,8 +144,8 @@ public class VivaldiLM1Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
-                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
                         // moveUnderBridge();
                 }
             }
@@ -158,8 +158,8 @@ public class VivaldiLM1Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
-                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
+                        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_DOWN);
+                        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_DOWN);
                         pullBack();
                 }
             }
