@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import opmodes.TempCalibration;
+import opmodes.MiyazakiCalibration;
+import opmodes.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.GamepadTask;
@@ -77,7 +78,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
         pullBackPath = new DeadReckonPath();
         pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4);
         moveUnderBridgePath = new DeadReckonPath();
-        arm.setPosition(TempCalibration.ARM_STOW);
+        arm.setPosition(MiyazakiCalibration.ARM_STOW);
 
     }
 
@@ -91,7 +92,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
 
     @Override
     public void start() {
-        arm.setPosition(TempCalibration.ARM_STOW);
+        arm.setPosition(MiyazakiCalibration.ARM_STOW);
         if (allianceColor == allianceColor.RED){
             // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
         } else {
@@ -139,7 +140,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        arm.setPosition(TempCalibration.ARM_LEFT_STOW);
+                        arm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
                         // moveUnderBridge();
                 }
             }
@@ -152,7 +153,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        arm.setPosition(TempCalibration.ARM_LEFT_DOWN);
+                        arm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
                         pullBack();
                 }
             }

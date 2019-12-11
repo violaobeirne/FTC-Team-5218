@@ -54,12 +54,12 @@ public class MiyazakiCalibration {
         MOTORS (DRIVETRAIN)
             0 - "backRight"     - drivetrain back left
             1 - "backLeft"      - drivetrain back right
-            2 - "lift"          - cascading lift
-            3 -
+            2 - "vLift"         - vertical lift
+            3 - "hLift"         - horizontal lift
 
         SERVOS
-            0 - "susan"         - lazy susan
-            1 - "claw"          - claw --> moved to servo module port 1 if first port were to be 0
+            0 - "claw"         - claw
+            1 - "arm"          - autonomous arm
             2 -
             3 -
      */
