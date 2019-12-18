@@ -82,7 +82,8 @@ public class VivaldiLM1Autonomous extends Robot {
         pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4);
         moveUnderBridgePath = new DeadReckonPath();
 
-        //arm.setPosition(HisaishiCalibration.ARM_STOW);
+        leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
+        rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
 
     }
 
@@ -146,7 +147,7 @@ public class VivaldiLM1Autonomous extends Robot {
                         RobotLog.i("163: PATH DONE");
                         leftArm.setPosition(HisaishiCalibration.ARM_LEFT_STOW);
                         rigthArm.setPosition(HisaishiCalibration.ARM_RIGHT_STOW);
-                        // moveUnderBridge();
+                        moveUnderBridge();
                 }
             }
         });
