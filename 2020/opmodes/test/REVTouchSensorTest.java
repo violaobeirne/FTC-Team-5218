@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import team25core.DeadReckonPath;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
@@ -13,13 +14,14 @@ import team25core.TeleopDriveTask;
 
 @TeleOp(name = "REV TouchSensor Test")
 public class REVTouchSensorTest extends Robot {
-
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
     private TeleopDriveTask driveTask;
     private MechanumGearedDrivetrain drivetrain;
+
+    private DeadReckonPath TouchSensorTouchedPath;
 
     public void handleEvent(RobotEvent e) {
 
@@ -38,11 +40,11 @@ public class REVTouchSensorTest extends Robot {
         drivetrain.encodersOn();
         drivetrain.resetEncoders();
 
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
+        TouchSensorTouchedPath = new DeadReckonPath();
 
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
     }
-
     @Override
     public void start() {
         this.addTask(driveTask);
@@ -51,7 +53,7 @@ public class REVTouchSensorTest extends Robot {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
                     case BUTTON_X_DOWN:
-
+                    TouchSensorTouchedPath();
 
 
                 }

@@ -1,20 +1,23 @@
 package opmodes;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
 import team25core.SensorCriteria;
 
 public class REVTouchSensorCriteria implements SensorCriteria {
-    sensorTouch = HardwareMap.get(TouchSensor.class, "Touch Sensor");
+    SensorTouch = HardwareMap.get(TouchSensor.class,"Touch Sensor");
+
 
     
-        public REVTouchSensorCriteria(sensorTouch, ){
+        public REVTouchSensorCriteria(SensorTouch,  ){
+            this.SensorTouch = SensorTouch;
 
 
         }
 
     @Override
     public boolean satisfied(){
+
+    }
 
     }
 
