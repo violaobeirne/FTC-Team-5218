@@ -1,4 +1,6 @@
+/*
 package test;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -99,7 +101,7 @@ public class StoneDetectionTest extends Robot {
                     stonePositionTlm = telemetry.addData("LeftOrigin", left);
                     stoneConfidTlm = telemetry.addData("Confidence", confidence);
                     stoneTypeTlm = telemetry.addData("StoneType",type);
-                    */
+
                 skystoneIndex = checkSkystonePosition(event.stones);
                 skystoneIndexTlm.setValue(skystoneIndex);
             }
@@ -123,3 +125,4 @@ public class StoneDetectionTest extends Robot {
         addTask(mdTask);
     }
 }
+*/
