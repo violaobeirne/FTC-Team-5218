@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import opmodes.MiyazakiCalibration;
-import opmodes.MiyazakiCalibration;
+import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.GamepadTask;
@@ -26,10 +25,11 @@ public class RachmaninoffLM2Autonomous extends Robot {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private DcMotor lift;
-    private Servo susan;
-    private Servo claw;
-    private Servo arm;
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
+    private Servo leftArm;
+    private Servo rightArm;
+    private Servo stoneArm;
     private MechanumGearedDrivetrain drivetrain;
 
     // gamepad and telemetry declaration
@@ -39,9 +39,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
     private Telemetry.Item path;
 
     // skybridge constant declaration
-    private DeadReckonPath initialPath;
-    private DeadReckonPath pullBackPath;
-    private DeadReckonPath moveUnderBridgePath;
+    private DeadReckonPath moveFoundationPath;
     private RachmaninoffSkybridgePath skybridgePath;
     private RachmaninoffSkybridgePath.AllianceColor allianceColor;
     private RachmaninoffSkybridgePath.StartingPosition startingPosition;
@@ -53,15 +51,17 @@ public class RachmaninoffLM2Autonomous extends Robot {
         frontRight = hardwareMap.dcMotor.get("frontRight");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
-        lift = hardwareMap.dcMotor.get("lift");
-        susan = hardwareMap.servo.get("susan");
-        claw = hardwareMap.servo.get("claw");
-        arm = hardwareMap.servo.get("arm");
+        leftIntake = hardwareMap.dcMotor.get("leftIntake");
+        rightIntake = hardwareMap.dcMotor.get("rightIntake");
+        leftArm = hardwareMap.servo.get("leftArm");
+        rightArm = hardwareMap.servo.get("rightArm");
+        stoneArm = hardwareMap.servo.get("arm");
 
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
+        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
         drivetrain.encodersOn();
         drivetrain.resetEncoders();
+        drivetrain.setNoncanonicalMotorDirection();
 
         // gamepad and telemtry initialization
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
@@ -72,14 +72,12 @@ public class RachmaninoffLM2Autonomous extends Robot {
         path = telemetry.addData("Path: ", "NOT SELECTED");
 
         skybridgePath = new RachmaninoffSkybridgePath();
-        initialPath = new DeadReckonPath();
+        moveFoundationPath = new DeadReckonPath();
         allianceColor = allianceColor.DEFAULT;
         startingPosition = startingPosition.DEFAULT;
-        pullBackPath = new DeadReckonPath();
-        pullBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4);
-        moveUnderBridgePath = new DeadReckonPath();
-        arm.setPosition(MiyazakiCalibration.ARM_STOW);
-
+        leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
+        rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
     }
 
     @Override
@@ -92,14 +90,11 @@ public class RachmaninoffLM2Autonomous extends Robot {
 
     @Override
     public void start() {
-        arm.setPosition(MiyazakiCalibration.ARM_STOW);
-        if (allianceColor == allianceColor.RED){
-            // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, -0.2);
-        } else {
-            // moveUnderBridgePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, 0.2);
-        }
-        initialPath = skybridgePath.getPath(allianceColor, startingPosition);
-        initialMove(initialPath);
+        leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
+        rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
+        moveFoundationPath = skybridgePath.getPath(allianceColor, startingPosition);
+        moveFoundation(moveFoundationPath);
     }
 
     public void handleGamePadSelection (GamepadTask.GamepadEvent event) {
@@ -122,41 +117,52 @@ public class RachmaninoffLM2Autonomous extends Robot {
                 break;
         }
     }
-    public void moveUnderBridge() {
-        addTask(new DeadReckonTask(this, moveUnderBridgePath, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch(event.kind) {
-                    case PATH_DONE:
-                        RobotLog.i("163: PATH DONE");
-                }
-            }
-        });
-    }
-    public void pullBack() {
-        addTask(new DeadReckonTask(this, pullBackPath, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch(event.kind) {
-                    case PATH_DONE:
-                        RobotLog.i("163: PATH DONE");
-                        arm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
-                        // moveUnderBridge();
-                }
-            }
-        });
-    }
-    public void initialMove(final DeadReckonPath path) {
+    public void moveFoundation(final DeadReckonPath path) {
         addTask(new DeadReckonTask(this, path, drivetrain) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        arm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
-                        pullBack();
+                        // dropFoundationArms(true);
+                    case SEGMENT_DONE:
+                        RobotLog.i("163: SEGMENT DONE %d", num);
+                        if (num == 2) {
+                           if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.BUILDING) {
+                               dropFoundationArms(true);
+                           } else if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.LOADING) {
+                               dropStoneArm(true);
+                           }
+                        } else if (num == 5) {
+                           if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.BUILDING) {
+                               dropFoundationArms(false);
+                           } else if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.LOADING) {
+                               dropStoneArm(false);
+                           }
+                        }
+
                 }
             }
         });
+    }
+
+    public void dropFoundationArms (boolean drop) {
+        if (drop == true) {
+            leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
+            rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
+        }
+        if (drop == false) {
+            leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
+            rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        }
+    }
+
+    public void dropStoneArm (boolean drop) {
+        if (drop == true) {
+            stoneArm.setPosition(MiyazakiCalibration.ARM_DOWN);
+        }
+        if (drop == false) {
+            stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
+        }
     }
 }

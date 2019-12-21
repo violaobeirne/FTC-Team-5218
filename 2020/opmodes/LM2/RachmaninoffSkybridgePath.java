@@ -23,33 +23,48 @@ public class RachmaninoffSkybridgePath {
     public RachmaninoffSkybridgePath() {
         // BLUE ALLIANCE, BUILDING SIDE
         paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
-        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 22, 0.8); //forward to latch, 30
-        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 33.25, -0.6); //forward to latch, 30
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); //forward to latch, 30
-
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 22, -0.8); //forward to latch, 30
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 33.25, -0.6); //right, -35.25
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 3.25, -0.6); //right, -35.25
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 8, -0.2); //right, -35.25
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 35, 0.4); //right, -35.25
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 28, -0.8); // move to foundation
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.2); // touch foundation
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.2); // phantom segment for arms
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 120, -0.5); // turn the foundation into the building
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.8); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.2); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, -0.4); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 46, 0.8); // pull foundation back
 
         // BLUE ALLIANCE, LOADING SIDE
         paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
-        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.2); //forward, 20
-        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 8, 0.2); //forward, 20
-        // paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, -62, 0.2); //left to latch, -62
-        //paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 23, 0.8);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 10, 0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 2, -0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 6, -0.5);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 72, -0.5);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 60, 0.8);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 2, 0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, -0.8);
 
         // RED ALLIANCE, BUILDING SIDE
         paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
-        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, 0.2); //forward, 30
-        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 35.25, -0.2); //left, 35.25
-        //paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 28, -0.8); // move to foundation
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.2); // touch foundation
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.2); // phantom segment for arms
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 130, 0.5); // turn the foundation into the building
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.8); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, 0.4); // pull foundation back
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 43, 0.8); // pull foundation back
 
         // RED ALLIANCE, LOADING SIDE
         paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
-        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2); //forward, 20
-        //paths[RachmaninoffSkybridgePath.AllianceColor.BLUE.ordinal()][RachmaninoffSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, -30, 0.2); //backward, -30
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 23, 0.8);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 10, 0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 2, -0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 6, -0.5);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 72, 0.5);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 60, 0.8);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 2, 0.2);
+        paths[RachmaninoffSkybridgePath.AllianceColor.RED.ordinal()][RachmaninoffSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, -0.8);
     }
 
     public DeadReckonPath getPath(RachmaninoffSkybridgePath.AllianceColor allianceColor, RachmaninoffSkybridgePath.StartingPosition startingPosition) {

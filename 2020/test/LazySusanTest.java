@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.HisaishiCalibration;
+import opmodes.calibration.HisaishiCalibration;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.GamepadTask;
 import team25core.Robot;

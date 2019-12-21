@@ -1,10 +1,11 @@
 package opmodes.LM1;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import opmodes.HisaishiCalibration;
+import opmodes.calibration.HisaishiCalibration;
 import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
@@ -14,6 +15,7 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "5218 LM1 Disbelief Teleop")
+@Disabled
 public class VivaldiLM1Teleop extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
