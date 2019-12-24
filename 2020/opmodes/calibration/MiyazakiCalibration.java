@@ -11,11 +11,11 @@ public class MiyazakiCalibration {
     public static final double ARM_DOWN = 240/256.0; //235
     public static final double ARM_STOW = 45/256.0; //95
 
-    public static final double ARM_LEFT_STOW = 151.0/256.0;
-    public static final double ARM_LEFT_DOWN = 15.0/256.0;
+    public static final double ARM_LEFT_STOW = 11.0/256.0;
+    public static final double ARM_LEFT_DOWN = 130.0/256.0;
 
-    public static final double ARM_RIGHT_STOW = 16.0/360.0;
-    public static final double ARM_RIGHT_DOWN = 141.0/256.0;
+    public static final double ARM_RIGHT_STOW = 0.0/360.0;
+    public static final double ARM_RIGHT_DOWN = 92.0/256.0;
 
     // active wheel intake
     public static final double INTAKE_LEFT_COLLECT = 1.0;
@@ -64,5 +64,9 @@ public class MiyazakiCalibration {
             1 - "arm"          - autonomous arm
             2 -
             3 -
+
+        DIGITAL DEVICES
+            0 - "touchLeft"    - touch sensor left
+            1 - "toughRight"   - touch sensor right
      */
 }
