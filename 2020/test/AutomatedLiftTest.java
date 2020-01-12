@@ -1,12 +1,14 @@
-package opmodes.LM3;
+package test;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import opmodes.calibration.HisaishiCalibration;
+import opmodes.AutomatedLiftTask;
+import opmodes.LM3.LisztSkybridgePath;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
@@ -19,20 +21,8 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 import team25core.TouchSensorCriteria;
 
-@TeleOp(name = "5218 LM3 Teleop")
-public class LisztLM3Teleop extends Robot {
-    // teleop with the mecanum drivetrain and linear lift
-    // active wheel intake
-
-    /* GAMEPAD 2
-    // linear lift up (right bumper) down (right trigger)
-    // active wheel intake in (A) out (B)
-     */
-
-    /* GAMEPAD 1
-    // drivetrain
-    // slow mode!
-     */
+@TeleOp(name = "Automated Lift Test")
+public class AutomatedLiftTest extends Robot {
 
     // drivetrain
     private DcMotor frontLeft;
@@ -62,6 +52,10 @@ public class LisztLM3Teleop extends Robot {
     private TouchSensorCriteria touchLeftCriteria;
     private DeadReckonPath touchPath;
     private DeadReckonTask foundationMoveTask;
+    private RevColorSensorV3 colorSensor;
+
+    // automated lift test
+    private AutomatedLiftTask autoLiftTask;
 
     public void handleEvent(RobotEvent e) {
 
@@ -98,12 +92,15 @@ public class LisztLM3Teleop extends Robot {
         touchLeftCriteria = new TouchSensorCriteria(touchLeft);
         touchPath = new DeadReckonPath();
         touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2);
+
+        // automated lift task
+        autoLiftTask = new AutomatedLiftTask(this, vLift, hLift, claw, colorSensor, MiyazakiCalibration.LEVEL_ENCODER_VALUE);
     }
 
     @Override
     public void start() {
         this.addTask(driveTask);
-
+        this.addTask(autoLiftTask);
         // GAMEPAD 2
         DeadmanMotorTask liftUp = new DeadmanMotorTask(this, vLift, MiyazakiCalibration.VLIFT_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_BUMPER);
         addTask(liftUp);
@@ -136,6 +133,9 @@ public class LisztLM3Teleop extends Robot {
                         break;
                     case LEFT_BUMPER_UP: case LEFT_TRIGGER_UP:
                         hLift.setPower(MiyazakiCalibration.HLIFT_STOP);
+                        break;
+                    case BUTTON_A_DOWN:
+                        autoLiftTask.doStoneStack();
                         break;
                 }
 
