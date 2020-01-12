@@ -1,5 +1,6 @@
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +15,7 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "Motor Test")
+@Disabled
 public class MotorTest extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake

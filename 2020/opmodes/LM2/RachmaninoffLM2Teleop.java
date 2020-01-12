@@ -1,5 +1,6 @@
 package opmodes.LM2;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "5218 LM2 Teleop")
+@Disabled
 public class RachmaninoffLM2Teleop extends Robot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
@@ -121,10 +123,10 @@ public class RachmaninoffLM2Teleop extends Robot {
                         rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
                         break;
                     case RIGHT_TRIGGER_DOWN:
-                        arm.setPosition(MiyazakiCalibration.ARM_DOWN);
+                        // arm.setPosition(MiyazakiCalibration.ARM_DOWN);
                         break;
                     case RIGHT_BUMPER_DOWN:
-                        arm.setPosition(MiyazakiCalibration.ARM_STOW);
+                        // arm.setPosition(MiyazakiCalibration.ARM_STOW);
                         break;
                     case BUTTON_A_DOWN:
                         driveTask.slowDown(false);

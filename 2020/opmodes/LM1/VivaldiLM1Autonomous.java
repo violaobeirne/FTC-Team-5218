@@ -1,5 +1,6 @@
 package opmodes.LM1;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -18,7 +19,8 @@ import team25core.TankMechanumControlScheme;
 /**
  * Created by Lizzie on 11/2/2019.
  */
-@Autonomous(name = "5218 LM1 Autonomous 1")
+@Autonomous(name = "5218 LM1 Autonomous")
+@Disabled
 public class VivaldiLM1Autonomous extends Robot {
     // drivetrain and mechanisms declaration
     private DcMotor frontLeft;
