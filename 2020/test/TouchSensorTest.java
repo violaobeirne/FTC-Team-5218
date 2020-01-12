@@ -36,6 +36,7 @@ public class TouchSensorTest extends Robot {
 
     // auto path
     private DeadReckonPath touchPath;
+    private DeadReckonPath backPath;
 
     public void handleEvent(RobotEvent e) {
 
@@ -65,6 +66,8 @@ public class TouchSensorTest extends Robot {
         // touch path
         touchPath = new DeadReckonPath();
         touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2);
+        backPath = new DeadReckonPath();
+        backPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.2);
     }
     @Override
     public void start() {
@@ -76,6 +79,12 @@ public class TouchSensorTest extends Robot {
                     case BUTTON_X_DOWN:
                     latchFoundation();
                     break;
+                    case LEFT_BUMPER_DOWN:
+                        dropFoundationArms(false);
+                        break;
+                    case LEFT_TRIGGER_DOWN:
+                        dropFoundationArms(true);
+                        break;
                 }
             }
         });
@@ -87,7 +96,9 @@ public class TouchSensorTest extends Robot {
                DeadReckonEvent event = (DeadReckonEvent) e;
                switch (event.kind) {
                    case BOTH_SENSORS_SATISFIED:
+                       drivetrain.stop();
                        dropFoundationArms(true);
+                       // backUp();
                        break;
                }
            }
@@ -104,5 +115,17 @@ public class TouchSensorTest extends Robot {
             leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
             rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
         }
+    }
+
+    public void backUp () {
+        this.addTask(new DeadReckonTask(this, backPath, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        dropFoundationArms(false);
+                }
+            }
+        });
     }
 }
