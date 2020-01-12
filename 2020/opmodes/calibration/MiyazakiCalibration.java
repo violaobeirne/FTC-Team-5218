@@ -37,8 +37,8 @@ public class MiyazakiCalibration {
     public static final double OLD_CLAW_CLOSE = 120.0/256.0;//version 1: 150, version 2: 170, version 3: 150, version 4: 120, version 5: 100, version 6: 90
 
     // vertical lift
-    public static final double VLIFT_UP = -0.5;
-    public static final double VLIFT_DOWN = 0.5;
+    public static final double VLIFT_UP = -1.0;
+    public static final double VLIFT_DOWN = 1.0;
     public static final int LEVEL_ENCODER_VALUE = 2510;
 
     // horizontal lift

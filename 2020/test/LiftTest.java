@@ -1,5 +1,6 @@
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,6 +13,7 @@ import team25core.RobotEvent;
  * Created by Lizzie on 10/2/2019.
  */
 @TeleOp(name = "Lift Test")
+@Disabled
 public class LiftTest extends Robot {
     private DcMotor lift;
 

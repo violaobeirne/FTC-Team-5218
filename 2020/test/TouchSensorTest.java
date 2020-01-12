@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import opmodes.TouchSensorCriteria;
+import team25core.TouchSensorCriteria;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
@@ -36,7 +36,7 @@ public class TouchSensorTest extends Robot {
 
     // auto path
     private DeadReckonPath touchPath;
-    private DeadReckonPath backPath;
+    protected DeadReckonTask foundationMoveTask;
 
     public void handleEvent(RobotEvent e) {
 
@@ -50,10 +50,12 @@ public class TouchSensorTest extends Robot {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.get(Servo.class, "leftArm");
         rightArm  = hardwareMap.get(Servo.class, "rightArm");
+
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
-        drivetrain.setNoncanonicalMotorDirection();
-        drivetrain.encodersOn();
+        drivetrain.setCanonicalMotorDirection();
         drivetrain.resetEncoders();
+        drivetrain.encodersOn();
+
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
 
@@ -62,12 +64,6 @@ public class TouchSensorTest extends Robot {
         touchLeft = hardwareMap.get(TouchSensor.class, "touchLeft");
         touchRightCriteria = new TouchSensorCriteria(touchRight);
         touchLeftCriteria = new TouchSensorCriteria(touchLeft);
-
-        // touch path
-        touchPath = new DeadReckonPath();
-        touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2);
-        backPath = new DeadReckonPath();
-        backPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.2);
     }
     @Override
     public void start() {
@@ -77,8 +73,8 @@ public class TouchSensorTest extends Robot {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
                     case BUTTON_X_DOWN:
-                    latchFoundation();
-                    break;
+                        latchFoundation();
+                        break;
                     case LEFT_BUMPER_DOWN:
                         dropFoundationArms(false);
                         break;
@@ -90,23 +86,35 @@ public class TouchSensorTest extends Robot {
         });
     }
 
-    public void latchFoundation() {
-       this.addTask(new DeadReckonTask(this, touchPath, drivetrain, touchLeftCriteria, touchRightCriteria) {
-           public void handleEvent(RobotEvent e) {
-               DeadReckonEvent event = (DeadReckonEvent) e;
-               switch (event.kind) {
-                   case BOTH_SENSORS_SATISFIED:
-                       drivetrain.stop();
-                       dropFoundationArms(true);
-                       // backUp();
-                       break;
-               }
-           }
-       });
+    public void latchFoundation()
+    {
+        driveTask.suspend();
+
+        // touch path
+        touchPath = new DeadReckonPath();
+        touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 500, 0.2);
+        touchPath.addPause(1000);
+        touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 50, -0.2);
+
+        foundationMoveTask = new DeadReckonTask(this, touchPath, drivetrain, touchLeftCriteria, touchRightCriteria) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case BOTH_SENSORS_SATISFIED:
+                        dropFoundationArms(true);
+                        foundationMoveTask.disableSensors();
+                        break;
+                    case PATH_DONE:
+                        // driveTask.resume();
+                        break;
+                }
+            }
+        };
+        addTask(foundationMoveTask);
     }
 
-
-    public void dropFoundationArms (boolean drop) {
+    public void dropFoundationArms (boolean drop)
+    {
         if (drop == true) {
             leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
             rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
@@ -115,17 +123,5 @@ public class TouchSensorTest extends Robot {
             leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
             rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
         }
-    }
-
-    public void backUp () {
-        this.addTask(new DeadReckonTask(this, backPath, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case PATH_DONE:
-                        dropFoundationArms(false);
-                }
-            }
-        });
     }
 }

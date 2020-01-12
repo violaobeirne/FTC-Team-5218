@@ -1,5 +1,6 @@
 package opmodes.LM2;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -19,7 +20,9 @@ import team25core.TankMechanumControlScheme;
  * Created by Lizzie on 11/2/2019.
  */
 @Autonomous(name = "5218 LM2 Autonomous")
+@Disabled
 public class RachmaninoffLM2Autonomous extends Robot {
+
     // drivetrain and mechanisms declaration
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -59,8 +62,8 @@ public class RachmaninoffLM2Autonomous extends Robot {
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
-        drivetrain.encodersOn();
         drivetrain.resetEncoders();
+        drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();
 
         // gamepad and telemtry initialization
@@ -77,7 +80,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
         startingPosition = startingPosition.DEFAULT;
         leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
         rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
-        stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
+        // stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
     public void start() {
         leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
         rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
-        stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
+        // stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
         moveFoundationPath = skybridgePath.getPath(allianceColor, startingPosition);
         moveFoundation(moveFoundationPath);
     }
@@ -117,7 +120,9 @@ public class RachmaninoffLM2Autonomous extends Robot {
                 break;
         }
     }
-    public void moveFoundation(final DeadReckonPath path) {
+
+    public void moveFoundation(final DeadReckonPath path)
+    {
         addTask(new DeadReckonTask(this, path, drivetrain) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
@@ -128,11 +133,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
                     case SEGMENT_DONE:
                         RobotLog.i("163: SEGMENT DONE %d", num);
                         if (num == 2) {
-                           if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.BUILDING) {
-                               dropFoundationArms(true);
-                           } else if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.LOADING) {
-                               dropStoneArm(true);
-                           }
+                            dropFoundationArms(true);
                         } else if (num == 5) {
                            if (startingPosition == RachmaninoffSkybridgePath.StartingPosition.BUILDING) {
                                dropFoundationArms(false);
@@ -146,23 +147,24 @@ public class RachmaninoffLM2Autonomous extends Robot {
         });
     }
 
-    public void dropFoundationArms (boolean drop) {
-        if (drop == true) {
-            leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
-            rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
-        }
+    public void dropFoundationArms(boolean drop)
+    {
         if (drop == false) {
             leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
             rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        } else if (drop == true) {
+            leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
+            rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
         }
     }
 
+
     public void dropStoneArm (boolean drop) {
         if (drop == true) {
-            stoneArm.setPosition(MiyazakiCalibration.ARM_DOWN);
+            // stoneArm.setPosition(MiyazakiCalibration.ARM_DOWN);
         }
         if (drop == false) {
-            stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
+            // stoneArm.setPosition(MiyazakiCalibration.ARM_STOW);
         }
     }
 }

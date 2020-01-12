@@ -1,4 +1,5 @@
 package test;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -14,7 +15,8 @@ import team25core.RobotEvent;
 /**
  * Created by Lizzie on 12/23/2019.
  */
-public class HoritontalLiftTest extends Robot {
+@TeleOp(name = "H Lift Test")
+public class HorizontalLiftTest extends Robot {
 
     private CRServo hLift;
     private DistanceSensor distanceSensor; // lowkey a V3 color sensor but a distance sensor in disguise

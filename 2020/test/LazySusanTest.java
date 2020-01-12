@@ -33,6 +33,7 @@
 
 package test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -45,7 +46,7 @@ import team25core.RobotEvent;
 import team25core.TankDriveTask;
 
 @TeleOp(name = "LazySusanTest")
-//@Disabled
+@Disabled
 public class LazySusanTest extends Robot {
 
     private DcMotor frontLeft;
