@@ -207,7 +207,7 @@ public class SternLM3Autonomous extends Robot {
     {
         drivetrain.resetEncoders();
         drivetrain.straight(0.4 * MULTIPLIER);
-        skystoneDetectionTask = new SkystoneDetectionTask(this, purpleColorSensor) {
+        skystoneDetectionTask = new SkystoneDetectionTask(this, purpleColorSensor, purpleDistanceSensor) {
             public void handleEvent(RobotEvent e) {
                 SkystoneDetectionEvent event = (SkystoneDetectionEvent) e;
                 switch (event.kind) {

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -34,6 +35,7 @@ public class SkystoneDetectionTest extends Robot {
 
     // sensor
     private ColorSensor leftColorSensor;
+    private DistanceSensor leftDistanceSensor;
     private ColorSensor rightColorSensor;
     private SkystoneDetectionTask skystoneDetectionTask;
 
@@ -64,6 +66,7 @@ public class SkystoneDetectionTest extends Robot {
 
         // skystone and sensor initialization
         leftColorSensor = hardwareMap.get(RevColorSensorV3.class, "leftColorSensor");
+        leftDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "leftColorSensor");
         // rightColorSensor = hardwareMap.colorSensor.get("rightColorSensor");
 
         skystonePath = new DeadReckonPath();
@@ -87,7 +90,7 @@ public class SkystoneDetectionTest extends Robot {
 
     public void detectColor()
     {
-        skystoneDetectionTask = new SkystoneDetectionTask(this, leftColorSensor) {
+        skystoneDetectionTask = new SkystoneDetectionTask(this, leftColorSensor, leftDistanceSensor) {
             public void handleEvent(RobotEvent e) {
                 SkystoneDetectionTask.SkystoneDetectionEvent event = (SkystoneDetectionTask.SkystoneDetectionEvent) e;
                 switch (event.kind) {

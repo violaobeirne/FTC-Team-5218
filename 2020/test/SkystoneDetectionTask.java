@@ -36,8 +36,11 @@ package test;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import team25core.Robot;
 import team25core.RobotEvent;
@@ -61,22 +64,21 @@ public class SkystoneDetectionTask extends RobotTask
     }
 
     protected ColorSensor colorSensor;
+    protected DistanceSensor distanceSensor;
     protected int count;
-    protected int threshold = 1000;
-    protected int msDelay = 0;
+    protected final static int THRESHOLD = 100;
     protected ElapsedTime delayTimer;
 
-    public SkystoneDetectionTask(Robot robot, ColorSensor colorSensor)
+    public SkystoneDetectionTask(Robot robot, ColorSensor colorSensor, DistanceSensor distanceSensor)
     {
         super(robot);
         this.colorSensor = colorSensor;
+        this.distanceSensor = distanceSensor;
     }
 
     @Override
     public void start()
     {
-        delayTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        count = 0;
     }
 
     @Override
@@ -90,19 +92,20 @@ public class SkystoneDetectionTask extends RobotTask
     {
         SkystoneDetectionEvent event;
 
-        int rgb = colorSensor.argb();
+        /*
+         * Don't attempt detection if the sensor is not within 5cm of an object.
+         */
+        if (distanceSensor.getDistance(DistanceUnit.CM) > 5) {
+            return false;
+        }
+
         int blue = colorSensor.blue();
         int red = colorSensor.red();
-        int green = colorSensor.green();
 
-        robot.telemetry.addData("Red  ", colorSensor.red());
-        robot.telemetry.addData("Green", colorSensor.green());
-        robot.telemetry.addData("Blue ", colorSensor.blue());
-        RobotLog.i("ColorSensor 0x%08X %02X %02X %02X", rgb, red, green, blue);
-
-        if (blue < threshold && red < threshold && green < threshold) {
+        if (Math.abs(red - blue) < THRESHOLD) {
             event = new SkystoneDetectionEvent(this, EventKind.STONE_DETECTED);
             robot.queueEvent(event);
+            return true;
         }
         return false;
     }
