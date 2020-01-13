@@ -87,6 +87,8 @@ public class LisztLM3Teleop extends Robot {
         stoneArm = hardwareMap.servo.get("stoneArm");
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
+        stoneArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
+        foundationArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
         vLift = hardwareMap.dcMotor.get("vLift");
         hLift = hardwareMap.crservo.get("hLift");
         leftIntake = hardwareMap.dcMotor.get("leftIntake");
