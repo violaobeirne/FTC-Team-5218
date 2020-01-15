@@ -10,15 +10,15 @@ public class MiyazakiCalibration {
     public static final double SPEED_LIMIT = 0.6;
 
     // foundation migration and stone arms
-    public static final double STONE_LEFT_ARM_DOWN = 228/256.0; //235
-    public static final double STONE_LEFT_ARM_STOW = 58/256.0; //95
-    public static final double STONE_RIGHT_ARM_DOWN = 26/256.0; //235
-    public static final double STONE_RIGHT_ARM_STOW = 198/256.0; //95
+    public static final double STONE_LEFT_ARM_DOWN = 238/256.0;
+    public static final double STONE_LEFT_ARM_STOW = 65/256.0;
+    public static final double STONE_RIGHT_ARM_DOWN = 28/256.0;
+    public static final double STONE_RIGHT_ARM_STOW = 191/256.0;
     public static final double STONE_ARM_STOW = 80.0/256.0;
     public static final double STONE_ARM_PUSH = 256.0/256.0;
 
-    public static final double ARM_LEFT_STOW = 254.0/256.0;
-    public static final double ARM_LEFT_DOWN = 2.0/256.0;
+    public static final double ARM_LEFT_STOW = 111.0/256.0;
+    public static final double ARM_LEFT_DOWN = 0/256.0;
 
     public static final double ARM_RIGHT_STOW = 0.0/360.0;
     public static final double ARM_RIGHT_DOWN = 198.0/256.0;
@@ -31,8 +31,8 @@ public class MiyazakiCalibration {
     public static final double INTAKE_RIGHT_DISPENSE = 1.0;
 
     // claw
-    public static final double NEW_CLAW_OPEN = 231.0 / 256.0; //version 1: 50, version 2: 225, version 3: 95, version 4: 50, version 5: 5
-    public static final double NEW_CLAW_CLOSE = 77.0 / 256.0; //version 1: 200, version 2: 168, version 3: 170, version 4: 150, version 5: 120
+    public static final double NEW_CLAW_OPEN = 169.0 / 256.0; //version 1: 50, version 2: 225, version 3: 95, version 4: 50, version 5: 5
+    public static final double NEW_CLAW_CLOSE = 5.0 / 256.0; //version 1: 200, version 2: 168, version 3: 170, version 4: 150, version 5: 120
     public static final double OLD_CLAW_OPEN = 50.0/256.0; //version 1: 50, version 2: 150, version 3: 50
     public static final double OLD_CLAW_CLOSE = 120.0/256.0;//version 1: 150, version 2: 170, version 3: 150, version 4: 120, version 5: 100, version 6: 90
 

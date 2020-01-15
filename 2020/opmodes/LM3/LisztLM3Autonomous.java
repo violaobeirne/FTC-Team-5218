@@ -81,8 +81,10 @@ public class LisztLM3Autonomous extends Robot {
         startingPosition = startingPosition.DEFAULT;
         leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
         rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        foundationArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
+        stoneArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
     }
 
     @Override

@@ -30,7 +30,7 @@ import static opmodes.LM3.LisztSkybridgePath.ArmLocation.ARM_DEPLOYED;
  * Created by Lizzie on 1/6/2020.
  */
 
-@Autonomous(name = "5218 Skystone Autonomuos")
+@Autonomous(name = "5218 Skystone Autonomous")
 public class SternLM3Autonomous extends Robot {
 
     // drivetrain and mechanisms declaration
@@ -79,7 +79,7 @@ public class SternLM3Autonomous extends Robot {
         rightStoneArm = hardwareMap.servo.get("rightStoneArm");
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
+
         drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
@@ -149,7 +149,7 @@ public class SternLM3Autonomous extends Robot {
     public void initialMove ()
     {
         DeadReckonPath initialPath = new DeadReckonPath();
-        initialPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 28, 0.8);
+        initialPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 23, 0.6);
         addTask(new DeadReckonTask(this, initialPath, drivetrain) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
@@ -166,7 +166,7 @@ public class SternLM3Autonomous extends Robot {
     {
         DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 10);
         DeadReckonPath distanceOffset = new DeadReckonPath();
-        distanceOffset.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 100, MULTIPLIER * .5);
+        distanceOffset.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 100, MULTIPLIER * .2);
         addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
@@ -189,7 +189,7 @@ public class SternLM3Autonomous extends Robot {
     {
         DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 2);
         DeadReckonPath distanceOffset = new DeadReckonPath();
-        distanceOffset.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 100, .5);
+        distanceOffset.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 100, .2);
         addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
