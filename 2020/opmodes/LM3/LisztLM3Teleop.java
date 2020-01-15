@@ -157,19 +157,29 @@ public class LisztLM3Teleop extends Robot {
             }
         });
 
+        /*
         DeadmanMotorTask leftIntakeIn = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
         addTask(leftIntakeIn);
-        DeadmanMotorTask rightIntakeIn = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        final DeadmanMotorTask rightIntakeIn = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
         addTask(rightIntakeIn);
         DeadmanMotorTask leftIntakeOut = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
         addTask(leftIntakeOut);
         DeadmanMotorTask rightIntakeOut = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
         addTask(rightIntakeOut);
+         */
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
+                    case BUTTON_A_DOWN:
+                        rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
+                        leftIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
+                        break;
+                    case BUTTON_B_DOWN:
+                        rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_DISPENSE);
+                        leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_DISPENSE);
+                        break;
                     case BUTTON_X_DOWN:
                         moveFoundationArms();
                         break;
