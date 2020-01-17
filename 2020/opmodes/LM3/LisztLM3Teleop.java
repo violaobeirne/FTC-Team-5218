@@ -34,6 +34,19 @@ public class LisztLM3Teleop extends Robot {
     // slow mode!
      */
 
+    // enum
+    public enum drivetrainMode {
+        SLOW_MODE,
+        FAST_MODE,
+    }
+    drivetrainMode dMode = drivetrainMode.FAST_MODE;
+
+    public enum clawMode {
+        CLAW_OPEN,
+        CLAW_CLOSE,
+    }
+    clawMode cMode = clawMode.CLAW_OPEN;
+
     // drivetrain
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -113,24 +126,22 @@ public class LisztLM3Teleop extends Robot {
         addTask(liftUp);
         DeadmanMotorTask liftDown = new DeadmanMotorTask(this, vLift, MiyazakiCalibration.VLIFT_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.RIGHT_TRIGGER);
         addTask(liftDown);
-        DeadmanMotorTask leftIntakeIn = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(leftIntakeIn);
-        DeadmanMotorTask rightIntakeIn = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(rightIntakeIn);
-        DeadmanMotorTask leftIntakeOut = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_B);
-        addTask(leftIntakeOut);
-        DeadmanMotorTask rightIntakeOut = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.BUTTON_B);
-        addTask(rightIntakeOut);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
-                    case BUTTON_X_DOWN:
-                        claw.setPosition(MiyazakiCalibration.NEW_CLAW_OPEN);
+                    case BUTTON_A_DOWN:
+                        latchFoundation();
                         break;
-                    case BUTTON_Y_DOWN:
-                        claw.setPosition(MiyazakiCalibration.NEW_CLAW_CLOSE);
+                    case BUTTON_X_DOWN:
+                        if (cMode == clawMode.CLAW_CLOSE) {
+                            claw.setPosition(MiyazakiCalibration.NEW_CLAW_OPEN);
+                            cMode = clawMode.CLAW_OPEN;
+                        } else {
+                            claw.setPosition(MiyazakiCalibration.NEW_CLAW_CLOSE);
+                            cMode = clawMode.CLAW_CLOSE;
+                        }
                         break;
                     case LEFT_BUMPER_DOWN:
                         hLift.setPower(MiyazakiCalibration.HLIFT_OUT);
@@ -146,24 +157,42 @@ public class LisztLM3Teleop extends Robot {
             }
         });
 
+        /*
+        DeadmanMotorTask leftIntakeIn = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        addTask(leftIntakeIn);
+        final DeadmanMotorTask rightIntakeIn = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        addTask(rightIntakeIn);
+        DeadmanMotorTask leftIntakeOut = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
+        addTask(leftIntakeOut);
+        DeadmanMotorTask rightIntakeOut = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
+        addTask(rightIntakeOut);
+         */
+
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
+                    case BUTTON_A_DOWN:
+                        rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
+                        leftIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
+                        break;
+                    case BUTTON_B_DOWN:
+                        rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_DISPENSE);
+                        leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_DISPENSE);
+                        break;
                     case BUTTON_X_DOWN:
                         moveFoundationArms();
                         break;
                     case BUTTON_Y_DOWN:
-                        moveStoneArms();
-                        break;
-                    case BUTTON_A_DOWN:
+                        if (dMode == drivetrainMode.SLOW_MODE) {
+                            driveTask.slowDown(false);
+                            dMode = drivetrainMode.FAST_MODE;
+                        } else {
+                            driveTask.slowDown(true);
+                            dMode = drivetrainMode.SLOW_MODE;
+                        }
                         driveTask.slowDown(false);
                         break;
-                    case BUTTON_B_DOWN:
-                        driveTask.slowDown(true);
-                        break;
-                    case LEFT_TRIGGER_DOWN:
-                        latchFoundation();
                     case RIGHT_BUMPER_DOWN:
                         stoneArm.setPosition(MiyazakiCalibration.STONE_ARM_PUSH);
                         break;
