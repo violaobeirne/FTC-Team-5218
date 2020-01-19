@@ -8,9 +8,12 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.HashMap;
 
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.ColorSensorTask;
@@ -19,6 +22,7 @@ import team25core.DeadReckonTask;
 import team25core.DistanceSensorCriteria;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
+import team25core.MotorPackage;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
@@ -44,6 +48,7 @@ public class SternLM3Autonomous extends Robot {
     private Servo leftArm;
     private Servo rightArm;
     private MechanumGearedDrivetrain drivetrain;
+    HashMap<MotorPackage.MotorLocation, MotorPackage> motorMap;
 
     // sensor
     private ColorSensor leftColorSensor;
@@ -65,7 +70,6 @@ public class SternLM3Autonomous extends Robot {
     private SternSkystonePath.ArmLocation stoneArms;
     private int MULTIPLIER = MiyazakiCalibration.ALLIANCE_MULTIPLIER;
     private int stoneOffset;
-    private DeadReckonPath offsetStonePath;
 
     @Override
     public void init ()
@@ -80,10 +84,17 @@ public class SternLM3Autonomous extends Robot {
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        motorMap = new HashMap<>();
+        motorMap.put(MotorPackage.MotorLocation.FRONT_LEFT, new MotorPackage(frontLeft));
+        motorMap.put(MotorPackage.MotorLocation.FRONT_RIGHT, new MotorPackage(frontRight));
+        motorMap.put(MotorPackage.MotorLocation.BACK_LEFT, new MotorPackage(backLeft));
+        motorMap.put(MotorPackage.MotorLocation.BACK_RIGHT, new MotorPackage(backRight, 0.815, MotorPackage.OffsetPolarity.POLARITY_POSITIVE));
+
+        drivetrain = new MechanumGearedDrivetrain(60, motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();
+        drivetrain.setMasterMotor(frontLeft);
 
         // gamepad and telemetry initialization
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
@@ -107,7 +118,6 @@ public class SternLM3Autonomous extends Robot {
         // sky stone path initialization
         skystone = new SternSkystonePath();
         allianceColor = allianceColor.DEFAULT;
-        DeadReckonPath offsetStonePath = new DeadReckonPath();
     }
 
     @Override
@@ -148,8 +158,9 @@ public class SternLM3Autonomous extends Robot {
 
     public void initialMove ()
     {
+        RobotLog.i("163 initialMove");
         DeadReckonPath initialPath = new DeadReckonPath();
-        initialPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 23, 0.6);
+        initialPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 36, 0.5);
         addTask(new DeadReckonTask(this, initialPath, drivetrain) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
@@ -164,21 +175,24 @@ public class SternLM3Autonomous extends Robot {
     }
     public void findStoneEdge()
     {
-        DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 10);
+        RobotLog.i("163 findStoneEdge");
+        DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 5);
         DeadReckonPath distanceOffset = new DeadReckonPath();
-        distanceOffset.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 100, MULTIPLIER * .2);
+        distanceOffset.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 100, MULTIPLIER * -.2);
         addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case SENSOR_SATISFIED:
-                        drivetrain.stop();
-                        drivetrain.resetEncoders();
-                        if (purpleDistanceSensor.getDistance(DistanceUnit.CM) > 2) {
-                            approachStone();
-                        } else {
+                        RobotLog.i("163 Stone Approach");
+                        this.disableSensors();
+                        this.stop();
+                        robot.removeTask(this);
+                        // if (purpleDistanceSensor.getDistance(DistanceUnit.CM) > 2) {
+                          //   approachStone();
+                        // } else {
                             detectColor();
-                        }
+                        // }
                         break;
                 }
             }
@@ -187,6 +201,7 @@ public class SternLM3Autonomous extends Robot {
 
     public void approachStone()
     {
+        RobotLog.i("163 approachStone");
         DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 2);
         DeadReckonPath distanceOffset = new DeadReckonPath();
         distanceOffset.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 100, .2);
@@ -196,6 +211,9 @@ public class SternLM3Autonomous extends Robot {
                 switch (event.kind) {
                     case SENSOR_SATISFIED:
                         drivetrain.stop();
+                        this.stop();
+                        this.
+                        robot.removeTask(this);
                         detectColor();
                         break;
                 }
@@ -205,6 +223,7 @@ public class SternLM3Autonomous extends Robot {
 
     public void detectColor()
     {
+        RobotLog.i("163 detectColor");
         drivetrain.resetEncoders();
         drivetrain.straight(0.4 * MULTIPLIER);
         skystoneDetectionTask = new SkystoneDetectionTask(this, purpleColorSensor, purpleDistanceSensor) {
@@ -212,9 +231,13 @@ public class SternLM3Autonomous extends Robot {
                 SkystoneDetectionEvent event = (SkystoneDetectionEvent) e;
                 switch (event.kind) {
                     case STONE_DETECTED:
+                        RobotLog.i("163 Color detected");
                         stone.setValue("DETECTED");
+                        stoneOffset = drivetrain.getCurrentPosition();
                         drivetrain.stop();
+                        moveBack();
                         moveStoneArms();
+                        pullBack();
                         skystoneOffset();
                         break;
                 }
@@ -223,8 +246,27 @@ public class SternLM3Autonomous extends Robot {
         this.addTask(skystoneDetectionTask);
     }
 
+    public void moveBack()
+    {
+        RobotLog.i("163 moveBack");
+        DeadReckonPath moveToStone;
+        moveToStone = new DeadReckonPath();
+        moveToStone.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, MULTIPLIER * 0.4);
+        addTask(new DeadReckonTask(this, moveToStone, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch(event.kind) {
+                    case PATH_DONE:
+                        stoneOffset += drivetrain.getCurrentPosition();
+                        break;
+                }
+            }
+        });
+    }
+
     public void moveStoneArms ()
     {
+        RobotLog.i("163 moveStoneArms");
         switch (stoneArms) {
             case ARM_DEPLOYED:
                 switch(allianceColor) {
@@ -252,8 +294,24 @@ public class SternLM3Autonomous extends Robot {
         }
     }
 
-    public void skystoneOffset()
+    public void pullBack()
     {
+        RobotLog.i("163 pullBack");
+        DeadReckonPath pullback = new DeadReckonPath();
+        pullback.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 6, -0.5);
+        addTask(new DeadReckonTask(this, pullback, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+
+            }
+        });
+    }
+
+
+    public void skystoneOffset() //
+    {
+        RobotLog.i("163 skystoneOffset");
+        DeadReckonPath offsetStonePath = new DeadReckonPath();
         stoneOffset = drivetrain.getCurrentPosition() / MiyazakiCalibration.ENCODERS_PER_INCH;
         offsetStonePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, stoneOffset, MULTIPLIER * 0.4);
         runOffset(offsetStonePath);
@@ -261,6 +319,7 @@ public class SternLM3Autonomous extends Robot {
 
     public void runOffset(DeadReckonPath path)
     {
+        RobotLog.i("163 runOffset");
         int deliverDistance = stoneOffset + 60;
         DeadReckonPath deliverStone = new DeadReckonPath();
         deliverStone.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 14, -0.5);
@@ -280,7 +339,7 @@ public class SternLM3Autonomous extends Robot {
 
     public void approachSecondStone()
     {
-
+        RobotLog.i("163 approachSecondStone");
     }
 
 

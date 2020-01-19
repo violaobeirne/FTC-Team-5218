@@ -28,15 +28,15 @@ public class LisztSkybridgePath {
     public LisztSkybridgePath() {
         // BLUE ALLIANCE, BUILDING SIDE
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
-        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 28, -0.8); // move to foundation
+        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 26, -0.8); // move to foundation
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.2); // touch foundation
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addPause(1000); // phantom segment for arms
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); // pull foundation back
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 120, -0.5); // turn the foundation into the building
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.8);
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addPause(1000);
-        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 14, -0.4);
-        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 46, 0.8);
+        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 16, -0.4);
+        paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 42, 0.8);
 
         // BLUE ALLIANCE, LOADING SIDE
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
@@ -50,16 +50,16 @@ public class LisztSkybridgePath {
         paths[LisztSkybridgePath.AllianceColor.BLUE.ordinal()][LisztSkybridgePath.StartingPosition.LOADING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, -0.8);
 
         // RED ALLIANCE, BUILDING SIDE
-        // doublecheck for phantom segment
         paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()] = new DeadReckonPath();
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 28, -0.8); // move to foundation
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 26, -0.8); // move to foundation
         paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.2); // touch foundation
         paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addPause(1000); // phantom segment for arms
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.4); // pull foundation back
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 130, 0.5); // turn the foundation into the building
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.8); // pull foundation back
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 20, 0.4); // pull foundation back
-        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 43, 0.8); // pull foundation back
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.5); // pull foundation back
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.TURN, 120, 0.7); // turn the foundation into the building
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.8); // push foundation against wall
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addPause(1000); // phantom segment for arms
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 16, 0.4);
+        paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.BUILDING.ordinal()].addSegment(DeadReckonPath.SegmentType.STRAIGHT, 35, 0.8);
 
         // RED ALLIANCE, LOADING SIDE
         paths[LisztSkybridgePath.AllianceColor.RED.ordinal()][LisztSkybridgePath.StartingPosition.LOADING.ordinal()] = new DeadReckonPath();
