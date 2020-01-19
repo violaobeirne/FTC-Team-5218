@@ -6,11 +6,14 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.HashMap;
+
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
+import team25core.MotorPackage;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.TankMechanumControlScheme;
@@ -33,6 +36,7 @@ public class LisztLM3Autonomous extends Robot {
     private Servo leftStoneArm;
     private Servo rightStoneArm;
     private MechanumGearedDrivetrain drivetrain;
+    HashMap<MotorPackage.MotorLocation, MotorPackage> motorMap;
 
     // gamepad and telemetry declaration
     private GamepadTask gamepad;
@@ -61,11 +65,18 @@ public class LisztLM3Autonomous extends Robot {
         rightArm = hardwareMap.servo.get("rightArm");
         leftStoneArm = hardwareMap.servo.get("leftStoneArm");
         rightStoneArm = hardwareMap.servo.get("rightStoneArm");
-        TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+
+        motorMap = new HashMap<>();
+        motorMap.put(MotorPackage.MotorLocation.FRONT_LEFT, new MotorPackage(frontLeft));
+        motorMap.put(MotorPackage.MotorLocation.FRONT_RIGHT, new MotorPackage(frontRight));
+        motorMap.put(MotorPackage.MotorLocation.BACK_LEFT, new MotorPackage(backLeft));
+        motorMap.put(MotorPackage.MotorLocation.BACK_RIGHT, new MotorPackage(backRight, 0.815, MotorPackage.OffsetPolarity.POLARITY_POSITIVE));
+
+        drivetrain = new MechanumGearedDrivetrain(60, motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();
+        drivetrain.setMasterMotor(frontLeft);
 
         // gamepad and telemetry initialization
         gamepad = new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1);
@@ -133,7 +144,6 @@ public class LisztLM3Autonomous extends Robot {
                 switch(event.kind) {
                     case PATH_DONE:
                         RobotLog.i("163: PATH DONE");
-                        // dropFoundationArms(true);
                         break;
                     case PAUSING:
                         RobotLog.i("163: SEGMENT DONE %d", num);
@@ -143,6 +153,7 @@ public class LisztLM3Autonomous extends Robot {
                             moveStoneArms();
                         }
                         break;
+                    /*
                     case SEGMENT_DONE:
                         RobotLog.i("163: SEGMENT DONE %d", num);
                         if (num == 2) {
@@ -154,7 +165,7 @@ public class LisztLM3Autonomous extends Robot {
                            }
                         }
                         break;
-
+                    */
                 }
             }
         });

@@ -143,6 +143,18 @@ public class LisztLM3Teleop extends Robot {
                             cMode = clawMode.CLAW_CLOSE;
                         }
                         break;
+                    case BUTTON_B_DOWN:
+                        leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_DOWN);
+                        break;
+                    case BUTTON_B_UP:
+                        leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
+                        break;
+                    case BUTTON_Y_DOWN:
+                        rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_DOWN);
+                        break;
+                    case BUTTON_Y_UP:
+                        rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
+                        break;
                     case LEFT_BUMPER_DOWN:
                         hLift.setPower(MiyazakiCalibration.HLIFT_OUT);
                         break;
@@ -172,11 +184,11 @@ public class LisztLM3Teleop extends Robot {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
-                    case BUTTON_A_DOWN:
+                    case RIGHT_TRIGGER_DOWN:
                         rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
-                        leftIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
+                        leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_COLLECT);
                         break;
-                    case BUTTON_B_DOWN:
+                    case LEFT_TRIGGER_DOWN:
                         rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_DISPENSE);
                         leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_DISPENSE);
                         break;
@@ -192,6 +204,10 @@ public class LisztLM3Teleop extends Robot {
                             dMode = drivetrainMode.SLOW_MODE;
                         }
                         driveTask.slowDown(false);
+                        break;
+                    case LEFT_BUMPER_DOWN:
+                        leftIntake.setPower(0.0);
+                        rightIntake.setPower(0.0);
                         break;
                     case RIGHT_BUMPER_DOWN:
                         stoneArm.setPosition(MiyazakiCalibration.STONE_ARM_PUSH);

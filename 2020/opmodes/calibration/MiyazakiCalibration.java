@@ -14,21 +14,21 @@ public class MiyazakiCalibration {
     public static final double STONE_LEFT_ARM_STOW = 65/256.0;
     public static final double STONE_RIGHT_ARM_DOWN = 28/256.0;
     public static final double STONE_RIGHT_ARM_STOW = 191/256.0;
-    public static final double STONE_ARM_STOW = 80.0/256.0;
+    public static final double STONE_ARM_STOW = 62.0/256.0;
     public static final double STONE_ARM_PUSH = 256.0/256.0;
 
-    public static final double ARM_LEFT_STOW = 111.0/256.0;
-    public static final double ARM_LEFT_DOWN = 0/256.0;
+    public static final double ARM_LEFT_STOW = 9.0/256.0; // 9
+    public static final double ARM_LEFT_DOWN = 256.0/256.0; // 256
 
-    public static final double ARM_RIGHT_STOW = 0.0/360.0;
-    public static final double ARM_RIGHT_DOWN = 198.0/256.0;
+    public static final double ARM_RIGHT_STOW = 256.0/360.0;
+    public static final double ARM_RIGHT_DOWN = 11.0/256.0;
 
     // active wheel intake
-    public static final double INTAKE_LEFT_COLLECT = 1.0;
-    public static final double INTAKE_RIGHT_COLLECT = -1.0;
+    public static final double INTAKE_LEFT_DISPENSE = 1.0;
+    public static final double INTAKE_RIGHT_DISPENSE = -1.0;
 
-    public static final double INTAKE_LEFT_DISPENSE = -1.0;
-    public static final double INTAKE_RIGHT_DISPENSE = 1.0;
+    public static final double INTAKE_LEFT_COLLECT = -1.0;
+    public static final double INTAKE_RIGHT_COLLECT = 1.0;
 
     // claw
     public static final double NEW_CLAW_OPEN = 169.0 / 256.0; //version 1: 50, version 2: 225, version 3: 95, version 4: 50, version 5: 5
