@@ -54,7 +54,7 @@ public class SketchParkAuto extends Robot {
         motorMap.put(MotorPackage.MotorLocation.BACK_LEFT, new MotorPackage(backLeft));
         motorMap.put(MotorPackage.MotorLocation.BACK_RIGHT, new MotorPackage(backRight, 0.815, MotorPackage.OffsetPolarity.POLARITY_POSITIVE));
 
-        drivetrain = new MechanumGearedDrivetrain(60, motorMap);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();

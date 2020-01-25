@@ -48,6 +48,8 @@ import team25core.RobotTask;
 
 public class SkystoneDetectionTask extends RobotTask
 {
+    public final static String TAG = "SkystoneDetectionTask";
+
     public enum EventKind {
         STONE_DETECTED,
     }
@@ -84,7 +86,6 @@ public class SkystoneDetectionTask extends RobotTask
     @Override
     public void stop()
     {
-        robot.removeTask(this);
     }
 
     @Override
@@ -96,6 +97,7 @@ public class SkystoneDetectionTask extends RobotTask
          * Don't attempt detection if the sensor is not within 5cm of an object.
          */
         if (distanceSensor.getDistance(DistanceUnit.CM) > 5) {
+            RobotLog.i(TAG, "Too far away to detect");
             return false;
         }
 

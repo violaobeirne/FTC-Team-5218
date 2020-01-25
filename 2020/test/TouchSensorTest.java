@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import team25core.StandardFourMotorRobot;
 import team25core.TouchSensorCriteria;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
@@ -17,12 +18,8 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "Touch Sensor Test")
-public class TouchSensorTest extends Robot {
+public class TouchSensorTest extends StandardFourMotorRobot {
     // drivetrain and servos
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private Servo leftArm;
     private Servo rightArm;
     private TeleopDriveTask driveTask;
@@ -44,14 +41,10 @@ public class TouchSensorTest extends Robot {
 
     public void init() {
         // drivetrain, and servos
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.get(Servo.class, "leftArm");
         rightArm  = hardwareMap.get(Servo.class, "rightArm");
 
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setCanonicalMotorDirection();
         drivetrain.resetEncoders();
         drivetrain.encodersOn();

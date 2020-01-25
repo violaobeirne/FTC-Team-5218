@@ -15,6 +15,7 @@ import team25core.DeadReckonPath;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 
 /**
@@ -22,13 +23,9 @@ import team25core.TankMechanumControlScheme;
  */
 
 @Autonomous(name = "5218 Skystone Detection Test")
-public class SkystoneDetectionTest extends Robot {
+public class SkystoneDetectionTest extends StandardFourMotorRobot {
 
     // drivetrain and mechanisms declaration
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private Servo leftStoneArm;
     private Servo rightStoneArm;
     private MechanumGearedDrivetrain drivetrain;
@@ -50,14 +47,10 @@ public class SkystoneDetectionTest extends Robot {
     @Override
     public void init () {
         // drivetrain and mechanisms initialization
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
         leftStoneArm = hardwareMap.servo.get("leftStoneArm");
         rightStoneArm = hardwareMap.servo.get("rightStoneArm");
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();

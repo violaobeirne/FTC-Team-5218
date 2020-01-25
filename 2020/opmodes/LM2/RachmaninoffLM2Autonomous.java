@@ -14,6 +14,7 @@ import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 
 /**
@@ -21,13 +22,9 @@ import team25core.TankMechanumControlScheme;
  */
 @Autonomous(name = "5218 LM2 Autonomous")
 @Disabled
-public class RachmaninoffLM2Autonomous extends Robot {
+public class RachmaninoffLM2Autonomous extends StandardFourMotorRobot {
 
     // drivetrain and mechanisms declaration
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private DcMotor leftIntake;
     private DcMotor rightIntake;
     private Servo leftArm;
@@ -50,10 +47,6 @@ public class RachmaninoffLM2Autonomous extends Robot {
     @Override
     public void init() {
         // drivetrain and mechanisms initialization
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
         leftIntake = hardwareMap.dcMotor.get("leftIntake");
         rightIntake = hardwareMap.dcMotor.get("rightIntake");
         leftArm = hardwareMap.servo.get("leftArm");
@@ -61,7 +54,7 @@ public class RachmaninoffLM2Autonomous extends Robot {
         stoneArm = hardwareMap.servo.get("arm");
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();

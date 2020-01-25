@@ -14,6 +14,7 @@ import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 
 /**
@@ -21,12 +22,8 @@ import team25core.TankMechanumControlScheme;
  */
 @Autonomous(name = "5218 LM1 Autonomous")
 @Disabled
-public class VivaldiLM1Autonomous extends Robot {
+public class VivaldiLM1Autonomous extends StandardFourMotorRobot {
     // drivetrain and mechanisms declaration
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private DcMotor lift;
     private Servo susan;
     private Servo claw;
@@ -51,10 +48,6 @@ public class VivaldiLM1Autonomous extends Robot {
     @Override
     public void init() {
         // drivetrain and mechanisms initialization
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
         lift = hardwareMap.dcMotor.get("lift");
         susan = hardwareMap.servo.get("susan");
         claw = hardwareMap.servo.get("claw");
@@ -62,7 +55,7 @@ public class VivaldiLM1Autonomous extends Robot {
         rigthArm = hardwareMap.servo.get("rightArm");
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1);
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.encodersOn();
         drivetrain.resetEncoders();
         drivetrain.setNoncanonicalMotorDirection();

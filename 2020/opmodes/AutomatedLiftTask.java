@@ -94,7 +94,6 @@ public class AutomatedLiftTask extends RobotTask {
     @Override
     public void stop()
     {
-        robot.removeTask(this);
     }
 
     public void doStoneStack()

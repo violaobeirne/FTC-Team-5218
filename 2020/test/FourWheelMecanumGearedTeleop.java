@@ -40,17 +40,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "FourWheelMecanumGearedTeleop")
 @Disabled
-public class FourWheelMecanumGearedTeleop extends Robot {
+public class FourWheelMecanumGearedTeleop extends StandardFourMotorRobot {
 
-    private DcMotor frontLeft; //declaration, private = just class. declaring variables
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
 
@@ -63,12 +60,7 @@ public class FourWheelMecanumGearedTeleop extends Robot {
     @Override
     public void init()
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-        drivetrain = new MechanumGearedDrivetrain(60, frontLeft,frontRight, backLeft, backRight);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1); //passing gamepad
 
         driveTask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);

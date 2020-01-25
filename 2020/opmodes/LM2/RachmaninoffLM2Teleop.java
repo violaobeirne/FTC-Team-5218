@@ -12,12 +12,13 @@ import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "5218 LM2 Teleop")
 @Disabled
-public class RachmaninoffLM2Teleop extends Robot {
+public class RachmaninoffLM2Teleop extends StandardFourMotorRobot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
 
@@ -30,10 +31,6 @@ public class RachmaninoffLM2Teleop extends Robot {
     // drivetrain
     // slow mode!
      */
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
     private DcMotor vLift;
@@ -50,14 +47,10 @@ public class RachmaninoffLM2Teleop extends Robot {
     }
 
     public void init() {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
         arm = hardwareMap.servo.get("arm");
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setCanonicalMotorDirection();
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         driveTask = new TeleopDriveTask(this, MiyazakiCalibration.SPEED_LIMIT, scheme, frontLeft, frontRight, backLeft, backRight);

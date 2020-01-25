@@ -15,12 +15,13 @@ import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 import team25core.TouchSensorCriteria;
 
 @TeleOp(name = "5218 LM3 Teleop")
-public class LisztLM3Teleop extends Robot {
+public class LisztLM3Teleop extends StandardFourMotorRobot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
 
@@ -48,10 +49,6 @@ public class LisztLM3Teleop extends Robot {
     clawMode cMode = clawMode.CLAW_OPEN;
 
     // drivetrain
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
 
@@ -83,11 +80,7 @@ public class LisztLM3Teleop extends Robot {
 
     public void init() {
         // drivetrain
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setCanonicalMotorDirection();
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         driveTask = new TeleopDriveTask(this, MiyazakiCalibration.SPEED_LIMIT, scheme, frontLeft, frontRight, backLeft, backRight);

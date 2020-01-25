@@ -11,12 +11,13 @@ import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
+import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 @TeleOp(name = "5218 LM0 Teleop")
 @Disabled
-public class MozartLM0Teleop extends Robot {
+public class MozartLM0Teleop extends StandardFourMotorRobot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
 
@@ -29,10 +30,6 @@ public class MozartLM0Teleop extends Robot {
     // drivetrain
     // slow mode!
      */
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
     private MechanumGearedDrivetrain drivetrain;
     private TeleopDriveTask driveTask;
     private DcMotor lift;
@@ -47,14 +44,10 @@ public class MozartLM0Teleop extends Robot {
 
     public void init()
     {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
         leftArm = hardwareMap.servo.get("leftArm");
         rightArm = hardwareMap.servo.get("rightArm");
 
-        drivetrain = new MechanumGearedDrivetrain(60, frontRight, backRight, frontLeft, backLeft);
+        drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setNoncanonicalMotorDirection();
 
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
