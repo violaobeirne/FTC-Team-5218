@@ -20,7 +20,7 @@ import team25core.RobotGyro;
 import team25core.SingleShotTimerTask;
 import team25core.StandardFourMotorRobot;
 
-@Autonomous(name="Autopilot Test")
+@Autonomous(name = "Autopilot Test")
 public class AutopilotTest extends StandardFourMotorRobot {
 
     BNO055IMU imu;

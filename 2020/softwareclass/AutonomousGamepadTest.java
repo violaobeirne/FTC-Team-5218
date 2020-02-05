@@ -34,6 +34,7 @@
 package softwareclass;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -47,7 +48,7 @@ import team25core.Robot;
 import team25core.RobotEvent;
 
 @Autonomous(name = "AutonomousGampepadTest")
-//@Disabled
+@Disabled
 public class AutonomousGamepadTest extends Robot {
 
     private DcMotor frontLeft;

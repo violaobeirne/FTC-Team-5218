@@ -1,6 +1,4 @@
-package opmodes.LM3;
-
-import android.nfc.cardemulation.OffHostApduService;
+package opmodes.ILT;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -13,13 +11,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.HashMap;
 import java.util.List;
 
 import opmodes.calibration.MiyazakiCalibration;
-import team25core.ColorSensorTask;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.DistanceSensorCriteria;
@@ -30,19 +26,16 @@ import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.RobotTaskChain;
 import team25core.SingleShotTimerTask;
-import team25core.TankMechanumControlScheme;
 import test.SkystoneDetectionTask;
-
-import static opmodes.LM3.LisztSkybridgePath.ArmLocation.ARM_DEPLOYED;
 
 /**
  * Created by Lizzie on 1/6/2020.
  */
 
-@Autonomous(name = "5218 Skystone Autonomous")
-public class SternLM3Autonomous extends Robot {
+@Autonomous(name = "5218 ILT Skystone Autonomous")
+public class BeethovenILTAutonomous extends Robot {
 
-    private final static String TAG = "SternLM3Autonomous";
+    private final static String TAG = "SternILTAutonomous";
 
     // drivetrain and mechanisms declaration
     private DcMotor frontLeft;
@@ -72,9 +65,9 @@ public class SternLM3Autonomous extends Robot {
     private Telemetry.Item stone;
 
     // skystone path declaration
-    private SternSkystonePath skystone;
-    private SternSkystonePath.AllianceColor allianceColor;
-    private SternSkystonePath.ArmLocation stoneArms;
+    private BeethovenILTSkystonePath skystone;
+    private BeethovenILTSkystonePath.AllianceColor allianceColor;
+    private BeethovenILTSkystonePath.ArmLocation stoneArms;
     private int MULTIPLIER = MiyazakiCalibration.ALLIANCE_MULTIPLIER;
     private int stoneOffset;
 
@@ -124,14 +117,14 @@ public class SternLM3Autonomous extends Robot {
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightColorSensor");
 
         // servo initialization
-        stoneArms = SternSkystonePath.ArmLocation.ARM_STOWED;
+        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
         leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
         rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
 
         // sky stone path initialization
-        skystone = new SternSkystonePath();
+        skystone = new BeethovenILTSkystonePath();
         allianceColor = allianceColor.DEFAULT;
 
         taskChain = new RobotTaskChain(this);
@@ -305,22 +298,22 @@ public class SternLM3Autonomous extends Robot {
                 switch(allianceColor) {
                     case BLUE:
                         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
-                        stoneArms = SternSkystonePath.ArmLocation.ARM_STOWED;
+                        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                         break;
                     case RED:
                         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
-                        stoneArms = SternSkystonePath.ArmLocation.ARM_STOWED;
+                        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                         break;
                 }
             case ARM_STOWED:
                 switch(allianceColor) {
                     case BLUE:
                         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_DOWN);
-                        stoneArms = SternSkystonePath.ArmLocation.ARM_STOWED;
+                        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                         break;
                     case RED:
                         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_DOWN);
-                        stoneArms = SternSkystonePath.ArmLocation.ARM_STOWED;
+                        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                         break;
                 }
                 break;

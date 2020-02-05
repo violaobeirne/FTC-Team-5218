@@ -1,5 +1,6 @@
 package opmodes.LM3;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +22,7 @@ import team25core.TeleopDriveTask;
 import team25core.TouchSensorCriteria;
 
 @TeleOp(name = "5218 LM3 Teleop")
+@Disabled
 public class LisztLM3Teleop extends StandardFourMotorRobot {
     // teleop with the mecanum drivetrain and linear lift
     // active wheel intake
@@ -79,6 +81,7 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
     }
 
     public void init() {
+        super.init();
         // drivetrain
         drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setCanonicalMotorDirection();
@@ -215,8 +218,8 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
         });
     }
 
-    public void latchFoundation() {
-
+    public void latchFoundation()
+    {
         foundationMoveTask = new DeadReckonTask(this, touchPath, drivetrain, touchLeftCriteria, touchRightCriteria) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
