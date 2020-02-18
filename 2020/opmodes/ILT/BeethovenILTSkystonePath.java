@@ -1,4 +1,4 @@
-package opmodes.LM3;
+package opmodes.ILT;
 
 import team25core.DeadReckonPath;
 
@@ -6,7 +6,7 @@ import team25core.DeadReckonPath;
  * Created by Lizzie on 1/7/2020.
  */
 
-public class SternSkystonePath {
+public class BeethovenILTSkystonePath {
 
     public enum ArmLocation {
         ARM_STOWED,
@@ -20,16 +20,16 @@ public class SternSkystonePath {
 
     DeadReckonPath[] paths = new DeadReckonPath[2];
 
-    public SternSkystonePath() {
+    public BeethovenILTSkystonePath() {
         // BLUE ALLIANCE
-        paths[SternSkystonePath.AllianceColor.BLUE.ordinal()] = new DeadReckonPath();
+        paths[BeethovenILTSkystonePath.AllianceColor.BLUE.ordinal()] = new DeadReckonPath();
 
 
         // RED ALLIANCE
-        paths[SternSkystonePath.AllianceColor.RED.ordinal()] = new DeadReckonPath();
+        paths[BeethovenILTSkystonePath.AllianceColor.RED.ordinal()] = new DeadReckonPath();
     }
 
-    public DeadReckonPath getPath(SternSkystonePath.AllianceColor allianceColor) {
+    public DeadReckonPath getPath(BeethovenILTSkystonePath.AllianceColor allianceColor) {
         return paths[allianceColor.ordinal()];
     }
 

@@ -81,6 +81,7 @@ public class SkystoneDetectionTask extends RobotTask
     @Override
     public void start()
     {
+        RobotLog.ii(TAG, "Starting");
     }
 
     @Override

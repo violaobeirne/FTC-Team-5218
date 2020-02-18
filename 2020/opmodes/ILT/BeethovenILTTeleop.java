@@ -1,41 +1,25 @@
-package opmodes.LM3;
+package opmodes.ILT;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import opmodes.calibration.HisaishiCalibration;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
 import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
-import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.StandardFourMotorRobot;
 import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 import team25core.TouchSensorCriteria;
 
-@TeleOp(name = "5218 LM3 Teleop")
-@Disabled
-public class LisztLM3Teleop extends StandardFourMotorRobot {
-    // teleop with the mecanum drivetrain and linear lift
-    // active wheel intake
-
-    /* GAMEPAD 2
-    // linear lift up (right bumper) down (right trigger)
-    // active wheel intake in (A) out (B)
-     */
-
-    /* GAMEPAD 1
-    // drivetrain
-    // slow mode!
-     */
+@TeleOp(name = "5218 ILT Teleop")
+public class BeethovenILTTeleop extends StandardFourMotorRobot {
 
     // enum
     public enum drivetrainMode {
@@ -59,14 +43,15 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
     private Servo claw;
     private Servo leftArm;
     private Servo rightArm;
-    private LisztSkybridgePath.ArmLocation foundationArms;
+    private BeethovenILTSkystonePath.ArmLocation foundationArms;
     private Servo leftStoneArm;
     private Servo rightStoneArm;
     private Servo stoneArm;
-    private LisztSkybridgePath.ArmLocation stoneArms;
+    private BeethovenILTSkystonePath.ArmLocation stoneArms;
     private CRServo hLift;
     private DcMotor leftIntake;
     private DcMotor rightIntake;
+    private DcMotor tapeMeasurer;
 
     // sensors
     private TouchSensor touchRight;
@@ -96,12 +81,15 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
         stoneArm = hardwareMap.servo.get("stoneArm");
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
-        stoneArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
-        foundationArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
+        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
+        foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
         vLift = hardwareMap.dcMotor.get("vLift");
         hLift = hardwareMap.crservo.get("hLift");
         leftIntake = hardwareMap.dcMotor.get("leftIntake");
         rightIntake = hardwareMap.dcMotor.get("rightIntake");
+        tapeMeasurer = hardwareMap.dcMotor.get("tapePark");
+        tapeMeasurer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        tapeMeasurer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         claw = hardwareMap.servo.get("claw");
 
         // sensors
@@ -165,15 +153,14 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
             }
         });
 
+        // GAMEPAD 1
         /*
-        DeadmanMotorTask leftIntakeIn = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(leftIntakeIn);
-        final DeadmanMotorTask rightIntakeIn = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_COLLECT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
-        addTask(rightIntakeIn);
-        DeadmanMotorTask leftIntakeOut = new DeadmanMotorTask(this, leftIntake, MiyazakiCalibration.INTAKE_LEFT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
-        addTask(leftIntakeOut);
-        DeadmanMotorTask rightIntakeOut = new DeadmanMotorTask(this, rightIntake, MiyazakiCalibration.INTAKE_RIGHT_DISPENSE, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
-        addTask(rightIntakeOut);
+        DeadmanMotorTask tapeOut = new DeadmanMotorTask(this, tapeMeasurer, MiyazakiCalibration.TAPE_OUT, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_A);
+        addTask(tapeOut);
+
+        final DeadmanMotorTask tapeIn = new DeadmanMotorTask(this, tapeMeasurer, MiyazakiCalibration.TAPE_IN, GamepadTask.GamepadNumber.GAMEPAD_1, DeadmanMotorTask.DeadmanButton.BUTTON_B);
+        addTask(tapeIn);
+
          */
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
@@ -211,15 +198,22 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
                     case RIGHT_BUMPER_UP:
                         stoneArm.setPosition(MiyazakiCalibration.STONE_ARM_STOW);
                         break;
-
-
+                    case BUTTON_A_DOWN:
+                        tapeMeasurer.setPower(1.0);
+                        break;
+                    case BUTTON_B_DOWN:
+                        tapeMeasurer.setPower(-1.0);
+                        break;
+                    case BUTTON_A_UP: case BUTTON_B_UP:
+                        tapeMeasurer.setPower(0.0);
+                        break;
                 }
             }
         });
     }
 
-    public void latchFoundation()
-    {
+    public void latchFoundation() {
+
         foundationMoveTask = new DeadReckonTask(this, touchPath, drivetrain, touchLeftCriteria, touchRightCriteria) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
@@ -241,12 +235,12 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
             case ARM_DEPLOYED:
                 leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
                 rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
-                foundationArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
+                foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                 break;
             case ARM_STOWED:
                 leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
                 rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
-                foundationArms = LisztSkybridgePath.ArmLocation.ARM_DEPLOYED;
+                foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_DEPLOYED;
                 break;
         }
     }
@@ -257,12 +251,12 @@ public class LisztLM3Teleop extends StandardFourMotorRobot {
             case ARM_DEPLOYED:
                 leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_DOWN);
                 rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_DOWN);
-                stoneArms = LisztSkybridgePath.ArmLocation.ARM_STOWED;
+                stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
                 break;
             case ARM_STOWED:
                 leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
                 rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
-                stoneArms = LisztSkybridgePath.ArmLocation.ARM_DEPLOYED;
+                stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_DEPLOYED;
                 break;
         }
     }

@@ -2,6 +2,7 @@ package opmodes.test;
 import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -25,6 +26,7 @@ import team25core.StandardFourMotorRobot;
  */
 
 @Autonomous(name = "XX Test")
+@Disabled
 public class XXTest extends StandardFourMotorRobot {
 
     // drivetrain and mechanisms declaration

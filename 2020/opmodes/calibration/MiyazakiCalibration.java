@@ -11,14 +11,14 @@ public class MiyazakiCalibration {
 
     // foundation migration and stone arms
     public static final double STONE_LEFT_ARM_DOWN = 238/256.0;
-    public static final double STONE_LEFT_ARM_STOW = 65/256.0;
+    public static final double STONE_LEFT_ARM_STOW = 70/256.0;
     public static final double STONE_RIGHT_ARM_DOWN = 28/256.0;
-    public static final double STONE_RIGHT_ARM_STOW = 191/256.0;
+    public static final double STONE_RIGHT_ARM_STOW = 180/256.0;
     public static final double STONE_ARM_STOW = 62.0/256.0;
     public static final double STONE_ARM_PUSH = 256.0/256.0;
 
-    public static final double ARM_LEFT_STOW = 9.0/256.0; // 9
-    public static final double ARM_LEFT_DOWN = 256.0/256.0; // 256
+    public static final double ARM_LEFT_STOW = 0.0/256.0; // 9
+    public static final double ARM_LEFT_DOWN = 225.0/256.0; // 256
 
     public static final double ARM_RIGHT_STOW = 256.0/360.0;
     public static final double ARM_RIGHT_DOWN = 11.0/256.0;
@@ -31,8 +31,8 @@ public class MiyazakiCalibration {
     public static final double INTAKE_RIGHT_COLLECT = 1.0;
 
     // claw
-    public static final double NEW_CLAW_OPEN = 169.0 / 256.0; //version 1: 50, version 2: 225, version 3: 95, version 4: 50, version 5: 5
-    public static final double NEW_CLAW_CLOSE = 5.0 / 256.0; //version 1: 200, version 2: 168, version 3: 170, version 4: 150, version 5: 120
+    public static final double NEW_CLAW_OPEN = 180.0 / 256.0; //version 1: 50, version 2: 225, version 3: 95, version 4: 50, version 5: 5
+    public static final double NEW_CLAW_CLOSE = 0.0 / 256.0; //version 1: 200, version 2: 168, version 3: 170, version 4: 150, version 5: 120
     public static final double OLD_CLAW_OPEN = 50.0/256.0; //version 1: 50, version 2: 150, version 3: 50
     public static final double OLD_CLAW_CLOSE = 120.0/256.0;//version 1: 150, version 2: 170, version 3: 150, version 4: 120, version 5: 100, version 6: 90
 
@@ -46,6 +46,10 @@ public class MiyazakiCalibration {
     public static final double HLIFT_IN = 1;
     public static final double HLIFT_STOP = 0;
     public static final double HLIFT_DIST = 1.00;
+
+    // tape measurer
+    public static final double TAPE_IN = 1.0;
+    public static final double TAPE_OUT = -1.0;
 
     // encoders per inch
     public static final int ENCODERS_PER_CYCLE = 950;
@@ -83,7 +87,7 @@ public class MiyazakiCalibration {
 
             0 - "leftArm"       - foundation migration left arm
             1 - "rightArm"      - foundation migration right arm
-            2 -
+            2 - "stoneArm"      - get over it arm
             3 -
 
         DIGITAL DEVICES
