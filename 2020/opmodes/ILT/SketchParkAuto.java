@@ -1,4 +1,4 @@
-package opmodes.LM3;
+package opmodes.ILT;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;

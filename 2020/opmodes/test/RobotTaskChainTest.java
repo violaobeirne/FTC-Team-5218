@@ -27,21 +27,21 @@ public class RobotTaskChainTest extends StandardFourMotorRobot {
 
     }
 
-    public void doObjectiveOne(RobotTaskChain chain)
+    public void doObjectiveOne()
     {
         DeadReckonPath path = new DeadReckonPath();
         path.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, 0.3);
         chain.addTask(new DeadReckonTask(this, path, drivetrain));
     }
 
-    public void doObjectiveTwo(RobotTaskChain chain)
+    public void doObjectiveTwo()
     {
         DeadReckonPath path = new DeadReckonPath();
         path.addSegment(DeadReckonPath.SegmentType.TURN, 90, 0.3);
         chain.addTask(new DeadReckonTask(this, path, drivetrain));
     }
 
-    public void doObjectiveThree(RobotTaskChain chain)
+    public void doObjectiveThree()
     {
         DeadReckonPath path = new DeadReckonPath();
         path.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 40, 0.3);
@@ -51,15 +51,16 @@ public class RobotTaskChainTest extends StandardFourMotorRobot {
     @Override
     public void init()
     {
+        super.init();
         drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.resetEncoders();
         drivetrain.encodersOn();
         drivetrain.setNoncanonicalMotorDirection();
         drivetrain.setMasterMotor(frontLeft);
 
-        doObjectiveOne(chain);
-        doObjectiveTwo(chain);
-        doObjectiveThree(chain);
+        doObjectiveOne();
+        doObjectiveTwo();
+        doObjectiveThree();
     }
 
     @Override

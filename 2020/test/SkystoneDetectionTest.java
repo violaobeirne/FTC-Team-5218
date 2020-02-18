@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import opmodes.LM3.SternSkystonePath;
+import opmodes.ILT.BeethovenILTSkystonePath;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.MechanumGearedDrivetrain;
@@ -41,8 +41,8 @@ public class SkystoneDetectionTest extends StandardFourMotorRobot {
 
     // skybridge constant declaration
     private DeadReckonPath skystonePath;
-    private SternSkystonePath skystone;
-    private SternSkystonePath.AllianceColor allianceColor;
+    private BeethovenILTSkystonePath skystone;
+    private BeethovenILTSkystonePath.AllianceColor allianceColor;
 
     @Override
     public void init () {

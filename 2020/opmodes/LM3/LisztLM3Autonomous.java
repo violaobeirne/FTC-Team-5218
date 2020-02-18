@@ -50,6 +50,7 @@ public class LisztLM3Autonomous extends StandardFourMotorRobot {
 
     @Override
     public void init() {
+        super.init();
         leftIntake = hardwareMap.dcMotor.get("leftIntake");
         rightIntake = hardwareMap.dcMotor.get("rightIntake");
 
