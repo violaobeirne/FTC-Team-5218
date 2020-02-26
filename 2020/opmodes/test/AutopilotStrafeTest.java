@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import team25core.AutopilotTask;
 import team25core.BNO055Gyro;
@@ -15,6 +16,7 @@ import team25core.SingleShotTimerTask;
 import team25core.StandardFourMotorRobot;
 
 @Autonomous(name="Autopilot Strafe Test")
+@Disabled
 public class AutopilotStrafeTest extends StandardFourMotorRobot {
 
     BNO055IMU imu;

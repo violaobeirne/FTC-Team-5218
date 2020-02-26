@@ -1,6 +1,7 @@
 package opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
@@ -11,6 +12,7 @@ import team25core.RobotEvent;
 import test.SkystoneDetectionTask;
 
 @Autonomous(name="SimpleStoneDetectionTest")
+@Disabled
 public class SimpleSkyStoneDetectionTest extends Robot {
 
     ColorSensor colorSensor;

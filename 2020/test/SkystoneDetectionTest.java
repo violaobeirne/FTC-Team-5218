@@ -2,6 +2,7 @@ package test;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -9,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import opmodes.ILT.BeethovenILTSkystonePath;
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
 import team25core.MechanumGearedDrivetrain;
@@ -23,7 +23,14 @@ import team25core.TankMechanumControlScheme;
  */
 
 @Autonomous(name = "5218 Skystone Detection Test")
+@Disabled
 public class SkystoneDetectionTest extends StandardFourMotorRobot {
+
+    public enum AllianceColor {
+        BLUE,
+        RED,
+        DEFAULT,
+    }
 
     // drivetrain and mechanisms declaration
     private Servo leftStoneArm;
@@ -41,8 +48,7 @@ public class SkystoneDetectionTest extends StandardFourMotorRobot {
 
     // skybridge constant declaration
     private DeadReckonPath skystonePath;
-    private BeethovenILTSkystonePath skystone;
-    private BeethovenILTSkystonePath.AllianceColor allianceColor;
+    private AllianceColor allianceColor;
 
     @Override
     public void init () {

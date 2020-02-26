@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 @Autonomous(name="ColorSensorTest")
+@Disabled
 public class ColorSensorTest extends OpMode {
 
     ColorSensor colorSensor;
