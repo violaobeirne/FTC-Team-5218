@@ -22,6 +22,12 @@ import team25core.TouchSensorCriteria;
 public class BeethovenILTTeleop extends StandardFourMotorRobot {
 
     // enum
+
+    public enum ArmToggle {
+        STOW_ARM,
+        DEPLOY_ARM
+    }
+
     public enum drivetrainMode {
         SLOW_MODE,
         FAST_MODE,
@@ -43,15 +49,16 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
     private Servo claw;
     private Servo leftArm;
     private Servo rightArm;
-    private BeethovenILTSkystonePath.ArmLocation foundationArms;
+    private ArmToggle foundationArms;
     private Servo leftStoneArm;
     private Servo rightStoneArm;
     private Servo stoneArm;
-    private BeethovenILTSkystonePath.ArmLocation stoneArms;
+    private ArmToggle stoneArms;
     private CRServo hLift;
     private DcMotor leftIntake;
     private DcMotor rightIntake;
     private DcMotor tapeMeasurer;
+    private boolean intakeOn;
 
     // sensors
     private TouchSensor touchRight;
@@ -81,8 +88,8 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
         stoneArm = hardwareMap.servo.get("stoneArm");
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
-        stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
-        foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
+        stoneArms = ArmToggle.STOW_ARM;
+        foundationArms = ArmToggle.STOW_ARM;
         vLift = hardwareMap.dcMotor.get("vLift");
         hLift = hardwareMap.crservo.get("hLift");
         leftIntake = hardwareMap.dcMotor.get("leftIntake");
@@ -170,10 +177,12 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
                     case RIGHT_TRIGGER_DOWN:
                         rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_COLLECT);
                         leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_COLLECT);
+                        claw.setPosition(MiyazakiCalibration.NEW_CLAW_OPEN);
                         break;
                     case LEFT_TRIGGER_DOWN:
                         rightIntake.setPower(MiyazakiCalibration.INTAKE_RIGHT_DISPENSE);
                         leftIntake.setPower(MiyazakiCalibration.INTAKE_LEFT_DISPENSE);
+                        claw.setPosition(MiyazakiCalibration.NEW_CLAW_OPEN);
                         break;
                     case BUTTON_X_DOWN:
                         moveFoundationArms();
@@ -191,6 +200,7 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
                     case LEFT_BUMPER_DOWN:
                         leftIntake.setPower(0.0);
                         rightIntake.setPower(0.0);
+                        intakeOn = false;
                         break;
                     case RIGHT_BUMPER_DOWN:
                         stoneArm.setPosition(MiyazakiCalibration.STONE_ARM_PUSH);
@@ -232,15 +242,15 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
     public void moveFoundationArms()
     {
         switch (foundationArms) {
-            case ARM_DEPLOYED:
+            case DEPLOY_ARM:
                 leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
                 rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
-                foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
+                foundationArms = ArmToggle.STOW_ARM;
                 break;
-            case ARM_STOWED:
+            case STOW_ARM:
                 leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
                 rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
-                foundationArms = BeethovenILTSkystonePath.ArmLocation.ARM_DEPLOYED;
+                foundationArms = ArmToggle.DEPLOY_ARM;
                 break;
         }
     }
@@ -248,15 +258,15 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
     public void moveStoneArms ()
     {
         switch (stoneArms) {
-            case ARM_DEPLOYED:
+            case DEPLOY_ARM:
                 leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_DOWN);
                 rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_DOWN);
-                stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_STOWED;
+                stoneArms = ArmToggle.STOW_ARM;
                 break;
-            case ARM_STOWED:
+            case STOW_ARM:
                 leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
                 rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
-                stoneArms = BeethovenILTSkystonePath.ArmLocation.ARM_DEPLOYED;
+                stoneArms = ArmToggle.DEPLOY_ARM;
                 break;
         }
     }

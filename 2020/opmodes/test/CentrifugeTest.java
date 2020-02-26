@@ -1,5 +1,6 @@
 package opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,6 +18,7 @@ import team25core.RobotTaskChain;
  * Created by Lizzie on 2/10/2020.
  */
 @Autonomous(name = "Centrifuge Test")
+@Disabled
 public class CentrifugeTest extends Robot {
 
     private DcMotor frontLeft;

@@ -32,8 +32,8 @@ import test.SkystoneDetectionTask;
  * Created by Lizzie on 1/6/2020.
  */
 
-@Autonomous(name = "KINDA BROKEN 5218 ILT Double Skystone Autonomous")
-public class BeethovenILTAutonomous extends Robot {
+@Autonomous(name = "5218 ILT Skystone Autonomous")
+public class BrentanoILTAutonomous extends Robot {
 
     private final static String TAG = "SternILTAutonomous";
 
@@ -56,8 +56,8 @@ public class BeethovenILTAutonomous extends Robot {
     private Servo leftStoneArm;
     private Servo rightStoneArm;
     private Servo purpleStoneArm;
-    private Servo leftArm;
-    private Servo rightArm;
+    // private Servo leftArm;
+    // private Servo rightArm;
     private MechanumGearedDrivetrain drivetrain;
     HashMap<MotorPackage.MotorLocation, MotorPackage> motorMap;
 
@@ -92,8 +92,8 @@ public class BeethovenILTAutonomous extends Robot {
 
         leftStoneArm = hardwareMap.get(Servo.class, "leftStoneArm");
         rightStoneArm = hardwareMap.get(Servo.class, "rightStoneArm");
-        leftArm = hardwareMap.get(Servo.class, "leftArm");
-        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        // leftArm = hardwareMap.get(Servo.class, "leftArm");
+        // rightArm = hardwareMap.get(Servo.class, "rightArm");
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule module : allHubs) {
@@ -126,8 +126,8 @@ public class BeethovenILTAutonomous extends Robot {
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightColorSensor");
 
         // servo initialization
-        leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
-        rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
+        // leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_STOW);
+        // rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_STOW);
         leftStoneArm.setPosition(MiyazakiCalibration.STONE_LEFT_ARM_STOW);
         rightStoneArm.setPosition(MiyazakiCalibration.STONE_RIGHT_ARM_STOW);
 
@@ -182,10 +182,6 @@ public class BeethovenILTAutonomous extends Robot {
         pullStoneBack();
         deliverFirstStone();
         moveToSecondStone();
-        approachSecondStone();
-        doWait(200);
-        pullSecondStoneBack();
-        deliverSecondStone();
         /*
          * Start the task chain.
          */
@@ -204,7 +200,7 @@ public class BeethovenILTAutonomous extends Robot {
         RobotLog.ii(TAG, "Setup initialMove");
         DeadReckonPath initialPath;
         initialPath = new DeadReckonPath();
-        initialPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 30, 0.4);
+        initialPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 27.5, 0.4);
         taskChain.addTask(new DeadReckonTask(this, initialPath, drivetrain));
     }
 
@@ -215,6 +211,11 @@ public class BeethovenILTAutonomous extends Robot {
         DeadReckonPath distanceOffset = new DeadReckonPath();
         distanceOffset.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 100, MULTIPLIER * -.1);
         taskChain.addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
+            @Override
+            public void start() {
+                super.start();
+                RobotLog.ii(TAG, "Starting findStoneEdge");
+            }
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
@@ -224,7 +225,7 @@ public class BeethovenILTAutonomous extends Robot {
                         robot.removeTask(this);
                         drivetrain.resetEncoders();
                         drivetrain.encodersOn();
-                        drivetrain.straight(-0.2 * MULTIPLIER);
+                        drivetrain.straight(-0.1 * MULTIPLIER);
                         break;
                 }
             }
@@ -235,6 +236,12 @@ public class BeethovenILTAutonomous extends Robot {
     {
         RobotLog.ii(TAG, "Setup detectSkystone");
         taskChain.addTask(new SkystoneDetectionTask(this, purpleColorSensor, purpleDistanceSensor) {
+            @Override
+            public void start() {
+                super.start();
+                RobotLog.ii(TAG, "Starting detectSkyStone");
+            }
+
             public void handleEvent(RobotEvent e) {
                 SkystoneDetectionEvent event = (SkystoneDetectionEvent) e;
                 switch (event.kind) {
@@ -256,6 +263,11 @@ public class BeethovenILTAutonomous extends Robot {
         DeadReckonPath distanceOffset = new DeadReckonPath();
         distanceOffset.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 100, .2);
         taskChain.addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
+            @Override
+            public void start() {
+                super.start();
+                RobotLog.ii(TAG, "Starting approachStone");
+            }
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
@@ -270,23 +282,37 @@ public class BeethovenILTAutonomous extends Robot {
         });
     }
 
-    public void pullStoneBack() // 5, 9 q
+    public void pullStoneBack() // 5
     {
         RobotLog.ii(TAG, "Setup pullStoneBack");
         DeadReckonPath pullBack = new DeadReckonPath();
-        pullBack.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 15, -0.4);
-        taskChain.addTask(new DeadReckonTask(this, pullBack, drivetrain));
+        pullBack.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 10, -0.4);
+        taskChain.addTask(new DeadReckonTask(this, pullBack, drivetrain) {
+            @Override
+            public void start() {
+                super.start();
+                RobotLog.ii(TAG, "Starting pullStoneBack");
+            }
+
+        });
     }
     public void deliverFirstStone () // 6
     {
+        int park = 0;
         RobotLog.ii(TAG, "Setup skystoneOffset");
         DeadReckonPath offsetStonePath = new DeadReckonPath();
         offsetStonePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, stoneOffset + 45, MULTIPLIER * 0.8);
         taskChain.addTask(new DeadReckonTask(this, offsetStonePath, drivetrain) {
+            @Override
+            public void start() {
+                super.start();
+                RobotLog.ii(TAG, "Starting deliverFirstStone");
+            }
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case PATH_DONE:
+                        RobotLog.ii(TAG, "StoneOffset: ", stoneOffset);
                         moveStoneArms(ArmToggle.STOW_ARM);
                         RobotLog.ii(TAG, "Finshed delivering first stone.");
                         break;
@@ -295,58 +321,16 @@ public class BeethovenILTAutonomous extends Robot {
         });
     }
 
-
     public void moveToSecondStone() // 7
     {
         RobotLog.ii(TAG, "Setup moveToSecondStone");
         DeadReckonPath offsetStonePath = new DeadReckonPath();
-        offsetStonePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, stoneOffset + 45 + 21, -MULTIPLIER * 0.8);
+        int park = 10;
+        if(stoneOffset < 10) {
+            park = 15;
+        }
+        offsetStonePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, stoneOffset + park, -MULTIPLIER * 0.8);
         taskChain.addTask(new DeadReckonTask(this, offsetStonePath, drivetrain));
-    }
-
-    public void approachSecondStone() // 8
-    {
-        RobotLog.ii(TAG, "Setup approachSecondStone");
-        DistanceSensorCriteria dsc = new DistanceSensorCriteria(purpleDistanceSensor, 2);
-        DeadReckonPath distanceOffset = new DeadReckonPath();
-        distanceOffset.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 100, .2);
-        taskChain.addTask(new DeadReckonTask(this, distanceOffset, drivetrain, dsc) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case SENSOR_SATISFIED:
-                        RobotLog.ii(TAG, "Finished approaching second stone");
-                        moveStoneArms(ArmToggle.DEPLOY_ARM);
-                        break;
-                }
-            }
-        });
-    }
-
-    public void pullSecondStoneBack () // 9
-    {
-        RobotLog.ii(TAG, "Setup pullSecondStoneBack");
-        DeadReckonPath pullBack = new DeadReckonPath();
-        pullBack.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 15, -0.4);
-        taskChain.addTask(new DeadReckonTask(this, pullBack, drivetrain));
-    }
-
-    public void deliverSecondStone() // 10
-    {
-        RobotLog.ii(TAG, "Setup deliverSecondStone");
-        DeadReckonPath offsetStonePath = new DeadReckonPath();
-        offsetStonePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, stoneOffset + 45 + 35, MULTIPLIER * 0.8);
-        taskChain.addTask(new DeadReckonTask(this, offsetStonePath, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch (event.kind) {
-                    case PATH_DONE:
-                        RobotLog.ii(TAG, "Finshed delivering second stone.");
-                        moveStoneArms(ArmToggle.STOW_ARM);
-                        break;
-                }
-            }
-        });
     }
 
     public void moveStoneArms(ArmToggle arm)
@@ -380,44 +364,4 @@ public class BeethovenILTAutonomous extends Robot {
                 break;
         }
     }
-
-    /*
-    public void runOffset(DeadReckonPath path)
-    {
-        RobotLog.i("163 runOffset");
-        int deliverDistance = stoneOffset + 60;
-        DeadReckonPath deliverStone = new DeadReckonPath();
-        deliverStone.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 14, -0.5);
-        deliverStone.addSegment(DeadReckonPath.SegmentType.STRAIGHT, deliverDistance, MULTIPLIER * 0.5);
-        addTask(new DeadReckonTask(this, path, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch(event.kind) {
-                    case PATH_DONE:
-                        moveStoneArms();
-                        // approachSecondStone();
-                        break;
-                }
-            }
-        });
-    }
-
-    public void moveBack()
-    {
-        RobotLog.i("163 moveBack");
-        DeadReckonPath moveToStone;
-        moveToStone = new DeadReckonPath();
-        moveToStone.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10.0, MULTIPLIER * 0.4);
-        taskChain.addTask(new DeadReckonTask(this, moveToStone, drivetrain) {
-            public void handleEvent(RobotEvent e) {
-                DeadReckonEvent event = (DeadReckonEvent) e;
-                switch(event.kind) {
-                    case PATH_DONE:
-                        stoneOffset += drivetrain.getCurrentPosition();
-                        break;
-                }
-            }
-        });
-    }
-     */
 }

@@ -1,5 +1,6 @@
 package opmodes.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -21,7 +22,9 @@ import team25core.TouchSensorCriteria;
  * Created by Lizzie on 2/8/2020.
  */
 @TeleOp(name = "CHAOS")
+@Disabled
 public class CHAOSTest extends Robot {
+
     // vertical lift code
     private DcMotor vLift;
     private TouchSensor liftTouchSensor;

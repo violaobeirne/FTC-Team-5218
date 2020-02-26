@@ -1,6 +1,7 @@
 package opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import team25core.RobotTaskChain;
 import team25core.StandardFourMotorRobot;
 
 @Autonomous(name="Robot Task Chain Test")
+@Disabled
 public class RobotTaskChainTest extends StandardFourMotorRobot {
 
     private MechanumGearedDrivetrain drivetrain;
