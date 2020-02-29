@@ -1,11 +1,11 @@
-package opmodes.ILT;
+package opmodes.Regionals;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import opmodes.calibration.MiyazakiCalibration;
 import team25core.DeadReckonPath;
@@ -19,9 +19,10 @@ import team25core.TankMechanumControlScheme;
 import team25core.TeleopDriveTask;
 import team25core.TouchSensorCriteria;
 
-@TeleOp(name = "5218 ILT Teleop")
-@Disabled
-public class BeethovenILTTeleop extends StandardFourMotorRobot {
+@TeleOp(name = "5218 Regionals Teleop")
+public class ChopinRegionalsTeleop extends StandardFourMotorRobot {
+
+    private final String TAG = "Chopin";
 
     // enum
 
@@ -78,6 +79,8 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
         super.init();
         // drivetrain
         drivetrain = new MechanumGearedDrivetrain(motorMap);
+        drivetrain.resetEncoders();
+        drivetrain.encodersOn();
         drivetrain.setCanonicalMotorDirection();
         TankMechanumControlScheme scheme = new TankMechanumControlScheme(gamepad1, TankMechanumControlScheme.MotorDirection.NONCANONICAL);
         driveTask = new TeleopDriveTask(this, MiyazakiCalibration.SPEED_LIMIT, scheme, frontLeft, frontRight, backLeft, backRight);
@@ -106,8 +109,6 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
         touchLeft = hardwareMap.get(TouchSensor.class, "touchLeft");
         touchRightCriteria = new TouchSensorCriteria(touchRight);
         touchLeftCriteria = new TouchSensorCriteria(touchLeft);
-        touchPath = new DeadReckonPath();
-        touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.2);
     }
 
     @Override
@@ -125,7 +126,6 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
                 GamepadEvent event = (GamepadEvent) e;
                 switch (event.kind) {
                     case BUTTON_A_DOWN:
-                        latchFoundation();
                         break;
                     case BUTTON_X_DOWN:
                         if (cMode == clawMode.CLAW_CLOSE) {
@@ -156,6 +156,27 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
                         break;
                     case LEFT_BUMPER_UP: case LEFT_TRIGGER_UP:
                         hLift.setPower(MiyazakiCalibration.HLIFT_STOP);
+                        break;
+                    case DPAD_UP_DOWN:
+                        driveTask.suspend();
+                        latchFoundation();
+                        break;
+                    case DPAD_RIGHT_DOWN:
+                        driveTask.suspend();
+                        drivetrain.strafe(0.2);
+                        break;
+                    case DPAD_RIGHT_UP:
+                    case DPAD_LEFT_UP:
+                        driveTask.resume();
+                        drivetrain.strafe(0.0);
+                        break;
+                    case DPAD_LEFT_DOWN:
+                        driveTask.suspend();
+                        drivetrain.strafe(-0.2);
+                        break;
+                    case DPAD_DOWN_DOWN:
+                        driveTask.suspend();
+                        moveBack();
                         break;
                 }
 
@@ -224,21 +245,44 @@ public class BeethovenILTTeleop extends StandardFourMotorRobot {
         });
     }
 
+    public void moveBack() {
+
+        DeadReckonPath moveBackPath = new DeadReckonPath();
+        moveBackPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.6);
+        DeadReckonTask moveBack = new DeadReckonTask(this, moveBackPath, drivetrain) {
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent event = (DeadReckonEvent) e;
+                switch (event.kind) {
+                    case PATH_DONE:
+                        drivetrain.stop();
+                        driveTask.resume();
+                        break;
+                }
+            }
+        };
+        addTask(moveBack);
+    }
+
     public void latchFoundation() {
 
+        RobotLog.ii(TAG, "Latch Foundation");
+        touchPath = new DeadReckonPath();
+        touchPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 30, 0.2);
         foundationMoveTask = new DeadReckonTask(this, touchPath, drivetrain, touchLeftCriteria, touchRightCriteria) {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent event = (DeadReckonEvent) e;
                 switch (event.kind) {
                     case BOTH_SENSORS_SATISFIED:
                         drivetrain.stop();
-                        leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
-                        rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
+                        driveTask.resume();
+                        // leftArm.setPosition(MiyazakiCalibration.ARM_LEFT_DOWN);
+                        // rightArm.setPosition(MiyazakiCalibration.ARM_RIGHT_DOWN);
                         foundationMoveTask.disableSensors();
                         break;
                 }
             }
         };
+        addTask(foundationMoveTask);
     }
 
     public void moveFoundationArms()
